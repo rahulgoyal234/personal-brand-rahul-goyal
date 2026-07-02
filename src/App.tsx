@@ -5,7 +5,7 @@ import Portfolio from './components/Portfolio';
 import Contact from './components/Contact';
 import Customizer from './components/Customizer';
 import { usePortfolio } from './context/PortfolioContext';
-import { Github, Linkedin, Mail, Twitter, ChevronUp, Clock, Sliders } from 'lucide-react';
+import { Linkedin, Mail, ChevronUp, Clock, Sliders } from 'lucide-react';
 
 export default function App() {
   const { personalInfo, setIsEditorOpen } = usePortfolio();
@@ -91,15 +91,7 @@ export default function App() {
         <div className="max-w-6xl mx-auto space-y-12">
           
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div className="space-y-2">
-              <div className="flex items-center space-x-2 font-sans text-sm font-bold tracking-widest text-neutral-900 uppercase">
-                <span className="w-1.5 h-1.5 bg-black"></span>
-                <span>rahul.goyal</span>
-              </div>
-              <p className="text-neutral-400 text-xs font-light max-w-sm">
-                Built with precision, React, Vite and Tailwind CSS.
-              </p>
-            </div>
+            <div></div>
 
             {/* Quick Links */}
             <div className="flex flex-wrap gap-x-8 gap-y-2 text-[10px] font-mono text-neutral-400 uppercase tracking-widest">
@@ -128,28 +120,12 @@ export default function App() {
           <div className="pt-8 border-t border-neutral-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] font-mono text-neutral-400 uppercase tracking-widest">
             <div className="flex items-center space-x-4">
               <a
-                href={personalInfo.github}
-                target="_blank"
-                rel="noreferrer"
-                className="hover:text-black transition-colors"
-              >
-                <Github className="w-4 h-4" />
-              </a>
-              <a
                 href={personalInfo.linkedin}
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-black transition-colors"
               >
                 <Linkedin className="w-4 h-4" />
-              </a>
-              <a
-                href={personalInfo.twitter}
-                target="_blank"
-                rel="noreferrer"
-                className="hover:text-black transition-colors"
-              >
-                <Twitter className="w-4 h-4" />
               </a>
               <a href={`mailto:${personalInfo.email}`} className="hover:text-black transition-colors">
                 <Mail className="w-4 h-4" />

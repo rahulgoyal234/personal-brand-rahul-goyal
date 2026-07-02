@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Github, Linkedin, Mail } from 'lucide-react';
+import { Menu, X, Linkedin, Mail } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 
 interface NavigationProps {
@@ -62,9 +62,6 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
           <span className="font-display text-lg font-bold tracking-tight text-brand-900 leading-none">
             {personalInfo.name}
           </span>
-          <span className="text-[9px] uppercase tracking-[0.3em] text-neutral-400 mt-1 font-medium">
-            Product & Engineering
-          </span>
         </button>
 
         {/* Desktop Nav */}
@@ -86,9 +83,6 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
         {/* Action Button & Socials */}
         <div className="hidden md:flex items-center space-x-4">
           <div className="flex items-center space-x-4">
-            <a href={personalInfo.github} target="_blank" rel="noreferrer" className="text-neutral-500 hover:text-black transition-colors" title="GitHub">
-              <Github className="w-4 h-4" />
-            </a>
             <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="text-neutral-500 hover:text-black transition-colors" title="LinkedIn">
               <Linkedin className="w-4 h-4" />
             </a>
@@ -139,9 +133,6 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
               <div className="pt-4 border-t border-brand-200 flex flex-col space-y-3">
                 {/* Social icons in mobile view */}
                 <div className="flex items-center justify-center space-x-6 py-2">
-                  <a href={personalInfo.github} target="_blank" rel="noreferrer" className="text-brand-500 hover:text-brand-900 transition-colors">
-                    <Github className="w-4 h-4" />
-                  </a>
                   <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="text-brand-500 hover:text-brand-900 transition-colors">
                     <Linkedin className="w-4 h-4" />
                   </a>

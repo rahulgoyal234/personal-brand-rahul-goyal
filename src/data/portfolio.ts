@@ -11,7 +11,7 @@ export const PERSONAL_INFO = {
   phone: '+91 8690247028',
   avatar: avatarImg,
   github: 'https://github.com/rahulgoyal',
-  linkedin: 'https://linkedin.com/in/rahulgoyal',
+  linkedin: 'https://www.linkedin.com/in/rahulgoyal48/',
   twitter: 'https://twitter.com/rahulgoyal',
   resumeUrl: '#resume',
 };

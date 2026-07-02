@@ -41,6 +41,9 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem('rahul_goyal_personal_info');
       if (saved) {
         const parsed = JSON.parse(saved);
+        if (parsed.linkedin === 'https://linkedin.com/in/rahulgoyal' || parsed.linkedin === 'https://linkedin.com/in/rahulgoyal/') {
+          parsed.linkedin = PERSONAL_INFO.linkedin;
+        }
         return { ...PERSONAL_INFO, ...parsed };
       }
     } catch (e) {

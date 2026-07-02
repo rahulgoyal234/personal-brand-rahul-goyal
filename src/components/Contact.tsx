@@ -17,9 +17,6 @@ export default function Contact() {
           <h2 className="font-sans text-3xl sm:text-4xl font-extralight tracking-tight text-neutral-900">
             Get in <span className="italic font-serif font-light">touch</span>
           </h2>
-          <p className="text-neutral-500 font-light text-xs sm:text-sm leading-relaxed">
-            Have a project idea, a position proposal, or simply want to chat about product architecture? Reach out via direct email.
-          </p>
         </div>
 
         {/* Contact Cards Grid */}
@@ -29,7 +26,7 @@ export default function Contact() {
               <Mail className="w-5 h-5" />
             </div>
             <div>
-              <span className="block text-neutral-400 text-[8px] font-mono uppercase tracking-widest mb-1">Direct Email</span>
+              <span className="block text-neutral-400 text-[8px] font-mono uppercase tracking-widest mb-1">Email</span>
               <a 
                 href={`mailto:${personalInfo.email}`} 
                 className="text-neutral-800 hover:text-black font-semibold text-xs sm:text-sm uppercase tracking-wider block transition-colors"

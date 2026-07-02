@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowRight, Github, Linkedin, Mail, Twitter, MapPin, Briefcase, Settings, Play, X } from 'lucide-react';
+import { ArrowRight, Linkedin, Mail, MapPin, Briefcase, Settings, Play, X } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 
 interface HeroProps {
@@ -60,16 +60,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             animate="visible"
             className="md:col-span-7 flex flex-col items-start text-left space-y-6"
           >
-            {/* Status Indicator */}
-            <motion.div
-              id="hero-status-badge"
-              variants={itemVariants}
-              className="inline-flex items-center space-x-2 px-3 py-1 bg-brand-100 border border-brand-200 text-brand-700 text-[10px] font-mono tracking-wider uppercase font-bold rounded-none"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Available for high-impact roles</span>
-            </motion.div>
-
             {/* Heading Name & Role */}
             <div className="space-y-4">
               <motion.h1
@@ -116,16 +106,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             {/* Social Links */}
             <motion.div id="hero-social-links" variants={itemVariants} className="flex items-center space-x-3 pt-2">
               <a
-                id="hero-social-github"
-                href={personalInfo.github}
-                target="_blank"
-                rel="noreferrer"
-                className="p-2 border border-brand-200 text-brand-600 hover:text-brand-900 hover:border-brand-900 hover:bg-white transition-all cursor-pointer rounded-none"
-                title="GitHub Profiles"
-              >
-                <Github className="w-4 h-4" />
-              </a>
-              <a
                 id="hero-social-linkedin"
                 href={personalInfo.linkedin}
                 target="_blank"
@@ -134,16 +114,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 title="LinkedIn Profile"
               >
                 <Linkedin className="w-4 h-4" />
-              </a>
-              <a
-                id="hero-social-twitter"
-                href={personalInfo.twitter}
-                target="_blank"
-                rel="noreferrer"
-                className="p-2 border border-brand-200 text-brand-600 hover:text-brand-900 hover:border-brand-900 hover:bg-white transition-all cursor-pointer rounded-none"
-                title="Twitter Profile"
-              >
-                <Twitter className="w-4 h-4" />
               </a>
               <a
                 id="hero-social-email"
