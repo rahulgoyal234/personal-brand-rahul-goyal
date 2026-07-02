@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { PERSONAL_INFO } from '../data/portfolio';
+import { PERSONAL_INFO, PROJECTS } from '../data/portfolio';
+import { Project } from '../types';
 
 export interface PersonalInfoType {
   name: string;
@@ -14,12 +15,19 @@ export interface PersonalInfoType {
   linkedin: string;
   twitter: string;
   resumeUrl: string;
+  introVideo?: string;
+  introVideoType?: 'file' | 'url' | 'youtube' | 'vimeo' | 'loom';
 }
 
 interface PortfolioContextProps {
   personalInfo: PersonalInfoType;
   updatePersonalInfo: (updates: Partial<PersonalInfoType>) => void;
   resetPersonalInfo: () => void;
+  projects: Project[];
+  addProject: (project: Omit<Project, 'id'>) => void;
+  updateProject: (id: string, updates: Partial<Project>) => void;
+  deleteProject: (id: string) => void;
+  resetProjects: () => void;
   isEditorOpen: boolean;
   setIsEditorOpen: (open: boolean) => void;
 }
@@ -41,6 +49,18 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
     return PERSONAL_INFO;
   });
 
+  const [projects, setProjects] = useState<Project[]>(() => {
+    try {
+      const saved = localStorage.getItem('rahul_goyal_projects');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      console.error('Error loading custom projects:', e);
+    }
+    return PROJECTS;
+  });
+
   useEffect(() => {
     try {
       localStorage.setItem('rahul_goyal_personal_info', JSON.stringify(personalInfo));
@@ -48,6 +68,14 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       console.error('Error saving custom personal info:', e);
     }
   }, [personalInfo]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('rahul_goyal_projects', JSON.stringify(projects));
+    } catch (e) {
+      console.error('Error saving custom projects:', e);
+    }
+  }, [projects]);
 
   const updatePersonalInfo = (updates: Partial<PersonalInfoType>) => {
     setPersonalInfo((prev) => ({ ...prev, ...updates }));
@@ -58,12 +86,40 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
     setPersonalInfo(PERSONAL_INFO);
   };
 
+  const addProject = (project: Omit<Project, 'id'>) => {
+    const newProject: Project = {
+      ...project,
+      id: `project_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`
+    };
+    setProjects((prev) => [...prev, newProject]);
+  };
+
+  const updateProject = (id: string, updates: Partial<Project>) => {
+    setProjects((prev) =>
+      prev.map((proj) => (proj.id === id ? { ...proj, ...updates } : proj))
+    );
+  };
+
+  const deleteProject = (id: string) => {
+    setProjects((prev) => prev.filter((proj) => proj.id !== id));
+  };
+
+  const resetProjects = () => {
+    localStorage.removeItem('rahul_goyal_projects');
+    setProjects(PROJECTS);
+  };
+
   return (
     <PortfolioContext.Provider
       value={{
         personalInfo,
         updatePersonalInfo,
         resetPersonalInfo,
+        projects,
+        addProject,
+        updateProject,
+        deleteProject,
+        resetProjects,
         isEditorOpen,
         setIsEditorOpen,
       }}

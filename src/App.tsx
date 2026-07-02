@@ -2,38 +2,16 @@ import React, { useState, useEffect } from 'react';
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
 import Portfolio from './components/Portfolio';
-import Resume from './components/Resume';
 import Contact from './components/Contact';
 import Customizer from './components/Customizer';
 import { usePortfolio } from './context/PortfolioContext';
-import { ContactSubmission } from './types';
 import { Github, Linkedin, Mail, Twitter, ChevronUp, Clock, Sliders } from 'lucide-react';
 
 export default function App() {
   const { personalInfo, setIsEditorOpen } = usePortfolio();
   const [activeSection, setActiveSection] = useState<string>('about');
-  const [showInbox, setShowInbox] = useState<boolean>(false);
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
   const [utcTime, setUtcTime] = useState<string>('');
-
-  // Manage submissions persistently in localStorage
-  const [submissions, setSubmissions] = useState<ContactSubmission[]>(() => {
-    try {
-      const saved = localStorage.getItem('rahul_goyal_contacts');
-      return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-      console.error('Error reading localStorage contact submissions:', e);
-      return [];
-    }
-  });
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('rahul_goyal_contacts', JSON.stringify(submissions));
-    } catch (e) {
-      console.error('Error writing localStorage contact submissions:', e);
-    }
-  }, [submissions]);
 
   // Handle live UTC Clock updates
   useEffect(() => {
@@ -49,7 +27,7 @@ export default function App() {
   // Set up Scroll Spy to highlight Navigation links based on scrolled sections
   useEffect(() => {
     const handleScrollSpy = () => {
-      const sections = ['about', 'portfolio', 'resume', 'contact'];
+      const sections = ['about', 'portfolio', 'contact'];
       const scrollPosition = window.scrollY + 120; // Offset for navbar
 
       // Scroll to top visibility check
@@ -72,26 +50,6 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScrollSpy);
   }, []);
 
-  const handleAddSubmission = (msg: Omit<ContactSubmission, 'id' | 'timestamp' | 'read'>) => {
-    const newSubmission: ContactSubmission = {
-      ...msg,
-      id: `sub_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
-      timestamp: new Date().toISOString(),
-      read: false,
-    };
-    setSubmissions((prev) => [newSubmission, ...prev]);
-  };
-
-  const handleMarkRead = (id: string) => {
-    setSubmissions((prev) =>
-      prev.map((sub) => (sub.id === id ? { ...sub, read: true } : sub))
-    );
-  };
-
-  const handleDeleteMessage = (id: string) => {
-    setSubmissions((prev) => prev.filter((sub) => sub.id !== id));
-  };
-
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -99,16 +57,12 @@ export default function App() {
     });
   };
 
-  const unreadCount = submissions.filter((sub) => !sub.read).length;
-
   return (
     <div id="root-layout" className="min-h-screen flex flex-col selection:bg-brand-900 selection:text-white">
       {/* Premium Floating Navigation Menu */}
       <Navigation
         activeSection={activeSection}
         setActiveSection={setActiveSection}
-        onOpenInbox={() => setShowInbox(true)}
-        unreadCount={unreadCount}
       />
 
       {/* Main Sections */}
@@ -128,18 +82,8 @@ export default function App() {
         {/* Selected Projects Showcase */}
         <Portfolio />
 
-        {/* Modular Resume Profile */}
-        <Resume />
-
-        {/* Fully Interactive Contact Form & submissions Inbox */}
-        <Contact
-          submissions={submissions}
-          onSubmitMessage={handleAddSubmission}
-          onMarkRead={handleMarkRead}
-          onDeleteMessage={handleDeleteMessage}
-          showInbox={showInbox}
-          setShowInbox={setShowInbox}
-        />
+        {/* Fully Interactive Contact Details */}
+        <Contact />
       </main>
 
       {/* Footer Design */}
@@ -161,25 +105,19 @@ export default function App() {
             <div className="flex flex-wrap gap-x-8 gap-y-2 text-[10px] font-mono text-neutral-400 uppercase tracking-widest">
               <button
                 onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
-                className="hover:text-black transition-colors cursor-pointer"
+                className="hover:text-black transition-colors cursor-pointer text-left"
               >
                 About
               </button>
               <button
                 onClick={() => document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' })}
-                className="hover:text-black transition-colors cursor-pointer"
+                className="hover:text-black transition-colors cursor-pointer text-left"
               >
                 Portfolio
               </button>
               <button
-                onClick={() => document.getElementById('resume')?.scrollIntoView({ behavior: 'smooth' })}
-                className="hover:text-black transition-colors cursor-pointer"
-              >
-                Resume
-              </button>
-              <button
                 onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                className="hover:text-black transition-colors cursor-pointer"
+                className="hover:text-black transition-colors cursor-pointer text-left"
               >
                 Contact
               </button>

@@ -4,7 +4,7 @@ export interface Project {
   description: string;
   longDescription: string;
   tags: string[];
-  category: 'Research Papers' | 'Articles' | 'IP Press Blogs';
+  category: string;
   image: string;
   demoUrl?: string;
   githubUrl?: string;

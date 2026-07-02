@@ -1,19 +1,24 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ExternalLink, Github, ArrowRight, X, ChevronRight, BarChart2, Star, Zap } from 'lucide-react';
-import { PROJECTS } from '../data/portfolio';
+import { usePortfolio } from '../context/PortfolioContext';
 import { Project } from '../types';
 
 export default function Portfolio() {
+  const { projects } = usePortfolio();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [activeProject, setActiveProject] = useState<Project | null>(null);
 
-  const categories = ['All', 'Research Papers', 'Articles', 'IP Press Blogs'];
+  // Compute unique categories dynamically from active projects
+  const categories: string[] = ['All', ...Array.from(new Set<string>(projects.map((p) => p.category)))];
+
+  // Reset selected category if it no longer exists
+  const currentCategory = categories.includes(selectedCategory) ? selectedCategory : 'All';
 
   // Categorize or filter items
-  const filteredProjects = PROJECTS.filter((project) => {
-    if (selectedCategory === 'All') return true;
-    return project.category === selectedCategory;
+  const filteredProjects = projects.filter((project) => {
+    if (currentCategory === 'All') return true;
+    return project.category === currentCategory;
   });
 
   return (
@@ -41,7 +46,7 @@ export default function Portfolio() {
                 key={category}
                 onClick={() => setSelectedCategory(category)}
                 className={`pb-1 text-[11px] uppercase tracking-[0.2em] font-bold border-b-2 transition-all cursor-pointer ${
-                  selectedCategory === category
+                  currentCategory === category
                     ? 'border-black text-black'
                     : 'border-transparent text-neutral-400 hover:text-black'
                 }`}
