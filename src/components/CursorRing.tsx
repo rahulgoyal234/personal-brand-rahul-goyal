@@ -1,14 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export default function CursorRing() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
-    // Only run if the device supports hover (mouse/desktop users)
-    const mediaQuery = window.matchMedia('(hover: hover)');
+    // Only run on devices that actually support hover and have a fine pointer (e.g., a mouse)
+    const mediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
     if (!mediaQuery.matches) {
       return;
     }
@@ -21,36 +19,103 @@ export default function CursorRing() {
     let mouseY = 0;
     let ringX = 0;
     let ringY = 0;
+    let isVisible = false;
     let animationFrameId: number;
 
     const onMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      
+
       if (!isVisible) {
-        setIsVisible(true);
+        isVisible = true;
+        dot.style.opacity = '1';
+        ring.style.opacity = '0.5';
       }
 
+      // Directly update dot position using hardware-accelerated translate3d
       dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
     };
 
+    // Ease the ring toward the dot position
     const animate = () => {
       ringX += (mouseX - ringX) * 0.18;
       ringY += (mouseY - ringY) * 0.18;
 
-      if (ring) {
-        ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
-      }
+      ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    window.addEventListener('mousemove', onMouseMove);
+    // Event delegation for interactive elements (handles dynamically loaded elements as well!)
+    const onMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      const interactive = target.closest(
+        'a, button, select, input, textarea, [role="button"], .cursor-pointer, [data-cursor-hover]'
+      );
+
+      if (interactive) {
+        ring.style.width = '56px';
+        ring.style.height = '56px';
+        ring.style.borderColor = 'rgba(17, 17, 17, 0.8)'; // Brand color or high contrast
+        ring.style.backgroundColor = 'rgba(17, 17, 17, 0.03)';
+        dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(1.5)`;
+      }
+    };
+
+    const onMouseOut = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      const interactive = target.closest(
+        'a, button, select, input, textarea, [role="button"], .cursor-pointer, [data-cursor-hover]'
+      );
+
+      if (interactive) {
+        const relatedTarget = e.relatedTarget as HTMLElement | null;
+        if (!relatedTarget || !interactive.contains(relatedTarget)) {
+          ring.style.width = '36px';
+          ring.style.height = '36px';
+          ring.style.borderColor = 'rgba(17, 17, 17, 0.3)';
+          ring.style.backgroundColor = 'transparent';
+          dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(1)`;
+        }
+      }
+    };
+
+    // Safely hide cursors on touch screens (hybrid laptops, mobile devices)
+    const onTouchStart = () => {
+      dot.style.display = 'none';
+      ring.style.display = 'none';
+    };
+
+    // Window visibility handlers
+    const onMouseLeaveWindow = () => {
+      isVisible = false;
+      dot.style.opacity = '0';
+      ring.style.opacity = '0';
+    };
+
+    const onMouseEnterWindow = () => {
+      isVisible = true;
+      dot.style.opacity = '1';
+      ring.style.opacity = '0.5';
+    };
+
+    // Event listeners
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
+    window.addEventListener('mouseover', onMouseOver, { passive: true });
+    window.addEventListener('mouseout', onMouseOut, { passive: true });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    document.addEventListener('mouseleave', onMouseLeaveWindow);
+    document.addEventListener('mouseenter', onMouseEnterWindow);
+
     animationFrameId = requestAnimationFrame(animate);
 
-    // Apply cursor: none to body and interactive elements
+    // Style injection to hide the default browser cursor, strictly scoped to fine-pointer hover devices
     const style = document.createElement('style');
     style.innerHTML = `
-      @media (hover: hover) {
+      @media (hover: hover) and (pointer: fine) {
         body, a, button, select, input, textarea, [role="button"], .cursor-pointer {
           cursor: none !important;
         }
@@ -58,76 +123,41 @@ export default function CursorRing() {
     `;
     document.head.appendChild(style);
 
-    // Handle hovering on interactive elements
-    const handleMouseEnter = () => setIsHovering(true);
-    const handleMouseLeave = () => setIsHovering(false);
-
-    const updateHoverListeners = () => {
-      const interactiveElements = document.querySelectorAll('a, button, select, input, textarea, [role="button"], .cursor-pointer');
-      interactiveElements.forEach((el) => {
-        el.addEventListener('mouseenter', handleMouseEnter);
-        el.addEventListener('mouseleave', handleMouseLeave);
-      });
-    };
-
-    // Run initially
-    updateHoverListeners();
-
-    // Use a mutation observer to attach listeners to dynamically added elements
-    const observer = new MutationObserver(() => {
-      updateHoverListeners();
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    // Handle mouse leaving/entering the window
-    const onMouseLeaveWindow = () => {
-      setIsVisible(false);
-    };
-    const onMouseEnterWindow = () => {
-      setIsVisible(true);
-    };
-
-    document.addEventListener('mouseleave', onMouseLeaveWindow);
-    document.addEventListener('mouseenter', onMouseEnterWindow);
-
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseover', onMouseOver);
+      window.removeEventListener('mouseout', onMouseOut);
+      window.removeEventListener('touchstart', onTouchStart);
+      document.removeEventListener('mouseleave', onMouseLeaveWindow);
+      document.removeEventListener('mouseenter', onMouseEnterWindow);
       cancelAnimationFrame(animationFrameId);
+      
       if (document.head.contains(style)) {
         document.head.removeChild(style);
       }
-      document.removeEventListener('mouseleave', onMouseLeaveWindow);
-      document.removeEventListener('mouseenter', onMouseEnterWindow);
-      observer.disconnect();
-      
-      const interactiveElements = document.querySelectorAll('a, button, select, input, textarea, [role="button"], .cursor-pointer');
-      interactiveElements.forEach((el) => {
-        el.removeEventListener('mouseenter', handleMouseEnter);
-        el.removeEventListener('mouseleave', handleMouseLeave);
-      });
     };
-  }, [isVisible]);
+  }, []);
 
   return (
     <>
+      {/* Outer wrapper elements with low overhead styles */}
       <div
         ref={dotRef}
-        className="fixed top-0 left-0 w-1.5 h-1.5 bg-brand-900 rounded-full pointer-events-none z-[9999] transition-opacity duration-300"
+        className="fixed top-0 left-0 w-1.5 h-1.5 bg-[#111111] rounded-full pointer-events-none z-[9999] opacity-0 transition-opacity duration-300 ease-out"
         style={{
-          opacity: isVisible ? 1 : 0,
-          transform: 'translate(-50%, -50%)',
+          transform: 'translate3d(0,0,0) translate(-50%, -50%)',
           willChange: 'transform',
         }}
       />
       <div
         ref={ringRef}
-        className="fixed top-0 left-0 border border-brand-900 rounded-full pointer-events-none z-[9999] transition-all duration-200 ease-out"
+        className="fixed top-0 left-0 border border-[#111111] rounded-full pointer-events-none z-[9999] opacity-0 transition-all duration-200 ease-out"
         style={{
-          width: isHovering ? '56px' : '36px',
-          height: isHovering ? '56px' : '36px',
-          opacity: isVisible ? 0.6 : 0,
-          transform: 'translate(-50%, -50%)',
-          willChange: 'transform',
+          width: '36px',
+          height: '36px',
+          borderColor: 'rgba(17, 17, 17, 0.3)',
+          transform: 'translate3d(0,0,0) translate(-50%, -50%)',
+          willChange: 'transform, width, height',
         }}
       />
     </>
