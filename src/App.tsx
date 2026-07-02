@@ -4,6 +4,7 @@ import Hero from './components/Hero';
 import Portfolio from './components/Portfolio';
 import Contact from './components/Contact';
 import Customizer from './components/Customizer';
+import CursorRing from './components/CursorRing';
 import { usePortfolio } from './context/PortfolioContext';
 import { Linkedin, Mail, ChevronUp, Clock, Sliders } from 'lucide-react';
 
@@ -59,6 +60,9 @@ export default function App() {
 
   return (
     <div id="root-layout" className="min-h-screen flex flex-col selection:bg-brand-900 selection:text-white">
+      {/* Custom Cursor Ring follower */}
+      <CursorRing />
+
       {/* Premium Floating Navigation Menu */}
       <Navigation
         activeSection={activeSection}
@@ -87,7 +91,7 @@ export default function App() {
       </main>
 
       {/* Footer Design */}
-      <footer id="main-footer" className="bg-[#fcfcfc] text-neutral-500 py-16 px-6 border-t border-neutral-200 print:hidden">
+      <footer id="main-footer" className="bg-[#fcfcfc] text-neutral-500 py-16 px-6 print:hidden">
         <div className="max-w-6xl mx-auto space-y-12">
           
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -117,7 +121,7 @@ export default function App() {
           </div>
 
           {/* Social icons, UTC clock and copyright statement */}
-          <div className="pt-8 border-t border-neutral-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] font-mono text-neutral-400 uppercase tracking-widest">
+          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] font-mono text-neutral-400 uppercase tracking-widest">
             <div className="flex items-center space-x-4">
               <a
                 href={personalInfo.linkedin}
@@ -132,13 +136,7 @@ export default function App() {
               </a>
             </div>
 
-            {/* UTC clock */}
-            {utcTime && (
-              <div className="flex items-center space-x-1 text-neutral-400">
-                <Clock className="w-3.5 h-3.5" />
-                <span>{utcTime}</span>
-              </div>
-            )}
+
 
             <p>© {new Date().getFullYear()} {personalInfo.name}. All rights reserved.</p>
           </div>
