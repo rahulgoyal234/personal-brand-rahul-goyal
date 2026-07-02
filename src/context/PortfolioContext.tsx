@@ -60,8 +60,8 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
         return parsed.map((p: any) => {
           const defaultProj = PROJECTS.find((dp) => dp.id === p.id);
           if (defaultProj) {
-            // Upgrade old unsplash placeholder image or any mismatch with the fresh local assets
-            if (p.image.includes('images.unsplash.com') || p.image !== defaultProj.image) {
+            // Force the official default images for default projects unless it's a custom base64 uploaded image (starts with data:)
+            if (!p.image || p.image.includes('images.unsplash.com') || (!p.image.startsWith('data:') && p.image !== defaultProj.image)) {
               return { ...p, image: defaultProj.image };
             }
           }
