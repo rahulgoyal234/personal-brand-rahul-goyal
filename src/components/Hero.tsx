@@ -11,6 +11,7 @@ interface HeroProps {
 export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
   const { personalInfo, setIsEditorOpen } = usePortfolio();
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   // Animation container variants for staggered effect
   const containerVariants = {
@@ -152,7 +153,13 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             transition={{ type: 'spring', stiffness: 50, damping: 15, delay: 0.2 }}
             className="md:col-span-5 flex justify-center md:justify-end"
           >
-            <div className="relative group w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80">
+            <div 
+              className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 cursor-pointer select-none"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              onTouchStart={() => setIsHovered(true)}
+              onTouchEnd={() => setIsHovered(false)}
+            >
               {/* Optional pulsing "Intro Video" badge at top right */}
               {personalInfo.introVideo && (
                 <div 
@@ -160,7 +167,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                     e.stopPropagation();
                     setIsVideoModalOpen(true);
                   }}
-                  className="absolute -top-2.5 -right-2.5 z-10 bg-black text-white border border-neutral-800 px-2 py-1 flex items-center space-x-1 font-mono text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105"
+                  className="absolute -top-2.5 -right-2.5 z-10 bg-black text-white border border-neutral-800 px-2 py-1 flex items-center space-x-1 font-mono text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
                   <span>Intro Video</span>
@@ -168,7 +175,9 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               )}
 
               {/* Back framing accent */}
-              <div className="absolute inset-0 border border-brand-200 rotate-1 group-hover:rotate-4 group-hover:scale-[1.02] transition-all duration-500 rounded-none bg-neutral-50"></div>
+              <div className={`absolute inset-0 border border-brand-200 transition-all duration-500 rounded-none bg-neutral-50 ${
+                isHovered ? 'rotate-4 scale-[1.02]' : 'rotate-1 scale-100'
+              }`}></div>
               
               {/* Main image card wrapper */}
               <div 
@@ -177,7 +186,9 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                     setIsVideoModalOpen(true);
                   }
                 }}
-                className={`absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] transition-all duration-500 shadow-none rounded-none ${
+                className={`absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none ${
+                  isHovered ? 'rotate-0 scale-[1.02]' : '-rotate-1 scale-100'
+                } ${
                   personalInfo.introVideo ? 'cursor-pointer' : 'cursor-default'
                 }`}
               >
@@ -186,13 +197,19 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   src={personalInfo.avatar}
                   alt={personalInfo.name}
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-108 filter group-hover:brightness-[1.03]"
+                  className={`w-full h-full object-cover transition-all duration-700 ease-out filter ${
+                    isHovered ? 'scale-108 brightness-[1.03]' : 'scale-100'
+                  }`}
                 />
 
                 {/* Animated overlay when video is active */}
                 {personalInfo.introVideo && (
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white gap-2">
-                    <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm border border-white flex items-center justify-center scale-95 group-hover:scale-100 transition-transform duration-300">
+                  <div className={`absolute inset-0 bg-black/40 transition-opacity duration-300 flex flex-col items-center justify-center text-white gap-2 ${
+                    isHovered ? 'opacity-100' : 'opacity-0'
+                  }`}>
+                    <div className={`w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm border border-white flex items-center justify-center transition-transform duration-300 ${
+                      isHovered ? 'scale-100' : 'scale-95'
+                    }`}>
                       <Play className="w-5 h-5 text-white fill-current translate-x-0.5" />
                     </div>
                     <span className="font-mono text-[8px] uppercase tracking-[0.2em] font-bold">Play Intro Video</span>
