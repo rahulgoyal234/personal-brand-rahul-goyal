@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Send, CheckCircle, Mail, MapPin, Inbox, Clock, ChevronRight, AlertCircle, X, Trash2, ShieldCheck } from 'lucide-react';
-import { PERSONAL_INFO } from '../data/portfolio';
+import { usePortfolio } from '../context/PortfolioContext';
 import { ContactSubmission } from '../types';
 
 interface ContactProps {
@@ -21,6 +21,7 @@ export default function Contact({
   showInbox,
   setShowInbox,
 }: ContactProps) {
+  const { personalInfo } = usePortfolio();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -94,8 +95,8 @@ export default function Contact({
                 </div>
                 <div>
                   <span className="block text-neutral-400 text-[8px] font-mono uppercase tracking-widest">Direct Email</span>
-                  <a href={`mailto:${PERSONAL_INFO.email}`} className="text-neutral-800 hover:text-black font-semibold text-xs uppercase tracking-wider">
-                    {PERSONAL_INFO.email}
+                  <a href={`mailto:${personalInfo.email}`} className="text-neutral-800 hover:text-black font-semibold text-xs uppercase tracking-wider">
+                    {personalInfo.email}
                   </a>
                 </div>
               </div>
@@ -107,7 +108,7 @@ export default function Contact({
                 <div>
                   <span className="block text-neutral-400 text-[8px] font-mono uppercase tracking-widest">Based In</span>
                   <span className="text-neutral-800 font-semibold text-xs uppercase tracking-wider">
-                    {PERSONAL_INFO.location}
+                    {personalInfo.location}
                   </span>
                 </div>
               </div>

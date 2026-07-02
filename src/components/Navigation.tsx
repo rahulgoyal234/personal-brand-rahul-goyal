@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, ArrowUpRight, Github, Linkedin, Mail } from 'lucide-react';
-import { PERSONAL_INFO } from '../data/portfolio';
+import { usePortfolio } from '../context/PortfolioContext';
 
 interface NavigationProps {
   activeSection: string;
@@ -11,6 +11,7 @@ interface NavigationProps {
 }
 
 export default function Navigation({ activeSection, setActiveSection, onOpenInbox, unreadCount }: NavigationProps) {
+  const { personalInfo } = usePortfolio();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -62,7 +63,7 @@ export default function Navigation({ activeSection, setActiveSection, onOpenInbo
           className="group flex flex-col items-start cursor-pointer text-left"
         >
           <span className="font-display text-lg font-bold tracking-tight text-brand-900 leading-none">
-            {PERSONAL_INFO.name}
+            {personalInfo.name}
           </span>
           <span className="text-[9px] uppercase tracking-[0.3em] text-neutral-400 mt-1 font-medium">
             Product & Engineering
@@ -99,7 +100,7 @@ export default function Navigation({ activeSection, setActiveSection, onOpenInbo
           )}
           <a
             id="nav-resume-download"
-            href={PERSONAL_INFO.resumeUrl}
+            href={personalInfo.resumeUrl}
             onClick={(e) => {
               e.preventDefault();
               handleNavClick('resume');
@@ -161,7 +162,7 @@ export default function Navigation({ activeSection, setActiveSection, onOpenInbo
               <div className="pt-4 border-t border-brand-200 flex flex-col space-y-3">
                 <a
                   id="mobile-nav-resume-link"
-                  href={PERSONAL_INFO.resumeUrl}
+                  href={personalInfo.resumeUrl}
                   onClick={(e) => {
                     e.preventDefault();
                     handleNavClick('resume');
@@ -174,13 +175,13 @@ export default function Navigation({ activeSection, setActiveSection, onOpenInbo
 
                 {/* Social icons in mobile view */}
                 <div className="flex items-center justify-center space-x-6 py-2">
-                  <a href={PERSONAL_INFO.github} target="_blank" rel="noreferrer" className="text-brand-500 hover:text-brand-900 transition-colors">
+                  <a href={personalInfo.github} target="_blank" rel="noreferrer" className="text-brand-500 hover:text-brand-900 transition-colors">
                     <Github className="w-4 h-4" />
                   </a>
-                  <a href={PERSONAL_INFO.linkedin} target="_blank" rel="noreferrer" className="text-brand-500 hover:text-brand-900 transition-colors">
+                  <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="text-brand-500 hover:text-brand-900 transition-colors">
                     <Linkedin className="w-4 h-4" />
                   </a>
-                  <a href={`mailto:${PERSONAL_INFO.email}`} className="text-brand-500 hover:text-brand-900 transition-colors">
+                  <a href={`mailto:${personalInfo.email}`} className="text-brand-500 hover:text-brand-900 transition-colors">
                     <Mail className="w-4 h-4" />
                   </a>
                 </div>

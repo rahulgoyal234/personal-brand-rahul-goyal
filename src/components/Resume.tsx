@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Download, Calendar, MapPin, Briefcase, Award, Plus, Minus, Printer, ExternalLink, GraduationCap, CheckCircle, ShieldCheck } from 'lucide-react';
-import { EXPERIENCES, EDUCATION, SKILL_GROUPS, PERSONAL_INFO, ACHIEVEMENTS, CERTIFICATIONS } from '../data/portfolio';
+import { EXPERIENCES, EDUCATION, SKILL_GROUPS, ACHIEVEMENTS, CERTIFICATIONS } from '../data/portfolio';
+import { usePortfolio } from '../context/PortfolioContext';
 
 export default function Resume() {
+  const { personalInfo } = usePortfolio();
   const [expandedWork, setExpandedWork] = useState<string[]>([EXPERIENCES[0].id]); // First experience expanded by default
   const [viewType, setViewType] = useState<'interactive' | 'ats'>('interactive');
   const [downloading, setDownloading] = useState(false);
@@ -27,10 +29,10 @@ export default function Resume() {
       // Create a simulated PDF download of the resume
       const element = document.createElement('a');
       const file = new Blob([
-        `RESUME - ${PERSONAL_INFO.name.toUpperCase()}\n` +
-        `${PERSONAL_INFO.title}\n` +
-        `Email: ${PERSONAL_INFO.email} | Location: ${PERSONAL_INFO.location}\n` +
-        `GitHub: ${PERSONAL_INFO.github} | LinkedIn: ${PERSONAL_INFO.linkedin}\n\n` +
+        `RESUME - ${personalInfo.name.toUpperCase()}\n` +
+        `${personalInfo.title}\n` +
+        `Email: ${personalInfo.email} | Location: ${personalInfo.location}\n` +
+        `GitHub: ${personalInfo.github} | LinkedIn: ${personalInfo.linkedin}\n\n` +
         `=========================================\n` +
         `WORK EXPERIENCE\n` +
         `=========================================\n` +
@@ -61,7 +63,7 @@ export default function Resume() {
         ACHIEVEMENTS.map(a => `  - ${a}`).join('\n')
       ], { type: 'text/plain' });
       element.href = URL.createObjectURL(file);
-      element.download = `${PERSONAL_INFO.name.toLowerCase().replace(/\s+/g, '_')}_resume.txt`;
+      element.download = `${personalInfo.name.toLowerCase().replace(/\s+/g, '_')}_resume.txt`;
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
@@ -144,23 +146,23 @@ export default function Resume() {
           <div id="resume-sheet-ats" className="bg-white border border-neutral-200 rounded-none p-8 sm:p-12 shadow-none font-sans text-brand-800 space-y-8 select-text">
             {/* Header info */}
             <div className="text-center space-y-2 border-b border-neutral-100 pb-6">
-              <h3 className="font-sans text-2xl font-light tracking-tight text-neutral-900 uppercase">{PERSONAL_INFO.name}</h3>
-              <p className="text-neutral-500 font-bold uppercase tracking-widest text-[10px]">{PERSONAL_INFO.title}</p>
+              <h3 className="font-sans text-2xl font-light tracking-tight text-neutral-900 uppercase">{personalInfo.name}</h3>
+              <p className="text-neutral-500 font-bold uppercase tracking-widest text-[10px]">{personalInfo.title}</p>
               <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[10px] text-neutral-400 font-mono uppercase tracking-wider">
-                <span>{PERSONAL_INFO.location}</span>
+                <span>{personalInfo.location}</span>
                 <span>•</span>
-                <a href={`mailto:${PERSONAL_INFO.email}`} className="hover:underline">{PERSONAL_INFO.email}</a>
+                <a href={`mailto:${personalInfo.email}`} className="hover:underline">{personalInfo.email}</a>
                 <span>•</span>
-                <a href={PERSONAL_INFO.github} target="_blank" rel="noreferrer" className="hover:underline">GitHub</a>
+                <a href={personalInfo.github} target="_blank" rel="noreferrer" className="hover:underline">GitHub</a>
                 <span>•</span>
-                <a href={PERSONAL_INFO.linkedin} target="_blank" rel="noreferrer" className="hover:underline">LinkedIn</a>
+                <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="hover:underline">LinkedIn</a>
               </div>
             </div>
 
             {/* Profile Brief */}
             <div className="space-y-2">
               <h4 className="text-[10px] uppercase tracking-[0.2em] font-bold text-neutral-900 border-b border-neutral-200 pb-1">Professional Summary</h4>
-              <p className="text-xs text-neutral-600 leading-relaxed font-light">{PERSONAL_INFO.bio}</p>
+              <p className="text-xs text-neutral-600 leading-relaxed font-light">{personalInfo.bio}</p>
             </div>
 
             {/* Work History */}

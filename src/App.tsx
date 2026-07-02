@@ -4,11 +4,13 @@ import Hero from './components/Hero';
 import Portfolio from './components/Portfolio';
 import Resume from './components/Resume';
 import Contact from './components/Contact';
+import Customizer from './components/Customizer';
+import { usePortfolio } from './context/PortfolioContext';
 import { ContactSubmission } from './types';
-import { PERSONAL_INFO } from './data/portfolio';
-import { Github, Linkedin, Mail, Twitter, ChevronUp, Clock } from 'lucide-react';
+import { Github, Linkedin, Mail, Twitter, ChevronUp, Clock, Sliders } from 'lucide-react';
 
 export default function App() {
+  const { personalInfo, setIsEditorOpen } = usePortfolio();
   const [activeSection, setActiveSection] = useState<string>('about');
   const [showInbox, setShowInbox] = useState<boolean>(false);
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
@@ -188,7 +190,7 @@ export default function App() {
           <div className="pt-8 border-t border-neutral-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] font-mono text-neutral-400 uppercase tracking-widest">
             <div className="flex items-center space-x-4">
               <a
-                href={PERSONAL_INFO.github}
+                href={personalInfo.github}
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-black transition-colors"
@@ -196,7 +198,7 @@ export default function App() {
                 <Github className="w-4 h-4" />
               </a>
               <a
-                href={PERSONAL_INFO.linkedin}
+                href={personalInfo.linkedin}
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-black transition-colors"
@@ -204,14 +206,14 @@ export default function App() {
                 <Linkedin className="w-4 h-4" />
               </a>
               <a
-                href={PERSONAL_INFO.twitter}
+                href={personalInfo.twitter}
                 target="_blank"
                 rel="noreferrer"
                 className="hover:text-black transition-colors"
               >
                 <Twitter className="w-4 h-4" />
               </a>
-              <a href={`mailto:${PERSONAL_INFO.email}`} className="hover:text-black transition-colors">
+              <a href={`mailto:${personalInfo.email}`} className="hover:text-black transition-colors">
                 <Mail className="w-4 h-4" />
               </a>
             </div>
@@ -224,10 +226,21 @@ export default function App() {
               </div>
             )}
 
-            <p>© {new Date().getFullYear()} Rahul Goyal. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} {personalInfo.name}. All rights reserved.</p>
           </div>
         </div>
       </footer>
+
+      {/* Floating Profile Editor Trigger */}
+      <button
+        id="open-customizer-btn"
+        onClick={() => setIsEditorOpen(true)}
+        className="fixed bottom-6 left-6 p-3 bg-black text-white rounded-none border border-black hover:bg-neutral-800 shadow-none transition-all duration-300 cursor-pointer z-40 flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest font-bold"
+        title="Customize Portfolio"
+      >
+        <Sliders className="w-3.5 h-3.5" />
+        <span>Customize Site</span>
+      </button>
 
       {/* Floating Scroll to Top trigger */}
       {showScrollTop && (
@@ -240,6 +253,9 @@ export default function App() {
           <ChevronUp className="w-4 h-4" />
         </button>
       )}
+
+      {/* Slide-over Profile Settings Panel */}
+      <Customizer />
     </div>
   );
 }
