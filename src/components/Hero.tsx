@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, Github, Linkedin, Mail, Twitter, MapPin, Briefcase } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, Mail, Twitter, MapPin, Briefcase, Camera } from 'lucide-react';
 import { PERSONAL_INFO } from '../data/portfolio';
 
 interface HeroProps {
@@ -9,6 +9,24 @@ interface HeroProps {
 }
 
 export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
+  const [avatar, setAvatar] = useState<string>(() => {
+    return localStorage.getItem('custom_avatar') || PERSONAL_INFO.avatar;
+  });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        localStorage.setItem('custom_avatar', base64String);
+        setAvatar(base64String);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // Animation container variants for staggered effect
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -183,15 +201,33 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               {/* Back framing accent */}
               <div className="absolute inset-0 border border-brand-200 rotate-1 group-hover:rotate-3 transition-transform duration-300 rounded-none bg-neutral-50"></div>
               {/* Main image card wrapper */}
-              <div className="absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 -rotate-1 group-hover:rotate-0 transition-transform duration-300 shadow-none rounded-none">
+              <div 
+                onClick={() => fileInputRef.current?.click()}
+                className="absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 -rotate-1 group-hover:rotate-0 transition-transform duration-300 shadow-none rounded-none cursor-pointer"
+              >
                 <img
                   id="hero-portrait-img"
-                  src={PERSONAL_INFO.avatar}
+                  src={avatar}
                   alt={PERSONAL_INFO.name}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500 scale-102 hover:scale-105"
                 />
+                
+                {/* Hover overlay for quick upload */}
+                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white gap-2">
+                  <Camera className="w-5 h-5 text-white/90" />
+                  <span className="font-mono text-[9px] uppercase tracking-widest font-bold">Upload New Photo</span>
+                </div>
               </div>
+
+              {/* Hidden File Input */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handlePhotoUpload}
+                accept="image/*"
+                className="hidden"
+              />
 
               {/* Minimal floating tech accent */}
               <div className="absolute -bottom-4 -left-4 bg-white border border-brand-200 px-3 py-1.5 rounded-none shadow-none flex items-center space-x-2 font-mono text-[9px] tracking-widest uppercase">

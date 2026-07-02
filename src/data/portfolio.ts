@@ -1,4 +1,5 @@
 import { Project, Experience, Education, SkillGroup } from '../types';
+import avatarImg from '../assets/images/rahul_avatar_1782920001963.jpg';
 
 export const PERSONAL_INFO = {
   name: 'Rahul Goyal',
@@ -8,7 +9,7 @@ export const PERSONAL_INFO = {
   location: 'New Delhi, India',
   email: 'rahulgyl48@gmail.com',
   phone: '+91 8690247028',
-  avatar: 'https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=400&q=80', // professional avatar placeholder
+  avatar: avatarImg,
   github: 'https://github.com/rahulgoyal',
   linkedin: 'https://linkedin.com/in/rahulgoyal',
   twitter: 'https://twitter.com/rahulgoyal',
