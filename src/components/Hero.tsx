@@ -161,9 +161,9 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   e.stopPropagation();
                   setIsEditorOpen(true);
                 }}
-                className="absolute -top-2.5 -left-2.5 z-10 bg-white text-black border border-neutral-200 hover:border-black px-2.5 py-1.5 flex items-center space-x-1.5 font-mono text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm text-neutral-800 font-bold"
+                className="absolute -top-3.5 -left-3.5 z-10 bg-white text-black border border-neutral-300 hover:border-black px-4 py-2.5 sm:px-2.5 sm:py-1.5 flex items-center space-x-2 sm:space-x-1.5 font-mono text-[10px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md text-neutral-800 font-bold min-h-[40px] sm:min-h-0"
               >
-                <Edit className="w-3 h-3 text-neutral-600" />
+                <Edit className="w-3.5 h-3.5 sm:w-3 sm:h-3 text-neutral-600" />
                 <span>Edit Photo</span>
               </button>
 
@@ -174,9 +174,9 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                     e.stopPropagation();
                     setIsVideoModalOpen(true);
                   }}
-                  className="absolute -top-2.5 -right-2.5 z-10 bg-black text-white border border-neutral-800 px-2 py-1 flex items-center space-x-1 font-mono text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95"
+                  className="absolute -top-3.5 -right-3.5 z-10 bg-black text-white border border-neutral-800 px-3.5 py-2.5 sm:px-2 sm:py-1 flex items-center space-x-2 sm:space-x-1 font-mono text-[10px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md min-h-[40px] sm:min-h-0"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span>
+                  <span className="w-2 h-2 sm:w-1.5 sm:h-1.5 rounded-full bg-red-500 animate-ping"></span>
                   <span>Intro Video</span>
                 </div>
               )}
