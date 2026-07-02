@@ -91,68 +91,90 @@ export default function App() {
       </main>
 
       {/* Footer Design */}
-      <footer id="main-footer" className="bg-[#fcfcfc] text-neutral-500 py-16 px-6 print:hidden">
-        <div className="max-w-6xl mx-auto space-y-12">
+      <footer id="main-footer" className="bg-[#fcfcfc] text-neutral-500 py-16 px-6 md:px-12 border-t border-neutral-200/60 print:hidden">
+        <div className="max-w-6xl mx-auto">
           
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div></div>
-
-            {/* Quick Links */}
-            <div className="flex flex-wrap gap-x-8 gap-y-2 text-[10px] font-mono text-neutral-400 uppercase tracking-widest">
-              <button
-                onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
-                className="hover:text-black transition-colors cursor-pointer text-left"
-              >
-                About
-              </button>
-              <button
-                onClick={() => document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' })}
-                className="hover:text-black transition-colors cursor-pointer text-left"
-              >
-                Portfolio
-              </button>
-              <button
-                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                className="hover:text-black transition-colors cursor-pointer text-left"
-              >
-                Contact
-              </button>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pb-12">
+            
+            {/* Brand column */}
+            <div className="md:col-span-6 space-y-4">
+              <div>
+                <span className="font-display text-base font-bold tracking-tight text-neutral-900 block">
+                  {personalInfo.name}
+                </span>
+                <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-widest mt-1 block">
+                  {personalInfo.title}
+                </span>
+              </div>
+              <p className="text-xs text-neutral-400 font-light max-w-sm leading-relaxed">
+                Advising on corporate law, commercial transactions, intellectual property, and emerging tech policy frameworks.
+              </p>
+              <div className="flex items-center space-x-3 pt-2">
+                <a
+                  href={personalInfo.linkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-2 border border-neutral-200 text-neutral-400 hover:text-black hover:border-black transition-all duration-300 rounded-none bg-white hover:scale-105"
+                  title="LinkedIn"
+                >
+                  <Linkedin className="w-3.5 h-3.5" />
+                </a>
+                <a
+                  href={`mailto:${personalInfo.email}`}
+                  className="p-2 border border-neutral-200 text-neutral-400 hover:text-black hover:border-black transition-all duration-300 rounded-none bg-white hover:scale-105"
+                  title="Email"
+                >
+                  <Mail className="w-3.5 h-3.5" />
+                </a>
+              </div>
             </div>
+
+            {/* Spacer */}
+            <div className="hidden md:block md:col-span-2"></div>
+
+            {/* Quick Links Column */}
+            <div className="md:col-span-4 space-y-4 md:text-right">
+              <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-widest font-bold block">
+                Navigation
+              </span>
+              <div className="flex flex-col md:items-end gap-2.5 text-[10px] font-mono text-neutral-500 uppercase tracking-widest">
+                <button
+                  onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="hover:text-black transition-colors cursor-pointer text-left md:text-right w-fit"
+                >
+                  About Profile
+                </button>
+                <button
+                  onClick={() => document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="hover:text-black transition-colors cursor-pointer text-left md:text-right w-fit"
+                >
+                  Selected Work
+                </button>
+                <button
+                  onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="hover:text-black transition-colors cursor-pointer text-left md:text-right w-fit"
+                >
+                  Get In Touch
+                </button>
+              </div>
+            </div>
+
           </div>
 
-          {/* Social icons, UTC clock and copyright statement */}
-          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] font-mono text-neutral-400 uppercase tracking-widest">
-            <div className="flex items-center space-x-4">
-              <a
-                href={personalInfo.linkedin}
-                target="_blank"
-                rel="noreferrer"
-                className="hover:text-black transition-colors"
-              >
-                <Linkedin className="w-4 h-4" />
-              </a>
-              <a href={`mailto:${personalInfo.email}`} className="hover:text-black transition-colors">
-                <Mail className="w-4 h-4" />
-              </a>
-            </div>
-
-
-
-            <p>© {new Date().getFullYear()} {personalInfo.name}. All rights reserved.</p>
+          {/* Bottom Row: Copyright & UTC Clock */}
+          <div className="border-t border-neutral-200/60 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[9px] font-mono text-neutral-400 uppercase tracking-widest">
+            <p className="text-center sm:text-left">
+              © {new Date().getFullYear()} {personalInfo.name}. All rights reserved.
+            </p>
+            {utcTime && (
+              <div className="flex items-center space-x-2 text-neutral-400">
+                <Clock className="w-3 h-3 text-neutral-400" />
+                <span>{utcTime}</span>
+              </div>
+            )}
           </div>
         </div>
       </footer>
-
-      {/* Floating Profile Editor Trigger */}
-      <button
-        id="open-customizer-btn"
-        onClick={() => setIsEditorOpen(true)}
-        className="fixed bottom-6 left-6 p-3 bg-black text-white rounded-none border border-black hover:bg-neutral-800 shadow-none transition-all duration-300 cursor-pointer z-40 flex items-center gap-2 font-mono text-[9px] uppercase tracking-widest font-bold"
-        title="Customize Portfolio"
-      >
-        <Sliders className="w-3.5 h-3.5" />
-        <span>Customize Site</span>
-      </button>
 
       {/* Floating Scroll to Top trigger */}
       {showScrollTop && (

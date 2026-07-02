@@ -5,12 +5,6 @@ export default function CursorRing() {
   const ringRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Only run on devices that actually support hover and have a fine pointer (e.g., a mouse)
-    const mediaQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
-    if (!mediaQuery.matches) {
-      return;
-    }
-
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
@@ -20,9 +14,34 @@ export default function CursorRing() {
     let ringX = 0;
     let ringY = 0;
     let isVisible = false;
+    let isMouseActive = false;
+    let lastTouchTime = 0;
     let animationFrameId: number;
 
+    const enableCustomCursor = () => {
+      if (isMouseActive) return;
+      isMouseActive = true;
+      document.body.classList.add('has-custom-cursor');
+      dot.style.display = 'block';
+      ring.style.display = 'block';
+    };
+
+    const disableCustomCursor = () => {
+      if (!isMouseActive) return;
+      isMouseActive = false;
+      document.body.classList.remove('has-custom-cursor');
+      dot.style.display = 'none';
+      ring.style.display = 'none';
+    };
+
     const onMouseMove = (e: MouseEvent) => {
+      // Debounce touch-emulated mousemove events
+      if (Date.now() - lastTouchTime < 1000) {
+        return;
+      }
+
+      enableCustomCursor();
+
       mouseX = e.clientX;
       mouseY = e.clientY;
 
@@ -38,15 +57,17 @@ export default function CursorRing() {
 
     // Ease the ring toward the dot position
     const animate = () => {
-      ringX += (mouseX - ringX) * 0.18;
-      ringY += (mouseY - ringY) * 0.18;
-
-      ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+      if (isMouseActive) {
+        ringX += (mouseX - ringX) * 0.18;
+        ringY += (mouseY - ringY) * 0.18;
+        ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+      }
       animationFrameId = requestAnimationFrame(animate);
     };
 
     // Event delegation for interactive elements (handles dynamically loaded elements as well!)
     const onMouseOver = (e: MouseEvent) => {
+      if (!isMouseActive) return;
       const target = e.target as HTMLElement | null;
       if (!target) return;
 
@@ -64,6 +85,7 @@ export default function CursorRing() {
     };
 
     const onMouseOut = (e: MouseEvent) => {
+      if (!isMouseActive) return;
       const target = e.target as HTMLElement | null;
       if (!target) return;
 
@@ -85,8 +107,8 @@ export default function CursorRing() {
 
     // Safely hide cursors on touch screens (hybrid laptops, mobile devices)
     const onTouchStart = () => {
-      dot.style.display = 'none';
-      ring.style.display = 'none';
+      lastTouchTime = Date.now();
+      disableCustomCursor();
     };
 
     // Window visibility handlers
@@ -97,6 +119,7 @@ export default function CursorRing() {
     };
 
     const onMouseEnterWindow = () => {
+      if (!isMouseActive) return;
       isVisible = true;
       dot.style.opacity = '1';
       ring.style.opacity = '0.5';
@@ -112,16 +135,25 @@ export default function CursorRing() {
 
     animationFrameId = requestAnimationFrame(animate);
 
-    // Style injection to hide the default browser cursor, strictly scoped to fine-pointer hover devices
+    // Style injection to hide the default browser cursor, strictly scoped to fine-pointer hover devices when active
     const style = document.createElement('style');
     style.innerHTML = `
-      @media (hover: hover) and (pointer: fine) {
-        body, a, button, select, input, textarea, [role="button"], .cursor-pointer {
-          cursor: none !important;
-        }
+      .has-custom-cursor,
+      .has-custom-cursor a,
+      .has-custom-cursor button,
+      .has-custom-cursor select,
+      .has-custom-cursor input,
+      .has-custom-cursor textarea,
+      .has-custom-cursor [role="button"],
+      .has-custom-cursor .cursor-pointer {
+        cursor: none !important;
       }
     `;
     document.head.appendChild(style);
+
+    // Initial state: hidden until real mouse activity is detected
+    dot.style.display = 'none';
+    ring.style.display = 'none';
 
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
@@ -132,6 +164,7 @@ export default function CursorRing() {
       document.removeEventListener('mouseenter', onMouseEnterWindow);
       cancelAnimationFrame(animationFrameId);
       
+      document.body.classList.remove('has-custom-cursor');
       if (document.head.contains(style)) {
         document.head.removeChild(style);
       }
