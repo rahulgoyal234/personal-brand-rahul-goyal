@@ -153,19 +153,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             className="md:col-span-5 flex justify-center md:justify-end"
           >
             <div className="relative group w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80">
-              {/* Floating "Upload Photo" trigger */}
-              <div 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsEditorOpen(true);
-                }}
-                className="absolute -top-2.5 -left-2.5 z-10 bg-black text-white border border-neutral-800 px-2 py-1 flex items-center space-x-1.5 font-mono text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105"
-                title="Upload Photo / Customize Portrait"
-              >
-                <Settings className="w-3 h-3 text-white" />
-                <span>Upload Photo</span>
-              </div>
-
               {/* Optional pulsing "Intro Video" badge at top right */}
               {personalInfo.introVideo && (
                 <div 
@@ -181,39 +168,34 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               )}
 
               {/* Back framing accent */}
-              <div className="absolute inset-0 border border-brand-200 rotate-1 group-hover:rotate-3 transition-transform duration-300 rounded-none bg-neutral-50"></div>
+              <div className="absolute inset-0 border border-brand-200 rotate-1 group-hover:rotate-4 group-hover:scale-[1.02] transition-all duration-500 rounded-none bg-neutral-50"></div>
               
               {/* Main image card wrapper */}
               <div 
                 onClick={() => {
                   if (personalInfo.introVideo) {
                     setIsVideoModalOpen(true);
-                  } else {
-                    setIsEditorOpen(true);
                   }
                 }}
-                className="absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 -rotate-1 group-hover:rotate-0 transition-transform duration-300 shadow-none rounded-none cursor-pointer"
+                className={`absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] transition-all duration-500 shadow-none rounded-none ${
+                  personalInfo.introVideo ? 'cursor-pointer' : 'cursor-default'
+                }`}
               >
                 <img
                   id="hero-portrait-img"
                   src={personalInfo.avatar}
                   alt={personalInfo.name}
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover transition-all duration-500 scale-102 hover:scale-105"
+                  className="w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-108 filter group-hover:brightness-[1.03]"
                 />
 
                 {/* Animated overlay when video is active */}
-                {personalInfo.introVideo ? (
+                {personalInfo.introVideo && (
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white gap-2">
                     <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm border border-white flex items-center justify-center scale-95 group-hover:scale-100 transition-transform duration-300">
                       <Play className="w-5 h-5 text-white fill-current translate-x-0.5" />
                     </div>
                     <span className="font-mono text-[8px] uppercase tracking-[0.2em] font-bold">Play Intro Video</span>
-                  </div>
-                ) : (
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white gap-1.5">
-                    <Settings className="w-4 h-4 text-white" />
-                    <span className="font-mono text-[8px] uppercase tracking-widest font-bold">Upload Photo</span>
                   </div>
                 )}
               </div>
