@@ -1,5 +1,7 @@
 import { Project, Experience, Education, SkillGroup } from '../types';
 import avatarImg from '../assets/images/rahul_avatar_1782920001963.jpg';
+import writJurisdictionImg from '../assets/images/writ_jurisdiction_thumbnail_1782986850417.jpg';
+import privateLawCollegesImg from '../assets/images/private_law_colleges_thumbnail_1782986865708.jpg';
 
 export const PERSONAL_INFO = {
   name: 'Rahul Goyal',
@@ -85,7 +87,7 @@ export const PROJECTS: Project[] = [
     description: 'A comprehensive constitutional study on the maintainability of writ petitions under Article 226 when alternative statutory remedies exist.',
     longDescription: 'Writ jurisdiction is a powerful constitutional remedy of High Courts. This article examines self-imposed judicial restrictions, exploring the circumstances under which alternative statutory remedies block writ jurisdiction, and cataloging exceptions established by the Supreme Court of India.',
     tags: ['Constitutional Law', 'Writ Jurisdiction', 'Article 226', 'Judicial Precedents'],
-    image: 'https://images.unsplash.com/photo-1505664194779-8bebcb95df84?auto=format&fit=crop&w=800&q=80',
+    image: writJurisdictionImg,
     demoUrl: 'https://www.manupatra.com',
     highlights: [
       'Published on the Manupatra research database, widely referenced by litigation practitioners.',
@@ -125,7 +127,7 @@ export const PROJECTS: Project[] = [
     description: 'An investigative policy piece examining regulatory gaps, curriculum deficiencies, and quality discrepancies in private legal education in India.',
     longDescription: 'This widely read investigative commentary provides a critical analysis of the legal education sector in India. It examines the commercialization of private law schools, highlighting the mismatch between infrastructure marketing and the quality of clinical pedagogy and placement outcomes.',
     tags: ['Legal Education', 'Regulatory Oversight', 'Bar Council of India', 'Policy Reform'],
-    image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80',
+    image: privateLawCollegesImg,
     demoUrl: 'https://www.barandbench.com',
     highlights: [
       'Published on Bar & Bench, sparking widespread discourse among legal educators and students.',

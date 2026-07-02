@@ -56,7 +56,17 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
     try {
       const saved = localStorage.getItem('rahul_goyal_projects');
       if (saved) {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        return parsed.map((p: any) => {
+          const defaultProj = PROJECTS.find((dp) => dp.id === p.id);
+          if (defaultProj) {
+            // Upgrade old unsplash placeholder image or any mismatch with the fresh local assets
+            if (p.image.includes('images.unsplash.com') || p.image !== defaultProj.image) {
+              return { ...p, image: defaultProj.image };
+            }
+          }
+          return p;
+        });
       }
     } catch (e) {
       console.error('Error loading custom projects:', e);
