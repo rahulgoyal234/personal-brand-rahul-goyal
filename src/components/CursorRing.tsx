@@ -65,6 +65,29 @@ export default function CursorRing() {
       animationFrameId = requestAnimationFrame(animate);
     };
 
+    const checkInteractiveElement = (x: number, y: number) => {
+      const target = document.elementFromPoint(x, y) as HTMLElement | null;
+      if (!target) return;
+
+      const interactive = target.closest(
+        'a, button, select, input, textarea, [role="button"], .cursor-pointer, [data-cursor-hover]'
+      );
+
+      if (interactive) {
+        ring.style.width = '56px';
+        ring.style.height = '56px';
+        ring.style.borderColor = 'rgba(17, 17, 17, 0.8)';
+        ring.style.backgroundColor = 'rgba(17, 17, 17, 0.03)';
+        dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(1.5)`;
+      } else {
+        ring.style.width = '36px';
+        ring.style.height = '36px';
+        ring.style.borderColor = 'rgba(17, 17, 17, 0.3)';
+        ring.style.backgroundColor = 'transparent';
+        dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(1)`;
+      }
+    };
+
     // Event delegation for interactive elements (handles dynamically loaded elements as well!)
     const onMouseOver = (e: MouseEvent) => {
       if (!isMouseActive) return;
@@ -105,10 +128,60 @@ export default function CursorRing() {
       }
     };
 
-    // Safely hide cursors on touch screens (hybrid laptops, mobile devices)
-    const onTouchStart = () => {
+    // Touch support for mobile view and devices
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 0) return;
+      const touch = e.touches[0];
       lastTouchTime = Date.now();
-      disableCustomCursor();
+
+      enableCustomCursor();
+
+      mouseX = touch.clientX;
+      mouseY = touch.clientY;
+      ringX = mouseX;
+      ringY = mouseY;
+
+      isVisible = true;
+      dot.style.opacity = '1';
+      ring.style.opacity = '0.5';
+
+      dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+      ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+
+      checkInteractiveElement(touch.clientX, touch.clientY);
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 0) return;
+      const touch = e.touches[0];
+      lastTouchTime = Date.now();
+
+      enableCustomCursor();
+
+      mouseX = touch.clientX;
+      mouseY = touch.clientY;
+
+      if (!isVisible) {
+        isVisible = true;
+        dot.style.opacity = '1';
+        ring.style.opacity = '0.5';
+      }
+
+      dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+      checkInteractiveElement(touch.clientX, touch.clientY);
+    };
+
+    const onTouchEnd = () => {
+      isVisible = false;
+      dot.style.opacity = '0';
+      ring.style.opacity = '0';
+
+      // Delay disabling so the transition completes elegantly
+      setTimeout(() => {
+        if (!isVisible) {
+          disableCustomCursor();
+        }
+      }, 300);
     };
 
     // Window visibility handlers
@@ -129,7 +202,13 @@ export default function CursorRing() {
     window.addEventListener('mousemove', onMouseMove, { passive: true });
     window.addEventListener('mouseover', onMouseOver, { passive: true });
     window.addEventListener('mouseout', onMouseOut, { passive: true });
+    
+    // Touch Events for mobile
     window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', onTouchEnd, { passive: true });
+
     document.addEventListener('mouseleave', onMouseLeaveWindow);
     document.addEventListener('mouseenter', onMouseEnterWindow);
 
@@ -151,7 +230,7 @@ export default function CursorRing() {
     `;
     document.head.appendChild(style);
 
-    // Initial state: hidden until real mouse activity is detected
+    // Initial state: hidden until real mouse/touch activity is detected
     dot.style.display = 'none';
     ring.style.display = 'none';
 
@@ -160,6 +239,9 @@ export default function CursorRing() {
       window.removeEventListener('mouseover', onMouseOver);
       window.removeEventListener('mouseout', onMouseOut);
       window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
       document.removeEventListener('mouseleave', onMouseLeaveWindow);
       document.removeEventListener('mouseenter', onMouseEnterWindow);
       cancelAnimationFrame(animationFrameId);

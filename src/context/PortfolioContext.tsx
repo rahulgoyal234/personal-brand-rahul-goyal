@@ -44,6 +44,9 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
         if (parsed.linkedin === 'https://linkedin.com/in/rahulgoyal' || parsed.linkedin === 'https://linkedin.com/in/rahulgoyal/') {
           parsed.linkedin = PERSONAL_INFO.linkedin;
         }
+        if (parsed.title === 'Corporate Lawyer & Tech Policy Specialist') {
+          parsed.title = PERSONAL_INFO.title;
+        }
         return { ...PERSONAL_INFO, ...parsed };
       }
     } catch (e) {

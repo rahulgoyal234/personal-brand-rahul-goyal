@@ -5,7 +5,7 @@ import privateLawCollegesImg from '../assets/images/private_law_colleges_thumbna
 
 export const PERSONAL_INFO = {
   name: 'Rahul Goyal',
-  title: 'Corporate Lawyer & Tech Policy Specialist',
+  title: 'Lawyer',
   bio: 'A legal professional specializing in Corporate & Commercial Law, Intellectual Property (IP), and Data Protection. Experienced in analyzing complex regulatory policies, drafting transactional contracts, and advising on emerging technology frameworks including Artificial Intelligence governance and cyber law.',
   shortBio: 'I specialize in corporate transactions, data privacy compliance, and emerging tech policy governance.',
   location: 'New Delhi, India',

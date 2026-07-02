@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Menu, X, Linkedin, Mail } from 'lucide-react';
+import { Menu, X, Linkedin, Mail, Sliders } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 
 interface NavigationProps {
@@ -9,7 +9,7 @@ interface NavigationProps {
 }
 
 export default function Navigation({ activeSection, setActiveSection }: NavigationProps) {
-  const { personalInfo } = usePortfolio();
+  const { personalInfo, setIsEditorOpen } = usePortfolio();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -81,7 +81,14 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
         </nav>
 
         {/* Action Button & Socials */}
-        <div className="hidden md:flex items-center space-x-4">
+        <div className="hidden md:flex items-center space-x-6">
+          <button
+            onClick={() => setIsEditorOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 border border-brand-200 hover:border-black hover:bg-neutral-50 text-[10px] uppercase font-mono tracking-widest font-bold transition-all cursor-pointer bg-white text-neutral-700"
+          >
+            <Sliders className="w-3 h-3" />
+            <span>Edit Profile</span>
+          </button>
           <div className="flex items-center space-x-4">
             <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="text-neutral-500 hover:text-black transition-colors" title="LinkedIn">
               <Linkedin className="w-4 h-4" />
@@ -131,6 +138,16 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
               ))}
 
               <div className="pt-4 border-t border-brand-200 flex flex-col space-y-3">
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    setIsEditorOpen(true);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 py-2.5 bg-black hover:bg-neutral-800 text-white font-mono text-[10px] uppercase tracking-widest font-bold transition-all cursor-pointer"
+                >
+                  <Sliders className="w-3.5 h-3.5" />
+                  <span>Edit Profile</span>
+                </button>
                 {/* Social icons in mobile view */}
                 <div className="flex items-center justify-center space-x-6 py-2">
                   <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="text-brand-500 hover:text-brand-900 transition-colors">

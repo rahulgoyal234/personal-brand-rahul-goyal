@@ -106,9 +106,6 @@ export default function App() {
                   {personalInfo.title}
                 </span>
               </div>
-              <p className="text-xs text-neutral-400 font-light max-w-sm leading-relaxed">
-                Advising on corporate law, commercial transactions, intellectual property, and emerging tech policy frameworks.
-              </p>
               <div className="flex items-center space-x-3 pt-2">
                 <a
                   href={personalInfo.linkedin}
