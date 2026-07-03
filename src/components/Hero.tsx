@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowRight, Linkedin, Mail, MapPin, Briefcase, Settings, Play, X, Edit } from 'lucide-react';
+import { ArrowRight, Linkedin, Mail, MapPin, Briefcase, Settings, Play, X, Edit, Lock } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 
 interface HeroProps {
@@ -160,11 +160,13 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 onClick={() => {
                   if (personalInfo.introVideo) {
                     setIsVideoModalOpen(true);
-                  } else {
+                  } else if (!personalInfo.isAvatarLocked) {
                     setIsEditorOpen(true);
                   }
                 }}
-                className="absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] cursor-pointer"
+                className={`absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] ${
+                  personalInfo.introVideo || !personalInfo.isAvatarLocked ? 'cursor-pointer' : 'cursor-default'
+                }`}
               >
                 <img
                   id="hero-portrait-img"
@@ -186,16 +188,18 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               </div>
 
               {/* Elegant floating "Edit Photo" button - Rendered on top of image wrapper */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsEditorOpen(true);
-                }}
-                className="absolute -top-3.5 -left-3.5 z-30 bg-white text-black border border-neutral-300 hover:border-black px-4 py-2.5 sm:px-2.5 sm:py-1.5 flex items-center space-x-2 sm:space-x-1.5 font-mono text-[10px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md text-neutral-800 font-bold min-h-[40px] sm:min-h-0"
-              >
-                <Edit className="w-3.5 h-3.5 sm:w-3 sm:h-3 text-neutral-600" />
-                <span>Edit Photo</span>
-              </button>
+              {!personalInfo.isAvatarLocked && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsEditorOpen(true);
+                  }}
+                  className="absolute -top-3.5 -left-3.5 z-30 bg-white border px-4 py-2.5 sm:px-2.5 sm:py-1.5 flex items-center space-x-2 sm:space-x-1.5 font-mono text-[10px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md font-bold min-h-[40px] sm:min-h-0 text-black border-neutral-300 hover:border-black text-neutral-800"
+                >
+                  <Edit className="w-3.5 h-3.5 sm:w-3 sm:h-3 text-neutral-600" />
+                  <span>Edit Photo</span>
+                </button>
+              )}
 
               {/* Optional pulsing "Intro Video" badge at top right - Rendered on top of image wrapper */}
               {personalInfo.introVideo && (

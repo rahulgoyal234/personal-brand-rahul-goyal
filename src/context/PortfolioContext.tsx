@@ -17,6 +17,7 @@ export interface PersonalInfoType {
   resumeUrl: string;
   introVideo?: string;
   introVideoType?: 'file' | 'url' | 'youtube' | 'vimeo' | 'loom';
+  isAvatarLocked?: boolean;
 }
 
 interface PortfolioContextProps {
@@ -54,7 +55,11 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
         if (!parsed.bio || parsed.bio.trim() === oldBio.trim() || parsed.bio.trim() === oldBio2.trim() || parsed.bio.trim() === oldBio3.trim()) {
           parsed.bio = PERSONAL_INFO.bio;
         }
-        return { ...PERSONAL_INFO, ...parsed };
+        const merged = { ...PERSONAL_INFO, ...parsed };
+        if (PERSONAL_INFO.isAvatarLocked) {
+          merged.isAvatarLocked = true;
+        }
+        return merged;
       }
     } catch (e) {
       console.error('Error loading custom personal info:', e);
@@ -101,7 +106,13 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
   }, [projects]);
 
   const updatePersonalInfo = (updates: Partial<PersonalInfoType>) => {
-    setPersonalInfo((prev) => ({ ...prev, ...updates }));
+    setPersonalInfo((prev) => {
+      const merged = { ...prev, ...updates };
+      if (PERSONAL_INFO.isAvatarLocked) {
+        merged.isAvatarLocked = true;
+      }
+      return merged;
+    });
   };
 
   const resetPersonalInfo = () => {

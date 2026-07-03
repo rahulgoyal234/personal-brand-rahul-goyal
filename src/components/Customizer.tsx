@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Upload, Link as LinkIcon, RotateCcw, Check, Sparkles, User, Image as ImageIcon, Video, Trash2, Play, AlertCircle, Film, Plus, Edit, FolderOpen } from 'lucide-react';
+import { X, Upload, Link as LinkIcon, RotateCcw, Check, Sparkles, User, Image as ImageIcon, Video, Trash2, Play, AlertCircle, Film, Plus, Edit, FolderOpen, Lock, Unlock } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { Project } from '../types';
 
@@ -80,6 +80,7 @@ export default function Customizer() {
 
   // Handle local file uploads
   const processFile = (file: File) => {
+    if (personalInfo.isAvatarLocked) return;
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -222,6 +223,7 @@ export default function Customizer() {
     e.stopPropagation();
     setDragActive(false);
     
+    if (personalInfo.isAvatarLocked) return;
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       processFile(e.dataTransfer.files[0]);
     }
@@ -230,6 +232,7 @@ export default function Customizer() {
   // Handle URL change
   const handleUrlSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (personalInfo.isAvatarLocked) return;
     if (tempUrl.trim()) {
       updatePersonalInfo({ avatar: tempUrl.trim() });
       triggerSaveSuccess();
@@ -480,27 +483,59 @@ export default function Customizer() {
                     </div>
                   </div>
 
+                  {/* Photo Lock Settings */}
+                  <div className="p-4 bg-neutral-50 border border-neutral-200 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        {personalInfo.isAvatarLocked ? (
+                          <Lock className="w-4 h-4 text-amber-600 animate-pulse" />
+                        ) : (
+                          <Unlock className="w-4 h-4 text-neutral-400" />
+                        )}
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-800">
+                          Lock Profile Photo
+                        </span>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={!!personalInfo.isAvatarLocked}
+                          onChange={(e) => updatePersonalInfo({ isAvatarLocked: e.target.checked })}
+                          className="sr-only peer"
+                        />
+                        <div className="w-9 h-5 bg-neutral-200 peer-focus:outline-none rounded-none peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-none after:h-4 after:w-4 after:transition-all peer-checked:bg-black"></div>
+                      </label>
+                    </div>
+                    <p className="text-[9px] font-sans text-neutral-500 leading-normal">
+                      {personalInfo.isAvatarLocked 
+                        ? "Currently LOCKED. Changing is disabled on the main landing page, and upload options are frozen to protect your avatar."
+                        : "Currently UNLOCKED. You can upload or paste a new avatar image URL."}
+                    </p>
+                  </div>
+
                   {/* Option 1: Drag and Drop Upload */}
-                  <div className="space-y-2">
+                  <div className={`space-y-2 ${personalInfo.isAvatarLocked ? 'opacity-50 pointer-events-none' : ''}`}>
                     <label className="text-[9px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">
-                      Option A: Upload Image File
+                      Option A: {personalInfo.isAvatarLocked ? 'Upload Image File (Locked)' : 'Upload Image File'}
                     </label>
                     <div
-                      onDragEnter={handleDrag}
-                      onDragOver={handleDrag}
-                      onDragLeave={handleDrag}
-                      onDrop={handleDrop}
-                      onClick={() => fileInputRef.current?.click()}
+                      onDragEnter={personalInfo.isAvatarLocked ? undefined : handleDrag}
+                      onDragOver={personalInfo.isAvatarLocked ? undefined : handleDrag}
+                      onDragLeave={personalInfo.isAvatarLocked ? undefined : handleDrag}
+                      onDrop={personalInfo.isAvatarLocked ? undefined : handleDrop}
+                      onClick={personalInfo.isAvatarLocked ? undefined : () => fileInputRef.current?.click()}
                       className={`border border-dashed p-8 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-3 bg-white ${
                         dragActive 
                           ? 'border-black bg-neutral-50 scale-[0.99]' 
                           : 'border-neutral-300 hover:border-neutral-600 hover:bg-neutral-50/50'
                       }`}
                     >
-                      <Upload className="w-6 h-6 text-neutral-400" />
+                      {personalInfo.isAvatarLocked ? <Lock className="w-6 h-6 text-neutral-400" /> : <Upload className="w-6 h-6 text-neutral-400" />}
                       <div className="space-y-1">
                         <p className="font-sans text-xs font-semibold text-neutral-800">
-                          Drag and drop your photo here, or <span className="underline text-black font-bold">browse</span>
+                          {personalInfo.isAvatarLocked 
+                            ? "This option is locked" 
+                            : "Drag and drop your photo here, or browse"}
                         </p>
                         <p className="text-[9px] font-mono text-neutral-400 uppercase tracking-wider">
                           Supports JPG, JPEG, PNG (Square works best)
@@ -510,9 +545,12 @@ export default function Customizer() {
                       {/* Robust touch-target button for mobile device support */}
                       <button
                         type="button"
+                        disabled={!!personalInfo.isAvatarLocked}
                         onClick={(e) => {
                           e.stopPropagation();
-                          fileInputRef.current?.click();
+                          if (!personalInfo.isAvatarLocked) {
+                            fileInputRef.current?.click();
+                          }
                         }}
                         className="px-3.5 py-2 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 hover:border-neutral-800 text-neutral-800 font-mono text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-sm rounded-none min-h-[36px]"
                       >
@@ -523,6 +561,7 @@ export default function Customizer() {
                       <input
                         type="file"
                         ref={fileInputRef}
+                        disabled={!!personalInfo.isAvatarLocked}
                         onChange={handleFileChange}
                         accept="image/*"
                         className="hidden"
@@ -531,18 +570,19 @@ export default function Customizer() {
                   </div>
 
                   {/* Option 2: Image URL Input */}
-                  <div className="space-y-2">
+                  <div className={`space-y-2 ${personalInfo.isAvatarLocked ? 'opacity-50 pointer-events-none' : ''}`}>
                     <label className="text-[9px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">
-                      Option B: Paste Image URL
+                      Option B: {personalInfo.isAvatarLocked ? 'Paste Image URL (Locked)' : 'Paste Image URL'}
                     </label>
                     <form onSubmit={handleUrlSubmit} className="flex gap-2">
                       <div className="relative flex-1">
                         <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-neutral-400">
-                          <LinkIcon className="w-3.5 h-3.5" />
+                          {personalInfo.isAvatarLocked ? <Lock className="w-3.5 h-3.5" /> : <LinkIcon className="w-3.5 h-3.5" />}
                         </div>
                         <input
                           type="url"
-                          placeholder="https://example.com/your-photo.jpg"
+                          disabled={!!personalInfo.isAvatarLocked}
+                          placeholder={personalInfo.isAvatarLocked ? "Profile photo is locked" : "https://example.com/your-photo.jpg"}
                           value={tempUrl}
                           onChange={(e) => setTempUrl(e.target.value)}
                           className="w-full pl-9 pr-3 py-2 bg-white border border-neutral-200 font-sans text-xs placeholder:text-neutral-400 focus:outline-none focus:border-black rounded-none transition-colors"
@@ -550,7 +590,8 @@ export default function Customizer() {
                       </div>
                       <button
                         type="submit"
-                        className="px-4 py-2 bg-black hover:bg-neutral-800 text-white font-mono text-[10px] uppercase tracking-widest font-bold transition-all cursor-pointer"
+                        disabled={!!personalInfo.isAvatarLocked}
+                        className="px-4 py-2 bg-black hover:bg-neutral-800 text-white font-mono text-[10px] uppercase tracking-widest font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Apply
                       </button>
