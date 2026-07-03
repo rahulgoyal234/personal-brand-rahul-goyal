@@ -33,6 +33,23 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
     },
   };
 
+  const renderFormattedHeading = (text: string) => {
+    const defaultText = "Delivering strategic legal solutions with clarity and precision.";
+    const targetText = text || defaultText;
+    const words = targetText.trim().split(' ');
+    if (words.length < 2) return targetText;
+    
+    const lastWord = words[words.length - 1];
+    const mainText = words.slice(0, words.length - 1).join(' ');
+    
+    return (
+      <>
+        {mainText}{' '}
+        <span className="italic font-serif font-light">{lastWord}</span>
+      </>
+    );
+  };
+
   return (
     <section
       id="about"
@@ -67,7 +84,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 variants={itemVariants}
                 className="font-sans text-4xl sm:text-5xl lg:text-6xl font-extralight tracking-tighter text-brand-900 leading-[1.1]"
               >
-                Delivering strategic legal solutions with clarity and <span className="italic font-serif font-light">precision</span>.
+                {renderFormattedHeading(personalInfo.shortBio)}
               </motion.h1>
               <motion.p
                 id="hero-subheading"

@@ -52,8 +52,22 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
         const oldBio = 'A legal professional specializing in Corporate & Commercial Law, Intellectual Property (IP), and Data Protection. Experienced in analyzing complex regulatory policies, drafting transactional contracts, and advising on emerging technology frameworks including Artificial Intelligence governance and cyber law.';
         const oldBio2 = 'A law graduate from KIIT School of Law, Bhubaneswar, and a legal professional specializing in Corporate & Commercial Law, Intellectual Property (IP), and Data Protection. Experienced in analyzing complex regulatory policies, drafting transactional contracts, and advising on emerging technology frameworks including Artificial Intelligence governance and cyber law.';
         const oldBio3 = 'A law graduate from KIIT School of Law, Bhubaneswar, specializing in Corporate & Commercial Law, Intellectual Property (IP), and Data Protection. Currently pursuing an LL.M. in Corporate & Commercial Law alongside the Company Secretary (CS) Executive program, I am passionate about navigating complex regulatory policies, drafting transactional contracts, and research-driven advocacy in emerging technology frameworks, cyber law, and artificial intelligence governance.';
-        if (!parsed.bio || parsed.bio.trim() === oldBio.trim() || parsed.bio.trim() === oldBio2.trim() || parsed.bio.trim() === oldBio3.trim()) {
+        const oldBio4 = 'A law graduate from KIIT School of Law, Bhubaneswar, specializing in Corporate & Commercial Law, Intellectual Property (IP), and Data Protection. I am deeply passionate about navigating complex regulatory policies, drafting transactional contracts, and research-driven advocacy in emerging technology frameworks, cyber law, and artificial intelligence governance.';
+        const oldBio5 = 'A dedicated legal professional specializing in Corporate and Commercial Law, Regulatory Compliance, and Transactional Advisory. I am passionate about navigating complex legal landscapes, drafting robust commercial contracts, and providing strategic counsel to help businesses and individuals achieve their goals with clarity and precision.';
+        const oldBio6 = 'A dedicated professional specializing in corporate advisory, regulatory compliance, and transactional management. Experienced in navigating complex operational landscapes, drafting robust agreements, and providing clear counsel to help businesses and individuals achieve their goals with clarity and precision.';
+        const oldBio7 = 'A motivated and analytical law graduate specializing in Corporate & Commercial Law, Regulatory Compliance, and Dispute Resolution. Passionate about rigorous legal research, contract drafting, and strategic advisory, I leverage research-driven insights to navigate complex legal frameworks and deliver clear, practical solutions.';
+        if (!parsed.bio || parsed.bio.trim() === oldBio.trim() || parsed.bio.trim() === oldBio2.trim() || parsed.bio.trim() === oldBio3.trim() || parsed.bio.trim() === oldBio4.trim() || parsed.bio.trim() === oldBio5.trim() || parsed.bio.trim() === oldBio6.trim() || parsed.bio.trim() === oldBio7.trim()) {
           parsed.bio = PERSONAL_INFO.bio;
+        }
+
+        // Upgrade saved shortBio if it matches old tech-policy taglines to show the new general tagline
+        const oldShortBio1 = 'I specialize in corporate transactions, data privacy compliance, and emerging tech policy governance.';
+        const oldShortBio2 = 'I specialize in Corporate & Commercial Law, Intellectual Property (IP), and Data Protection.';
+        const oldShortBio3 = 'Delivering strategic legal solutions with clarity and precision.';
+        const oldShortBio4 = 'Delivering strategic solutions with clarity and precision.';
+        const oldShortBio5 = 'Delivering strategic legal solutions with clarity and precision.';
+        if (!parsed.shortBio || parsed.shortBio.trim() === oldShortBio1.trim() || parsed.shortBio.trim() === oldShortBio2.trim() || parsed.shortBio.trim() === oldShortBio3.trim() || parsed.shortBio.trim() === oldShortBio4.trim() || parsed.shortBio.trim() === oldShortBio5.trim()) {
+          parsed.shortBio = PERSONAL_INFO.shortBio;
         }
         const merged = { ...PERSONAL_INFO, ...parsed };
         if (PERSONAL_INFO.isAvatarLocked) {
