@@ -1,10 +1,25 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export default function CursorRing() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
+  const [hasHover, setHasHover] = useState(false);
 
   useEffect(() => {
+    // Only enable custom cursor on devices that support hover/fine pointer
+    const mediaQuery = window.matchMedia('(hover: hover)');
+    setHasHover(mediaQuery.matches);
+
+    const listener = (e: MediaQueryListEvent) => {
+      setHasHover(e.matches);
+    };
+    mediaQuery.addEventListener('change', listener);
+    return () => mediaQuery.removeEventListener('change', listener);
+  }, []);
+
+  useEffect(() => {
+    if (!hasHover) return;
+
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
@@ -18,13 +33,11 @@ export default function CursorRing() {
 
     let currentDotScale = 1;
     let targetDotScale = 1;
-    let currentRingSize = 36;
-    let targetRingSize = 36;
+    let currentRingScale = 1;
+    let targetRingScale = 1;
 
     let isVisible = false;
     let isMouseActive = false;
-    let isTouch = false;
-    let lastTouchTime = 0;
     let animationFrameId: number;
 
     const enableCustomCursor = () => {
@@ -44,12 +57,6 @@ export default function CursorRing() {
     };
 
     const onMouseMove = (e: MouseEvent) => {
-      // Debounce touch-emulated mousemove events
-      if (Date.now() - lastTouchTime < 1000) {
-        return;
-      }
-
-      isTouch = false;
       enableCustomCursor();
 
       mouseX = e.clientX;
@@ -66,29 +73,23 @@ export default function CursorRing() {
       }
     };
 
-    // Ease the ring and dot toward the coordinates smoothly, with a mobile touch Y-offset
+    // Ease the ring and dot toward the coordinates smoothly, fully hardware-accelerated via scale transform
     const animate = () => {
       if (isMouseActive) {
-        const offset = isTouch ? -45 : 0;
-        const targetY = mouseY + offset;
-        const targetX = mouseX;
-
-        // Snappy snappy follow for the main dot indicator
-        dotX += (targetX - dotX) * 0.45;
-        dotY += (targetY - dotY) * 0.45;
+        // Snappy follow for the main dot indicator
+        dotX += (mouseX - dotX) * 0.45;
+        dotY += (mouseY - dotY) * 0.45;
 
         // Beautiful smooth trailing for the outer ring follower
-        ringX += (targetX - ringX) * 0.18;
-        ringY += (targetY - ringY) * 0.18;
+        ringX += (mouseX - ringX) * 0.18;
+        ringY += (mouseY - ringY) * 0.18;
 
-        // Smooth spring interpolation for scale & size
+        // Smooth spring interpolation for scale
         currentDotScale += (targetDotScale - currentDotScale) * 0.2;
-        currentRingSize += (targetRingSize - currentRingSize) * 0.2;
+        currentRingScale += (targetRingScale - currentRingScale) * 0.2;
 
         dot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0) translate(-50%, -50%) scale(${currentDotScale})`;
-        ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
-        ring.style.width = `${currentRingSize}px`;
-        ring.style.height = `${currentRingSize}px`;
+        ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%) scale(${currentRingScale})`;
       }
       animationFrameId = requestAnimationFrame(animate);
     };
@@ -102,14 +103,14 @@ export default function CursorRing() {
       );
 
       if (interactive) {
-        targetRingSize = isTouch ? 64 : 56;
-        targetDotScale = isTouch ? 1.8 : 1.5;
+        targetRingScale = 1.55; // Scales default 36px to ~56px
+        targetDotScale = 1.5;
         ring.style.borderColor = 'rgba(17, 17, 17, 0.8)';
         ring.style.backgroundColor = 'rgba(17, 17, 17, 0.05)';
       } else {
-        targetRingSize = isTouch ? 46 : 36;
-        targetDotScale = isTouch ? 1.2 : 1.0;
-        ring.style.borderColor = isTouch ? 'rgba(17, 17, 17, 0.6)' : 'rgba(17, 17, 17, 0.3)';
+        targetRingScale = 1.0;  // Scales to standard 36px
+        targetDotScale = 1.0;
+        ring.style.borderColor = 'rgba(17, 17, 17, 0.3)';
         ring.style.backgroundColor = 'transparent';
       }
     };
@@ -125,83 +126,13 @@ export default function CursorRing() {
       if (target) {
         checkInteractiveElement(e.clientX, e.clientY);
       } else {
-        targetRingSize = isTouch ? 46 : 36;
-        targetDotScale = isTouch ? 1.2 : 1.0;
-        ring.style.borderColor = isTouch ? 'rgba(17, 17, 17, 0.6)' : 'rgba(17, 17, 17, 0.3)';
+        targetRingScale = 1.0;
+        targetDotScale = 1.0;
+        ring.style.borderColor = 'rgba(17, 17, 17, 0.3)';
         ring.style.backgroundColor = 'transparent';
       }
     };
 
-    // Touch support for mobile view and devices
-    const onTouchStart = (e: TouchEvent) => {
-      if (e.touches.length === 0) return;
-      const touch = e.touches[0];
-      lastTouchTime = Date.now();
-      isTouch = true;
-
-      mouseX = touch.clientX;
-      mouseY = touch.clientY;
-
-      enableCustomCursor();
-
-      if (!isVisible) {
-        isVisible = true;
-        const targetY = mouseY - 45;
-        dotX = mouseX;
-        dotY = targetY;
-        ringX = mouseX;
-        ringY = targetY;
-        
-        dot.style.opacity = '1';
-        ring.style.opacity = '0.75';
-      }
-
-      checkInteractiveElement(touch.clientX, touch.clientY);
-    };
-
-    const onTouchMove = (e: TouchEvent) => {
-      if (e.touches.length === 0) return;
-      const touch = e.touches[0];
-      lastTouchTime = Date.now();
-      isTouch = true;
-
-      mouseX = touch.clientX;
-      mouseY = touch.clientY;
-
-      enableCustomCursor();
-
-      if (!isVisible) {
-        isVisible = true;
-        const targetY = mouseY - 45;
-        dotX = mouseX;
-        dotY = targetY;
-        ringX = mouseX;
-        ringY = targetY;
-        
-        dot.style.opacity = '1';
-        ring.style.opacity = '0.75';
-      }
-
-      checkInteractiveElement(touch.clientX, touch.clientY);
-    };
-
-    const onTouchEnd = () => {
-      isVisible = false;
-      dot.style.opacity = '0';
-      ring.style.opacity = '0';
-
-      targetRingSize = 36;
-      targetDotScale = 1.0;
-
-      // Delay disabling so the transition completes elegantly
-      setTimeout(() => {
-        if (!isVisible) {
-          disableCustomCursor();
-        }
-      }, 300);
-    };
-
-    // Window visibility handlers
     const onMouseLeaveWindow = () => {
       isVisible = false;
       dot.style.opacity = '0';
@@ -219,13 +150,6 @@ export default function CursorRing() {
     window.addEventListener('mousemove', onMouseMove, { passive: true });
     window.addEventListener('mouseover', onMouseOver, { passive: true });
     window.addEventListener('mouseout', onMouseOut, { passive: true });
-    
-    // Touch Events for mobile
-    window.addEventListener('touchstart', onTouchStart, { passive: true });
-    window.addEventListener('touchmove', onTouchMove, { passive: true });
-    window.addEventListener('touchend', onTouchEnd, { passive: true });
-    window.addEventListener('touchcancel', onTouchEnd, { passive: true });
-
     document.addEventListener('mouseleave', onMouseLeaveWindow);
     document.addEventListener('mouseenter', onMouseEnterWindow);
 
@@ -247,7 +171,7 @@ export default function CursorRing() {
     `;
     document.head.appendChild(style);
 
-    // Initial state: hidden until real mouse/touch activity is detected
+    // Initial state: hidden until real mouse activity is detected
     dot.style.display = 'none';
     ring.style.display = 'none';
 
@@ -255,10 +179,6 @@ export default function CursorRing() {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseover', onMouseOver);
       window.removeEventListener('mouseout', onMouseOut);
-      window.removeEventListener('touchstart', onTouchStart);
-      window.removeEventListener('touchmove', onTouchMove);
-      window.removeEventListener('touchend', onTouchEnd);
-      window.removeEventListener('touchcancel', onTouchEnd);
       document.removeEventListener('mouseleave', onMouseLeaveWindow);
       document.removeEventListener('mouseenter', onMouseEnterWindow);
       cancelAnimationFrame(animationFrameId);
@@ -268,7 +188,9 @@ export default function CursorRing() {
         document.head.removeChild(style);
       }
     };
-  }, []);
+  }, [hasHover]);
+
+  if (!hasHover) return null;
 
   return (
     <>
@@ -288,8 +210,8 @@ export default function CursorRing() {
           width: '36px',
           height: '36px',
           borderColor: 'rgba(17, 17, 17, 0.3)',
-          transform: 'translate3d(0,0,0) translate(-50%, -50%)',
-          willChange: 'transform, width, height',
+          transform: 'translate3d(0,0,0) translate(-50%, -50%) scale(1)',
+          willChange: 'transform',
         }}
       />
     </>

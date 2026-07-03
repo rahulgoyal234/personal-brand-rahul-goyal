@@ -45,7 +45,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
         if (parsed.linkedin === 'https://linkedin.com/in/rahulgoyal' || parsed.linkedin === 'https://linkedin.com/in/rahulgoyal/') {
           parsed.linkedin = PERSONAL_INFO.linkedin;
         }
-        if (parsed.title === 'Corporate Lawyer & Tech Policy Specialist' || parsed.title === 'Lawyer' || parsed.title === 'Law Graduate & Legal Researcher') {
+        if (parsed.title === 'Corporate Lawyer & Tech Policy Specialist' || parsed.title === 'Lawyer' || parsed.title === 'Law Graduate & Legal Researcher' || parsed.title === 'Lawyer & Legal Commentator') {
           parsed.title = PERSONAL_INFO.title;
         }
         // If the saved bio is the old default bio, automatically upgrade it to the new default bio
@@ -56,7 +56,10 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
         const oldBio5 = 'A dedicated legal professional specializing in Corporate and Commercial Law, Regulatory Compliance, and Transactional Advisory. I am passionate about navigating complex legal landscapes, drafting robust commercial contracts, and providing strategic counsel to help businesses and individuals achieve their goals with clarity and precision.';
         const oldBio6 = 'A dedicated professional specializing in corporate advisory, regulatory compliance, and transactional management. Experienced in navigating complex operational landscapes, drafting robust agreements, and providing clear counsel to help businesses and individuals achieve their goals with clarity and precision.';
         const oldBio7 = 'A motivated and analytical law graduate specializing in Corporate & Commercial Law, Regulatory Compliance, and Dispute Resolution. Passionate about rigorous legal research, contract drafting, and strategic advisory, I leverage research-driven insights to navigate complex legal frameworks and deliver clear, practical solutions.';
-        if (!parsed.bio || parsed.bio.trim() === oldBio.trim() || parsed.bio.trim() === oldBio2.trim() || parsed.bio.trim() === oldBio3.trim() || parsed.bio.trim() === oldBio4.trim() || parsed.bio.trim() === oldBio5.trim() || parsed.bio.trim() === oldBio6.trim() || parsed.bio.trim() === oldBio7.trim()) {
+        const oldBio8 = 'An analytical lawyer and legal commentator who decodes complex regulatory policies, corporate governance trends, and intellectual property disputes through research-driven writing. Best known for sharing insightful commentaries and investigative op-eds on leading legal portals, I am passionate about making modern law and tech-governance concepts accessible, engaging, and highly informative.';
+        const oldBio9 = 'A dedicated and analytical legal professional specializing in Corporate & Commercial Law, Regulatory Compliance, and Dispute Resolution. Passionate about navigating complex legal frameworks, drafting robust commercial contracts, and providing research-driven advisory, I help clients and businesses achieve their objectives with confidence and integrity.';
+        const oldBio10 = 'A dedicated and analytical legal professional specializing in Corporate & Commercial Law, Regulatory Compliance, and Dispute Resolution. Passionate about navigating complex legal frameworks, drafting robust commercial contracts, and providing clear, research-driven advisory, I help clients and businesses achieve their objectives with confidence and integrity.';
+        if (!parsed.bio || parsed.bio.trim() === oldBio.trim() || parsed.bio.trim() === oldBio2.trim() || parsed.bio.trim() === oldBio3.trim() || parsed.bio.trim() === oldBio4.trim() || parsed.bio.trim() === oldBio5.trim() || parsed.bio.trim() === oldBio6.trim() || parsed.bio.trim() === oldBio7.trim() || parsed.bio.trim() === oldBio8.trim() || parsed.bio.trim() === oldBio9.trim() || parsed.bio.trim() === oldBio10.trim()) {
           parsed.bio = PERSONAL_INFO.bio;
         }
 
@@ -66,7 +69,9 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
         const oldShortBio3 = 'Delivering strategic legal solutions with clarity and precision.';
         const oldShortBio4 = 'Delivering strategic solutions with clarity and precision.';
         const oldShortBio5 = 'Delivering strategic legal solutions with clarity and precision.';
-        if (!parsed.shortBio || parsed.shortBio.trim() === oldShortBio1.trim() || parsed.shortBio.trim() === oldShortBio2.trim() || parsed.shortBio.trim() === oldShortBio3.trim() || parsed.shortBio.trim() === oldShortBio4.trim() || parsed.shortBio.trim() === oldShortBio5.trim()) {
+        const oldShortBio6 = 'Providing insightful commentaries on modern corporate law, tech policy, and IP governance.';
+        const oldShortBio7 = 'Delivering strategic legal solutions with clarity and precision.';
+        if (!parsed.shortBio || parsed.shortBio.trim() === oldShortBio1.trim() || parsed.shortBio.trim() === oldShortBio2.trim() || parsed.shortBio.trim() === oldShortBio3.trim() || parsed.shortBio.trim() === oldShortBio4.trim() || parsed.shortBio.trim() === oldShortBio5.trim() || parsed.shortBio.trim() === oldShortBio6.trim() || parsed.shortBio.trim() === oldShortBio7.trim()) {
           parsed.shortBio = PERSONAL_INFO.shortBio;
         }
         const merged = { ...PERSONAL_INFO, ...parsed };
