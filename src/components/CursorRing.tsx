@@ -11,10 +11,19 @@ export default function CursorRing() {
 
     let mouseX = 0;
     let mouseY = 0;
+    let dotX = 0;
+    let dotY = 0;
     let ringX = 0;
     let ringY = 0;
+
+    let currentDotScale = 1;
+    let targetDotScale = 1;
+    let currentRingSize = 36;
+    let targetRingSize = 36;
+
     let isVisible = false;
     let isMouseActive = false;
+    let isTouch = false;
     let lastTouchTime = 0;
     let animationFrameId: number;
 
@@ -40,6 +49,7 @@ export default function CursorRing() {
         return;
       }
 
+      isTouch = false;
       enableCustomCursor();
 
       mouseX = e.clientX;
@@ -47,20 +57,38 @@ export default function CursorRing() {
 
       if (!isVisible) {
         isVisible = true;
+        dotX = mouseX;
+        dotY = mouseY;
+        ringX = mouseX;
+        ringY = mouseY;
         dot.style.opacity = '1';
         ring.style.opacity = '0.5';
       }
-
-      // Directly update dot position using hardware-accelerated translate3d
-      dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
     };
 
-    // Ease the ring toward the dot position
+    // Ease the ring and dot toward the coordinates smoothly, with a mobile touch Y-offset
     const animate = () => {
       if (isMouseActive) {
-        ringX += (mouseX - ringX) * 0.18;
-        ringY += (mouseY - ringY) * 0.18;
+        const offset = isTouch ? -45 : 0;
+        const targetY = mouseY + offset;
+        const targetX = mouseX;
+
+        // Snappy snappy follow for the main dot indicator
+        dotX += (targetX - dotX) * 0.45;
+        dotY += (targetY - dotY) * 0.45;
+
+        // Beautiful smooth trailing for the outer ring follower
+        ringX += (targetX - ringX) * 0.18;
+        ringY += (targetY - ringY) * 0.18;
+
+        // Smooth spring interpolation for scale & size
+        currentDotScale += (targetDotScale - currentDotScale) * 0.2;
+        currentRingSize += (targetRingSize - currentRingSize) * 0.2;
+
+        dot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0) translate(-50%, -50%) scale(${currentDotScale})`;
         ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+        ring.style.width = `${currentRingSize}px`;
+        ring.style.height = `${currentRingSize}px`;
       }
       animationFrameId = requestAnimationFrame(animate);
     };
@@ -74,57 +102,33 @@ export default function CursorRing() {
       );
 
       if (interactive) {
-        ring.style.width = '56px';
-        ring.style.height = '56px';
+        targetRingSize = isTouch ? 64 : 56;
+        targetDotScale = isTouch ? 1.8 : 1.5;
         ring.style.borderColor = 'rgba(17, 17, 17, 0.8)';
-        ring.style.backgroundColor = 'rgba(17, 17, 17, 0.03)';
-        dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(1.5)`;
+        ring.style.backgroundColor = 'rgba(17, 17, 17, 0.05)';
       } else {
-        ring.style.width = '36px';
-        ring.style.height = '36px';
-        ring.style.borderColor = 'rgba(17, 17, 17, 0.3)';
+        targetRingSize = isTouch ? 46 : 36;
+        targetDotScale = isTouch ? 1.2 : 1.0;
+        ring.style.borderColor = isTouch ? 'rgba(17, 17, 17, 0.6)' : 'rgba(17, 17, 17, 0.3)';
         ring.style.backgroundColor = 'transparent';
-        dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(1)`;
       }
     };
 
-    // Event delegation for interactive elements (handles dynamically loaded elements as well!)
     const onMouseOver = (e: MouseEvent) => {
       if (!isMouseActive) return;
-      const target = e.target as HTMLElement | null;
-      if (!target) return;
-
-      const interactive = target.closest(
-        'a, button, select, input, textarea, [role="button"], .cursor-pointer, [data-cursor-hover]'
-      );
-
-      if (interactive) {
-        ring.style.width = '56px';
-        ring.style.height = '56px';
-        ring.style.borderColor = 'rgba(17, 17, 17, 0.8)'; // Brand color or high contrast
-        ring.style.backgroundColor = 'rgba(17, 17, 17, 0.03)';
-        dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(1.5)`;
-      }
+      checkInteractiveElement(e.clientX, e.clientY);
     };
 
     const onMouseOut = (e: MouseEvent) => {
       if (!isMouseActive) return;
-      const target = e.target as HTMLElement | null;
-      if (!target) return;
-
-      const interactive = target.closest(
-        'a, button, select, input, textarea, [role="button"], .cursor-pointer, [data-cursor-hover]'
-      );
-
-      if (interactive) {
-        const relatedTarget = e.relatedTarget as HTMLElement | null;
-        if (!relatedTarget || !interactive.contains(relatedTarget)) {
-          ring.style.width = '36px';
-          ring.style.height = '36px';
-          ring.style.borderColor = 'rgba(17, 17, 17, 0.3)';
-          ring.style.backgroundColor = 'transparent';
-          dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%) scale(1)`;
-        }
+      const target = e.relatedTarget as HTMLElement | null;
+      if (target) {
+        checkInteractiveElement(e.clientX, e.clientY);
+      } else {
+        targetRingSize = isTouch ? 46 : 36;
+        targetDotScale = isTouch ? 1.2 : 1.0;
+        ring.style.borderColor = isTouch ? 'rgba(17, 17, 17, 0.6)' : 'rgba(17, 17, 17, 0.3)';
+        ring.style.backgroundColor = 'transparent';
       }
     };
 
@@ -133,20 +137,24 @@ export default function CursorRing() {
       if (e.touches.length === 0) return;
       const touch = e.touches[0];
       lastTouchTime = Date.now();
-
-      enableCustomCursor();
+      isTouch = true;
 
       mouseX = touch.clientX;
       mouseY = touch.clientY;
-      ringX = mouseX;
-      ringY = mouseY;
 
-      isVisible = true;
-      dot.style.opacity = '1';
-      ring.style.opacity = '0.5';
+      enableCustomCursor();
 
-      dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
-      ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+      if (!isVisible) {
+        isVisible = true;
+        const targetY = mouseY - 45;
+        dotX = mouseX;
+        dotY = targetY;
+        ringX = mouseX;
+        ringY = targetY;
+        
+        dot.style.opacity = '1';
+        ring.style.opacity = '0.75';
+      }
 
       checkInteractiveElement(touch.clientX, touch.clientY);
     };
@@ -155,19 +163,25 @@ export default function CursorRing() {
       if (e.touches.length === 0) return;
       const touch = e.touches[0];
       lastTouchTime = Date.now();
-
-      enableCustomCursor();
+      isTouch = true;
 
       mouseX = touch.clientX;
       mouseY = touch.clientY;
 
+      enableCustomCursor();
+
       if (!isVisible) {
         isVisible = true;
+        const targetY = mouseY - 45;
+        dotX = mouseX;
+        dotY = targetY;
+        ringX = mouseX;
+        ringY = targetY;
+        
         dot.style.opacity = '1';
-        ring.style.opacity = '0.5';
+        ring.style.opacity = '0.75';
       }
 
-      dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
       checkInteractiveElement(touch.clientX, touch.clientY);
     };
 
@@ -175,6 +189,9 @@ export default function CursorRing() {
       isVisible = false;
       dot.style.opacity = '0';
       ring.style.opacity = '0';
+
+      targetRingSize = 36;
+      targetDotScale = 1.0;
 
       // Delay disabling so the transition completes elegantly
       setTimeout(() => {
@@ -260,13 +277,13 @@ export default function CursorRing() {
         ref={dotRef}
         className="fixed top-0 left-0 w-1.5 h-1.5 bg-[#111111] rounded-full pointer-events-none z-[9999] opacity-0 transition-opacity duration-300 ease-out"
         style={{
-          transform: 'translate3d(0,0,0) translate(-50%, -50%)',
+          transform: 'translate3d(0,0,0) translate(-50%, -50%) scale(1)',
           willChange: 'transform',
         }}
       />
       <div
         ref={ringRef}
-        className="fixed top-0 left-0 border border-[#111111] rounded-full pointer-events-none z-[9999] opacity-0 transition-all duration-200 ease-out"
+        className="fixed top-0 left-0 border border-[#111111] rounded-full pointer-events-none z-[9999] opacity-0 transition-[opacity,background-color,border-color] duration-300 ease-out"
         style={{
           width: '36px',
           height: '36px',

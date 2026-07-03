@@ -47,6 +47,11 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
         if (parsed.title === 'Corporate Lawyer & Tech Policy Specialist') {
           parsed.title = PERSONAL_INFO.title;
         }
+        // If the saved bio is the old default bio, automatically upgrade it to the new default bio
+        const oldBio = 'A legal professional specializing in Corporate & Commercial Law, Intellectual Property (IP), and Data Protection. Experienced in analyzing complex regulatory policies, drafting transactional contracts, and advising on emerging technology frameworks including Artificial Intelligence governance and cyber law.';
+        if (!parsed.bio || parsed.bio.trim() === oldBio.trim()) {
+          parsed.bio = PERSONAL_INFO.bio;
+        }
         return { ...PERSONAL_INFO, ...parsed };
       }
     } catch (e) {

@@ -139,13 +139,13 @@ export default function App() {
                   onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
                   className="hover:text-black transition-colors cursor-pointer text-left md:text-right w-fit"
                 >
-                  About Profile
+                  About
                 </button>
                 <button
                   onClick={() => document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' })}
                   className="hover:text-black transition-colors cursor-pointer text-left md:text-right w-fit"
                 >
-                  Selected Work
+                  Writings
                 </button>
                 <button
                   onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}

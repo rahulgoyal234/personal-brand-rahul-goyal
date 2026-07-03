@@ -155,32 +155,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             <div 
               className="relative group w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 cursor-pointer select-none"
             >
-              {/* Elegant floating "Edit Photo" button */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsEditorOpen(true);
-                }}
-                className="absolute -top-3.5 -left-3.5 z-10 bg-white text-black border border-neutral-300 hover:border-black px-4 py-2.5 sm:px-2.5 sm:py-1.5 flex items-center space-x-2 sm:space-x-1.5 font-mono text-[10px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md text-neutral-800 font-bold min-h-[40px] sm:min-h-0"
-              >
-                <Edit className="w-3.5 h-3.5 sm:w-3 sm:h-3 text-neutral-600" />
-                <span>Edit Photo</span>
-              </button>
-
-              {/* Optional pulsing "Intro Video" badge at top right */}
-              {personalInfo.introVideo && (
-                <div 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsVideoModalOpen(true);
-                  }}
-                  className="absolute -top-3.5 -right-3.5 z-10 bg-black text-white border border-neutral-800 px-3.5 py-2.5 sm:px-2 sm:py-1 flex items-center space-x-2 sm:space-x-1 font-mono text-[10px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md min-h-[40px] sm:min-h-0"
-                >
-                  <span className="w-2 h-2 sm:w-1.5 sm:h-1.5 rounded-full bg-red-500 animate-ping"></span>
-                  <span>Intro Video</span>
-                </div>
-              )}
-
               {/* Back framing accent */}
               <div className="absolute inset-0 border border-brand-200 rotate-1 group-hover:rotate-4 group-hover:scale-[1.02] group-active:rotate-4 group-active:scale-[1.02] transition-all duration-500 rounded-none bg-neutral-50"></div>
               
@@ -213,6 +187,32 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   </div>
                 )}
               </div>
+
+              {/* Elegant floating "Edit Photo" button - Rendered on top of image wrapper */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsEditorOpen(true);
+                }}
+                className="absolute -top-3.5 -left-3.5 z-30 bg-white text-black border border-neutral-300 hover:border-black px-4 py-2.5 sm:px-2.5 sm:py-1.5 flex items-center space-x-2 sm:space-x-1.5 font-mono text-[10px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md text-neutral-800 font-bold min-h-[40px] sm:min-h-0"
+              >
+                <Edit className="w-3.5 h-3.5 sm:w-3 sm:h-3 text-neutral-600" />
+                <span>Edit Photo</span>
+              </button>
+
+              {/* Optional pulsing "Intro Video" badge at top right - Rendered on top of image wrapper */}
+              {personalInfo.introVideo && (
+                <div 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsVideoModalOpen(true);
+                  }}
+                  className="absolute -top-3.5 -right-3.5 z-30 bg-black text-white border border-neutral-800 px-3.5 py-2.5 sm:px-2 sm:py-1 flex items-center space-x-2 sm:space-x-1 font-mono text-[10px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md min-h-[40px] sm:min-h-0"
+                >
+                  <span className="w-2 h-2 sm:w-1.5 sm:h-1.5 rounded-full bg-red-500 animate-ping"></span>
+                  <span>Intro Video</span>
+                </div>
+              )}
 
               {/* Minimal floating tech accent */}
               <div className="absolute -bottom-4 -left-4 bg-white border border-brand-200 px-3 py-1.5 rounded-none shadow-none flex items-center space-x-2 font-mono text-[9px] tracking-widest">

@@ -377,7 +377,7 @@ export default function Customizer() {
               <div>
                 <h3 className="font-sans text-sm font-bold uppercase tracking-widest text-neutral-900 flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-neutral-800" />
-                  <span>Portfolio Customizer</span>
+                  <span>Writings Customizer</span>
                 </h3>
                 <p className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider mt-0.5">
                   Configure your professional avatar & profile
@@ -393,11 +393,11 @@ export default function Customizer() {
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex border-b border-neutral-200 bg-white">
+            <div className="flex overflow-x-auto scrollbar-none flex-nowrap border-b border-neutral-200 bg-white min-w-0">
               <button
                 id="tab-photo-btn"
                 onClick={() => setActiveTab('photo')}
-                className={`flex-1 py-3 text-[10px] font-mono font-bold uppercase tracking-wider border-b-2 transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`flex-1 py-3 text-[10px] font-mono font-bold uppercase tracking-wider border-b-2 transition-all flex items-center justify-center gap-1.5 cursor-pointer flex-shrink-0 px-4 ${
                   activeTab === 'photo'
                     ? 'border-black text-black bg-neutral-50/50'
                     : 'border-transparent text-neutral-400 hover:text-neutral-600'
@@ -409,7 +409,7 @@ export default function Customizer() {
               <button
                 id="tab-video-btn"
                 onClick={() => setActiveTab('video')}
-                className={`flex-1 py-3 text-[10px] font-mono font-bold uppercase tracking-wider border-b-2 transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`flex-1 py-3 text-[10px] font-mono font-bold uppercase tracking-wider border-b-2 transition-all flex items-center justify-center gap-1.5 cursor-pointer flex-shrink-0 px-4 ${
                   activeTab === 'video'
                     ? 'border-black text-black bg-neutral-50/50'
                     : 'border-transparent text-neutral-400 hover:text-neutral-600'
@@ -421,7 +421,7 @@ export default function Customizer() {
               <button
                 id="tab-info-btn"
                 onClick={() => setActiveTab('info')}
-                className={`flex-1 py-3 text-[10px] font-mono font-bold uppercase tracking-wider border-b-2 transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`flex-1 py-3 text-[10px] font-mono font-bold uppercase tracking-wider border-b-2 transition-all flex items-center justify-center gap-1.5 cursor-pointer flex-shrink-0 px-4 ${
                   activeTab === 'info'
                     ? 'border-black text-black bg-neutral-50/50'
                     : 'border-transparent text-neutral-400 hover:text-neutral-600'
@@ -433,14 +433,14 @@ export default function Customizer() {
               <button
                 id="tab-portfolio-btn"
                 onClick={() => setActiveTab('portfolio')}
-                className={`flex-1 py-3 text-[10px] font-mono font-bold uppercase tracking-wider border-b-2 transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`flex-1 py-3 text-[10px] font-mono font-bold uppercase tracking-wider border-b-2 transition-all flex items-center justify-center gap-1.5 cursor-pointer flex-shrink-0 px-4 ${
                   activeTab === 'portfolio'
                     ? 'border-black text-black bg-neutral-50/50'
                     : 'border-transparent text-neutral-400 hover:text-neutral-600'
                 }`}
               >
                 <FolderOpen className="w-3.5 h-3.5" />
-                <span>Portfolio</span>
+                <span>Writings</span>
               </button>
             </div>
 
@@ -500,12 +500,26 @@ export default function Customizer() {
                       <Upload className="w-6 h-6 text-neutral-400" />
                       <div className="space-y-1">
                         <p className="font-sans text-xs font-semibold text-neutral-800">
-                          Drag and drop your photo here, or <span className="underline text-black">browse</span>
+                          Drag and drop your photo here, or <span className="underline text-black font-bold">browse</span>
                         </p>
                         <p className="text-[9px] font-mono text-neutral-400 uppercase tracking-wider">
                           Supports JPG, JPEG, PNG (Square works best)
                         </p>
                       </div>
+                      
+                      {/* Robust touch-target button for mobile device support */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          fileInputRef.current?.click();
+                        }}
+                        className="px-3.5 py-2 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 hover:border-neutral-800 text-neutral-800 font-mono text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-sm rounded-none min-h-[36px]"
+                      >
+                        <Upload className="w-3 h-3 text-neutral-600" />
+                        <span>Select Photo</span>
+                      </button>
+
                       <input
                         type="file"
                         ref={fileInputRef}
@@ -625,12 +639,26 @@ export default function Customizer() {
                       <Upload className="w-6 h-6 text-neutral-400" />
                       <div className="space-y-1">
                         <p className="font-sans text-xs font-semibold text-neutral-800">
-                          Drag and drop your video file here, or <span className="underline text-black">browse</span>
+                          Drag and drop your video file here, or <span className="underline text-black font-bold">browse</span>
                         </p>
                         <p className="text-[9px] font-mono text-neutral-400 uppercase tracking-wider">
                           Supports MP4, WEBM, MOV (Max recommended: 15MB)
                         </p>
                       </div>
+
+                      {/* Robust touch-target button for mobile device support */}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          videoFileInputRef.current?.click();
+                        }}
+                        className="px-3.5 py-2 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 hover:border-neutral-800 text-neutral-800 font-mono text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-sm rounded-none min-h-[36px]"
+                      >
+                        <Upload className="w-3 h-3 text-neutral-600" />
+                        <span>Select Video</span>
+                      </button>
+
                       <input
                         type="file"
                         ref={videoFileInputRef}
@@ -1037,7 +1065,7 @@ export default function Customizer() {
                       <div className="flex items-center justify-between pb-2 border-b border-neutral-100">
                         <div>
                           <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">
-                            Portfolio Projects
+                            Writings & Publications
                           </span>
                           <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-wider">
                             {projects.length} Total items

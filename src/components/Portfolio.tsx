@@ -27,11 +27,8 @@ export default function Portfolio() {
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 space-y-6 md:space-y-0 pb-8 border-b border-neutral-100">
           <div className="space-y-3">
-            <span className="text-[10px] uppercase tracking-[0.3em] text-neutral-400 font-bold block">
-              Curated Showcase
-            </span>
             <h2 className="font-sans text-3xl sm:text-4xl font-extralight tracking-tight text-neutral-900">
-              Selected <span className="italic font-serif font-light">publications</span>
+              <span className="italic font-serif font-light">Writings</span>
             </h2>
             <p className="text-neutral-500 max-w-sm font-light text-xs sm:text-sm leading-relaxed">
               A carefully curated selection of peer-reviewed research papers, active policy articles, and academic columns.

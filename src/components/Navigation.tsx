@@ -23,7 +23,7 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
 
   const navItems = [
     { id: 'about', label: 'About' },
-    { id: 'portfolio', label: 'Portfolio' },
+    { id: 'portfolio', label: 'Writings' },
     { id: 'contact', label: 'Contact' },
   ];
 
