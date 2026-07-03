@@ -7,7 +7,7 @@ export const PERSONAL_INFO = {
   name: 'Rahul Goyal',
   title: 'Lawyer',
   bio: 'An analytical lawyer and legal commentator who decodes complex regulatory policies, corporate governance trends, and intellectual property disputes through research-driven writing. Best known for sharing insightful commentaries and investigative op-eds on leading legal portals, I am passionate about making modern law and tech-governance concepts accessible, engaging, and highly informative.',
-  shortBio: 'Providing insightful commentaries on modern corporate law, tech policy, and IP governance.',
+  shortBio: 'Making the complex, comprehensible.',
   location: 'New Delhi, India',
   email: 'rahulgyl48@gmail.com',
   phone: '+91 8690247028',
@@ -28,7 +28,7 @@ export const PROJECTS: Project[] = [
     longDescription: 'This peer-reviewed comparative research paper explores how artificial intelligence can be integrated into environmental sustainability governance. It contrasts India’s legislative mechanisms and digital initiatives with Peru’s environmental policy frameworks, evaluating the role of judicial bodies, constitutional guidelines, and regulatory authorities in enforcing AI-driven environmental mandates.',
     tags: ['Artificial Intelligence', 'Environmental Law', 'Comparative Governance', 'Policy Reform'],
     image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80',
-    demoUrl: 'https://www.pj.gob.pe', // Revista Oficial del Poder Judicial
+    demoUrl: 'https://revistas.pj.gob.pe/revista/index.php/ropj/article/view/1138', // Revista Oficial del Poder Judicial
     highlights: [
       'Published in the REVISTA OFICIAL DEL PODER JUDICIAL (Official Journal of the Judicial Branch of Peru).',
       'Conducted extensive comparative analysis between Indian and Peruvian eco-governance structures and regulatory hurdles.',
@@ -49,7 +49,7 @@ export const PROJECTS: Project[] = [
     longDescription: 'Unconventional trademarks represent the active frontier of intellectual property. This research analysis explores registration hurdles, distinctiveness requirements, and commercial implications of non-visual and sensory marks under Indian and international trademark regimes, charting how they integrate with corporate branding.',
     tags: ['Trademark Law', 'Intellectual Property', 'Branding Strategy', 'Anti-Dissection Rule'],
     image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80',
-    demoUrl: 'https://theippress.com',
+    demoUrl: 'https://www.theippress.com/2024/12/01/how-do-unconventional-trademarks-impact-branding-and-marketing-strategies/',
     highlights: [
       'Deconstructed the "Anti-Dissection" and "Dominant Feature" principles in the context of complex multi-sensory brand assets.',
       'Analyzed standards for establishing secondary meaning for unconventional sound, color, and motion marks.',
@@ -69,7 +69,7 @@ export const PROJECTS: Project[] = [
     longDescription: 'Patent claims define the legal boundaries of technological protection. This study examines recent landmark orders from the Delhi High Court and the Indian Patent Office regarding patent amendments under Section 59 of the Indian Patents Act, clarifying the permissible scope of claim modifications to withstand prior art challenges.',
     tags: ['Patent Law', 'Claim Modification', 'Delhi High Court', 'Patent Prosecution'],
     image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
-    demoUrl: 'https://theippress.com',
+    demoUrl: 'https://www.theippress.com/2024/10/01/trailblazing-decisions-transform-indian-patent-law-a-new-chapter-of-adaptability-in-claim-modification/',
     highlights: [
       'Investigated the legal boundaries of Section 59 of the Indian Patents Act, 1970.',
       'Reviewed Delhi High Court precedents governing claim narrowing and disclaimer practices.',
@@ -89,7 +89,7 @@ export const PROJECTS: Project[] = [
     longDescription: 'Writ jurisdiction is a powerful constitutional remedy of High Courts. This article examines self-imposed judicial restrictions, exploring the circumstances under which alternative statutory remedies block writ jurisdiction, and cataloging exceptions established by the Supreme Court of India.',
     tags: ['Constitutional Law', 'Writ Jurisdiction', 'Article 226', 'Judicial Precedents'],
     image: writJurisdictionImg,
-    demoUrl: 'https://www.manupatra.com',
+    demoUrl: 'https://articles.manupatra.com/article-details/EXISTENCE-OF-ALTERNATIVE-REMEDY-AS-AN-OBSTACLE-FOR-AVAILING-WRIT-JURISDICTION',
     highlights: [
       'Published on the Manupatra research database, widely referenced by litigation practitioners.',
       'Systematized Supreme Court jurisprudence on the doctrine of exhaustion of alternative remedies.',
@@ -109,7 +109,7 @@ export const PROJECTS: Project[] = [
     longDescription: 'Judicial independence is a cornerstone of the basic structure of the Indian Constitution. This paper investigates appointment mechanisms (Collegium system vs. NJAC), security of tenure, financial autonomy, and functional separation of powers, evaluating modern pressures and reforms.',
     tags: ['Constitutional Law', 'Judiciary', 'Basic Structure', 'Appointment Reform'],
     image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=800&q=80',
-    demoUrl: 'https://www.ijllr.com', // Indian Journal of Law and Legal Research
+    demoUrl: 'https://www.ijllr.com/post/extensive-study-on-independence-of-judiciary', // Indian Journal of Law and Legal Research
     highlights: [
       'Published in the Indian Journal of Law and Legal Research (IJLLR) with ISSN: 2582-8878.',
       'Conducted a comparative analysis with global judicial models, including the US Supreme Court and UK Judicial Appointments Commission.',
@@ -129,7 +129,7 @@ export const PROJECTS: Project[] = [
     longDescription: 'This widely read investigative commentary provides a critical analysis of the legal education sector in India. It examines the commercialization of private law schools, highlighting the mismatch between infrastructure marketing and the quality of clinical pedagogy and placement outcomes.',
     tags: ['Legal Education', 'Regulatory Oversight', 'Bar Council of India', 'Policy Reform'],
     image: privateLawCollegesImg,
-    demoUrl: 'https://www.barandbench.com',
+    demoUrl: 'https://www.barandbench.com/columns/private-law-colleges-five-star-promises-one-star-delivery',
     highlights: [
       'Published on Bar & Bench, sparking widespread discourse among legal educators and students.',
       'Argued for stricter Bar Council of India (BCI) inspections and modern clinical law mandates.',

@@ -94,10 +94,31 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
         return parsed.map((p: any) => {
           const defaultProj = PROJECTS.find((dp) => dp.id === p.id);
           if (defaultProj) {
+            let updated = { ...p };
             // Force the official default images for default projects unless it's a custom base64 uploaded image (starts with data:)
             if (!p.image || p.image.includes('images.unsplash.com') || (!p.image.startsWith('data:') && p.image !== defaultProj.image)) {
-              return { ...p, image: defaultProj.image };
+              updated.image = defaultProj.image;
             }
+            // If the saved demoUrl is the old default top-level link, upgrade it
+            if (p.id === 'private-law-colleges' && (!p.demoUrl || p.demoUrl === 'https://www.barandbench.com' || p.demoUrl === 'https://www.barandbench.com/')) {
+              updated.demoUrl = defaultProj.demoUrl;
+            }
+            if (p.id === 'judicial-independence' && (!p.demoUrl || p.demoUrl === 'https://www.ijllr.com' || p.demoUrl === 'https://www.ijllr.com/')) {
+              updated.demoUrl = defaultProj.demoUrl;
+            }
+            if (p.id === 'writ-jurisdiction' && (!p.demoUrl || p.demoUrl === 'https://www.manupatra.com' || p.demoUrl === 'https://www.manupatra.com/')) {
+              updated.demoUrl = defaultProj.demoUrl;
+            }
+            if (p.id === 'patent-claim-modification' && (!p.demoUrl || p.demoUrl === 'https://theippress.com' || p.demoUrl === 'https://theippress.com/')) {
+              updated.demoUrl = defaultProj.demoUrl;
+            }
+            if (p.id === 'unconventional-trademarks' && (!p.demoUrl || p.demoUrl === 'https://theippress.com' || p.demoUrl === 'https://theippress.com/')) {
+              updated.demoUrl = defaultProj.demoUrl;
+            }
+            if (p.id === 'ai-governance' && (!p.demoUrl || p.demoUrl === 'https://www.pj.gob.pe' || p.demoUrl === 'https://www.pj.gob.pe/')) {
+              updated.demoUrl = defaultProj.demoUrl;
+            }
+            return updated;
           }
           return p;
         });
