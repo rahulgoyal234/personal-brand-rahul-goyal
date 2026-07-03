@@ -97,10 +97,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 <MapPin className="w-3.5 h-3.5 text-brand-400" />
                 <span>{personalInfo.location}</span>
               </div>
-              <div className="flex items-center space-x-1.5">
-                <Briefcase className="w-3.5 h-3.5 text-brand-400" />
-                <span>Corporate Law & Tech Policy</span>
-              </div>
+
             </motion.div>
 
             {/* Social Links */}
