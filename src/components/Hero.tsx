@@ -67,7 +67,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 variants={itemVariants}
                 className="font-sans text-4xl sm:text-5xl lg:text-6xl font-extralight tracking-tighter text-brand-900 leading-[1.1]"
               >
-                Advocacy and precision in corporate law & <span className="italic font-serif font-light">tech policy</span>.
+                Delivering strategic legal solutions with clarity and <span className="italic font-serif font-light">precision</span>.
               </motion.h1>
               <motion.p
                 id="hero-subheading"
@@ -132,7 +132,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 onClick={onPortfolioClick}
                 className="bg-black text-white px-7 py-3.5 text-[11px] uppercase tracking-widest font-bold hover:bg-neutral-800 transition-all rounded-none cursor-pointer"
               >
-                View Publications
+                View Writings
               </button>
               <button
                 id="hero-cta-contact"

@@ -6,24 +6,12 @@ import Contact from './components/Contact';
 import Customizer from './components/Customizer';
 import CursorRing from './components/CursorRing';
 import { usePortfolio } from './context/PortfolioContext';
-import { Linkedin, Mail, ChevronUp, Clock, Sliders } from 'lucide-react';
+import { Linkedin, Mail, ChevronUp, Sliders } from 'lucide-react';
 
 export default function App() {
   const { personalInfo, setIsEditorOpen } = usePortfolio();
   const [activeSection, setActiveSection] = useState<string>('about');
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
-  const [utcTime, setUtcTime] = useState<string>('');
-
-  // Handle live UTC Clock updates
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setUtcTime(now.toUTCString().replace('GMT', 'UTC'));
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   // Set up Scroll Spy to highlight Navigation links based on scrolled sections
   useEffect(() => {
@@ -158,17 +146,11 @@ export default function App() {
 
           </div>
 
-          {/* Bottom Row: Copyright & UTC Clock */}
-          <div className="border-t border-neutral-200/60 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[9px] font-mono text-neutral-400 uppercase tracking-widest">
-            <p className="text-center sm:text-left">
+          {/* Bottom Row: Copyright */}
+          <div className="border-t border-neutral-200/60 pt-8 text-[9px] font-mono text-neutral-400 uppercase tracking-widest text-center sm:text-left">
+            <p>
               © {new Date().getFullYear()} {personalInfo.name}. All rights reserved.
             </p>
-            {utcTime && (
-              <div className="flex items-center space-x-2 text-neutral-400">
-                <Clock className="w-3 h-3 text-neutral-400" />
-                <span>{utcTime}</span>
-              </div>
-            )}
           </div>
         </div>
       </footer>

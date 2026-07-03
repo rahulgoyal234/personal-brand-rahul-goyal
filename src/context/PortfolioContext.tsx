@@ -44,12 +44,14 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
         if (parsed.linkedin === 'https://linkedin.com/in/rahulgoyal' || parsed.linkedin === 'https://linkedin.com/in/rahulgoyal/') {
           parsed.linkedin = PERSONAL_INFO.linkedin;
         }
-        if (parsed.title === 'Corporate Lawyer & Tech Policy Specialist') {
+        if (parsed.title === 'Corporate Lawyer & Tech Policy Specialist' || parsed.title === 'Lawyer' || parsed.title === 'Law Graduate & Legal Researcher') {
           parsed.title = PERSONAL_INFO.title;
         }
         // If the saved bio is the old default bio, automatically upgrade it to the new default bio
         const oldBio = 'A legal professional specializing in Corporate & Commercial Law, Intellectual Property (IP), and Data Protection. Experienced in analyzing complex regulatory policies, drafting transactional contracts, and advising on emerging technology frameworks including Artificial Intelligence governance and cyber law.';
-        if (!parsed.bio || parsed.bio.trim() === oldBio.trim()) {
+        const oldBio2 = 'A law graduate from KIIT School of Law, Bhubaneswar, and a legal professional specializing in Corporate & Commercial Law, Intellectual Property (IP), and Data Protection. Experienced in analyzing complex regulatory policies, drafting transactional contracts, and advising on emerging technology frameworks including Artificial Intelligence governance and cyber law.';
+        const oldBio3 = 'A law graduate from KIIT School of Law, Bhubaneswar, specializing in Corporate & Commercial Law, Intellectual Property (IP), and Data Protection. Currently pursuing an LL.M. in Corporate & Commercial Law alongside the Company Secretary (CS) Executive program, I am passionate about navigating complex regulatory policies, drafting transactional contracts, and research-driven advocacy in emerging technology frameworks, cyber law, and artificial intelligence governance.';
+        if (!parsed.bio || parsed.bio.trim() === oldBio.trim() || parsed.bio.trim() === oldBio2.trim() || parsed.bio.trim() === oldBio3.trim()) {
           parsed.bio = PERSONAL_INFO.bio;
         }
         return { ...PERSONAL_INFO, ...parsed };

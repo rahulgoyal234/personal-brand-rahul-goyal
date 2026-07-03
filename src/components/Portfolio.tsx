@@ -129,7 +129,7 @@ export default function Portfolio() {
                       onClick={() => setActiveProject(project)}
                       className="text-[10px] font-mono font-bold text-neutral-800 hover:text-black hover:underline flex items-center space-x-1 uppercase tracking-wider cursor-pointer"
                     >
-                      <span>Read Publication Abstract</span>
+                      <span>Read Writing Abstract</span>
                       <ChevronRight className="w-3.5 h-3.5" />
                     </button>
 
@@ -261,7 +261,7 @@ export default function Portfolio() {
                   {activeProject.stats && activeProject.stats.length > 0 && (
                     <div className="space-y-4">
                       <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-neutral-900 border-b border-neutral-200 pb-2">
-                        Publication Details
+                        Writing Details
                       </h4>
                       <div className="grid grid-cols-3 gap-4">
                         {activeProject.stats.map((stat) => (

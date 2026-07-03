@@ -931,7 +931,7 @@ export default function Customizer() {
                           value={projectLongDescription}
                           onChange={(e) => setProjectLongDescription(e.target.value)}
                           rows={4}
-                          placeholder="Comprehensive description of findings, publication context, and details."
+                          placeholder="Comprehensive description of findings, writing context, and details."
                           className="w-full px-3 py-2 bg-white border border-neutral-200 font-sans text-xs focus:outline-none focus:border-black rounded-none transition-colors resize-none"
                         />
                       </div>
@@ -965,7 +965,7 @@ export default function Customizer() {
                       <div className="grid grid-cols-2 gap-3">
                         <div className="space-y-1">
                           <label className="text-[9px] font-mono font-bold text-neutral-400 uppercase tracking-widest">
-                            Publication / External Link
+                            Writing / External Link
                           </label>
                           <input
                             type="url"
@@ -991,7 +991,7 @@ export default function Customizer() {
 
                       <div className="space-y-1">
                         <label className="text-[9px] font-mono font-bold text-neutral-400 uppercase tracking-widest">
-                          Publication / Project Metrics
+                          Writing / Project Metrics
                         </label>
                         <div className="grid grid-cols-2 gap-2 mb-2">
                           <input
@@ -1065,7 +1065,7 @@ export default function Customizer() {
                       <div className="flex items-center justify-between pb-2 border-b border-neutral-100">
                         <div>
                           <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">
-                            Writings & Publications
+                            Writings
                           </span>
                           <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-wider">
                             {projects.length} Total items
