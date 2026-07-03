@@ -45,7 +45,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
         if (parsed.linkedin === 'https://linkedin.com/in/rahulgoyal' || parsed.linkedin === 'https://linkedin.com/in/rahulgoyal/') {
           parsed.linkedin = PERSONAL_INFO.linkedin;
         }
-        if (parsed.title === 'Corporate Lawyer & Tech Policy Specialist' || parsed.title === 'Lawyer' || parsed.title === 'Law Graduate & Legal Researcher' || parsed.title === 'Lawyer & Legal Commentator') {
+        if (parsed.title === 'Corporate Lawyer & Tech Policy Specialist' || parsed.title === 'Lawyer' || parsed.title === 'Law Graduate & Legal Researcher' || parsed.title === 'Lawyer & Legal Commentator' || !parsed.title || parsed.title.toLowerCase().includes('full stack') || parsed.title.toLowerCase().includes('engineer')) {
           parsed.title = PERSONAL_INFO.title;
         }
         // If the saved bio is the old default bio, automatically upgrade it to the new default bio
