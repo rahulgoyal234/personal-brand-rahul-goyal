@@ -1,25 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export default function CursorRing() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
-  const [hasHover, setHasHover] = useState(false);
 
   useEffect(() => {
-    // Only enable custom cursor on devices that support hover/fine pointer
-    const mediaQuery = window.matchMedia('(hover: hover)');
-    setHasHover(mediaQuery.matches);
-
-    const listener = (e: MediaQueryListEvent) => {
-      setHasHover(e.matches);
-    };
-    mediaQuery.addEventListener('change', listener);
-    return () => mediaQuery.removeEventListener('change', listener);
-  }, []);
-
-  useEffect(() => {
-    if (!hasHover) return;
-
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
@@ -37,45 +22,87 @@ export default function CursorRing() {
     let targetRingScale = 1;
 
     let isVisible = false;
-    let isMouseActive = false;
+    let isCursorActive = false;
     let animationFrameId: number;
+    let lastInputTime = 0;
+    let isTouch = false;
 
     const enableCustomCursor = () => {
-      if (isMouseActive) return;
-      isMouseActive = true;
+      if (isCursorActive) return;
+      isCursorActive = true;
       document.body.classList.add('has-custom-cursor');
       dot.style.display = 'block';
       ring.style.display = 'block';
     };
 
-    const disableCustomCursor = () => {
-      if (!isMouseActive) return;
-      isMouseActive = false;
-      document.body.classList.remove('has-custom-cursor');
-      dot.style.display = 'none';
-      ring.style.display = 'none';
+    const showCursor = () => {
+      isVisible = true;
+      dot.style.opacity = '1';
+      ring.style.opacity = '0.5';
     };
 
-    const onMouseMove = (e: MouseEvent) => {
-      enableCustomCursor();
+    const hideCursor = () => {
+      isVisible = false;
+      dot.style.opacity = '0';
+      ring.style.opacity = '0';
+    };
 
-      mouseX = e.clientX;
-      mouseY = e.clientY;
+    const updateCoordinates = (x: number, y: number) => {
+      mouseX = x;
+      mouseY = y;
 
       if (!isVisible) {
-        isVisible = true;
+        showCursor();
         dotX = mouseX;
         dotY = mouseY;
         ringX = mouseX;
         ringY = mouseY;
-        dot.style.opacity = '1';
-        ring.style.opacity = '0.5';
       }
     };
 
-    // Ease the ring and dot toward the coordinates smoothly, fully hardware-accelerated via scale transform
+    const onMouseMove = (e: MouseEvent) => {
+      // Prevent mouse coordinates if we recently got a touch event (to avoid duplicate handling)
+      if (Date.now() - lastInputTime < 1000 && isTouch) return;
+      
+      isTouch = false;
+      enableCustomCursor();
+      updateCoordinates(e.clientX, e.clientY);
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      isTouch = true;
+      lastInputTime = Date.now();
+      enableCustomCursor();
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        updateCoordinates(touch.clientX, touch.clientY);
+        checkInteractiveElement(touch.clientX, touch.clientY);
+      }
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      isTouch = true;
+      lastInputTime = Date.now();
+      enableCustomCursor();
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        updateCoordinates(touch.clientX, touch.clientY);
+        checkInteractiveElement(touch.clientX, touch.clientY);
+      }
+    };
+
+    const onTouchEnd = () => {
+      isTouch = true;
+      lastInputTime = Date.now();
+      targetRingScale = 1.0;
+      targetDotScale = 1.0;
+      ring.style.borderColor = 'rgba(17, 17, 17, 0.3)';
+      ring.style.backgroundColor = 'transparent';
+      hideCursor();
+    };
+
     const animate = () => {
-      if (isMouseActive) {
+      if (isCursorActive && isVisible) {
         // Snappy follow for the main dot indicator
         dotX += (mouseX - dotX) * 0.45;
         dotY += (mouseY - dotY) * 0.45;
@@ -95,33 +122,38 @@ export default function CursorRing() {
     };
 
     const checkInteractiveElement = (x: number, y: number) => {
-      const target = document.elementFromPoint(x, y) as HTMLElement | null;
-      if (!target) return;
+      if (x < 0 || y < 0 || x > window.innerWidth || y > window.innerHeight) return;
+      try {
+        const target = document.elementFromPoint(x, y) as HTMLElement | null;
+        if (!target) return;
 
-      const interactive = target.closest(
-        'a, button, select, input, textarea, [role="button"], .cursor-pointer, [data-cursor-hover]'
-      );
+        const interactive = target.closest(
+          'a, button, select, input, textarea, [role="button"], .cursor-pointer, [data-cursor-hover]'
+        );
 
-      if (interactive) {
-        targetRingScale = 1.55; // Scales default 36px to ~56px
-        targetDotScale = 1.5;
-        ring.style.borderColor = 'rgba(17, 17, 17, 0.8)';
-        ring.style.backgroundColor = 'rgba(17, 17, 17, 0.05)';
-      } else {
-        targetRingScale = 1.0;  // Scales to standard 36px
-        targetDotScale = 1.0;
-        ring.style.borderColor = 'rgba(17, 17, 17, 0.3)';
-        ring.style.backgroundColor = 'transparent';
+        if (interactive) {
+          targetRingScale = 1.55;
+          targetDotScale = 1.5;
+          ring.style.borderColor = 'rgba(17, 17, 17, 0.8)';
+          ring.style.backgroundColor = 'rgba(17, 17, 17, 0.05)';
+        } else {
+          targetRingScale = 1.0;
+          targetDotScale = 1.0;
+          ring.style.borderColor = 'rgba(17, 17, 17, 0.3)';
+          ring.style.backgroundColor = 'transparent';
+        }
+      } catch (err) {
+        // Safe fallback
       }
     };
 
     const onMouseOver = (e: MouseEvent) => {
-      if (!isMouseActive) return;
+      if (!isCursorActive) return;
       checkInteractiveElement(e.clientX, e.clientY);
     };
 
     const onMouseOut = (e: MouseEvent) => {
-      if (!isMouseActive) return;
+      if (!isCursorActive) return;
       const target = e.relatedTarget as HTMLElement | null;
       if (target) {
         checkInteractiveElement(e.clientX, e.clientY);
@@ -134,44 +166,46 @@ export default function CursorRing() {
     };
 
     const onMouseLeaveWindow = () => {
-      isVisible = false;
-      dot.style.opacity = '0';
-      ring.style.opacity = '0';
+      hideCursor();
     };
 
     const onMouseEnterWindow = () => {
-      if (!isMouseActive) return;
-      isVisible = true;
-      dot.style.opacity = '1';
-      ring.style.opacity = '0.5';
+      if (!isCursorActive) return;
+      showCursor();
     };
 
     // Event listeners
     window.addEventListener('mousemove', onMouseMove, { passive: true });
     window.addEventListener('mouseover', onMouseOver, { passive: true });
     window.addEventListener('mouseout', onMouseOut, { passive: true });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', onTouchEnd, { passive: true });
     document.addEventListener('mouseleave', onMouseLeaveWindow);
     document.addEventListener('mouseenter', onMouseEnterWindow);
 
     animationFrameId = requestAnimationFrame(animate);
 
-    // Style injection to hide the default browser cursor, strictly scoped to fine-pointer hover devices when active
+    // Style injection to hide the default browser cursor, strictly scoped to devices where custom cursor is active
     const style = document.createElement('style');
     style.innerHTML = `
-      .has-custom-cursor,
-      .has-custom-cursor a,
-      .has-custom-cursor button,
-      .has-custom-cursor select,
-      .has-custom-cursor input,
-      .has-custom-cursor textarea,
-      .has-custom-cursor [role="button"],
-      .has-custom-cursor .cursor-pointer {
-        cursor: none !important;
+      @media (hover: hover) {
+        .has-custom-cursor,
+        .has-custom-cursor a,
+        .has-custom-cursor button,
+        .has-custom-cursor select,
+        .has-custom-cursor input,
+        .has-custom-cursor textarea,
+        .has-custom-cursor [role="button"],
+        .has-custom-cursor .cursor-pointer {
+          cursor: none !important;
+        }
       }
     `;
     document.head.appendChild(style);
 
-    // Initial state: hidden until real mouse activity is detected
+    // Initial state: hidden until interaction is detected
     dot.style.display = 'none';
     ring.style.display = 'none';
 
@@ -179,6 +213,10 @@ export default function CursorRing() {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseover', onMouseOver);
       window.removeEventListener('mouseout', onMouseOut);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
       document.removeEventListener('mouseleave', onMouseLeaveWindow);
       document.removeEventListener('mouseenter', onMouseEnterWindow);
       cancelAnimationFrame(animationFrameId);
@@ -188,13 +226,10 @@ export default function CursorRing() {
         document.head.removeChild(style);
       }
     };
-  }, [hasHover]);
-
-  if (!hasHover) return null;
+  }, []);
 
   return (
     <>
-      {/* Outer wrapper elements with low overhead styles */}
       <div
         ref={dotRef}
         className="fixed top-0 left-0 w-1.5 h-1.5 bg-[#111111] rounded-full pointer-events-none z-[9999] opacity-0 transition-opacity duration-300 ease-out"
