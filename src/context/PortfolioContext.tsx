@@ -31,6 +31,7 @@ interface PortfolioContextProps {
   resetProjects: () => void;
   isEditorOpen: boolean;
   setIsEditorOpen: (open: boolean) => void;
+  importPortfolio: (personalInfo: PersonalInfoType, projects: Project[]) => void;
 }
 
 const PortfolioContext = createContext<PortfolioContextProps | undefined>(undefined);
@@ -42,6 +43,9 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem('rahul_goyal_personal_info');
       if (saved) {
         const parsed = JSON.parse(saved);
+        if (!parsed.avatar) {
+          parsed.avatar = PERSONAL_INFO.avatar;
+        }
         if (parsed.linkedin === 'https://linkedin.com/in/rahulgoyal' || parsed.linkedin === 'https://linkedin.com/in/rahulgoyal/') {
           parsed.linkedin = PERSONAL_INFO.linkedin;
         }
@@ -75,9 +79,6 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           parsed.shortBio = PERSONAL_INFO.shortBio;
         }
         const merged = { ...PERSONAL_INFO, ...parsed };
-        if (PERSONAL_INFO.isAvatarLocked) {
-          merged.isAvatarLocked = true;
-        }
         return merged;
       }
     } catch (e) {
@@ -138,6 +139,13 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
   }, [personalInfo]);
 
   useEffect(() => {
+    const lowerTitle = personalInfo.title.toLowerCase();
+    if (lowerTitle.includes('engineer') || lowerTitle.includes('full stack') || lowerTitle.includes('full-stack') || lowerTitle.includes('developer')) {
+      setPersonalInfo((prev) => ({ ...prev, title: 'Lawyer' }));
+    }
+  }, [personalInfo.title]);
+
+  useEffect(() => {
     try {
       localStorage.setItem('rahul_goyal_projects', JSON.stringify(projects));
     } catch (e) {
@@ -148,9 +156,6 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
   const updatePersonalInfo = (updates: Partial<PersonalInfoType>) => {
     setPersonalInfo((prev) => {
       const merged = { ...prev, ...updates };
-      if (PERSONAL_INFO.isAvatarLocked) {
-        merged.isAvatarLocked = true;
-      }
       return merged;
     });
   };
@@ -183,6 +188,11 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
     setProjects(PROJECTS);
   };
 
+  const importPortfolio = (newPersonalInfo: PersonalInfoType, newProjects: Project[]) => {
+    setPersonalInfo(newPersonalInfo);
+    setProjects(newProjects);
+  };
+
   return (
     <PortfolioContext.Provider
       value={{
@@ -196,6 +206,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
         resetProjects,
         isEditorOpen,
         setIsEditorOpen,
+        importPortfolio,
       }}
     >
       {children}

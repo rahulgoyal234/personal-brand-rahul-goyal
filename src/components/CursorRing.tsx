@@ -5,6 +5,15 @@ export default function CursorRing() {
   const ringRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Completely disable custom cursor on touch/mobile devices to avoid physical tap conflicts or hijacking
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches || 
+                          'ontouchstart' in window || 
+                          navigator.maxTouchPoints > 0;
+    
+    if (isTouchDevice) {
+      return;
+    }
+
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;

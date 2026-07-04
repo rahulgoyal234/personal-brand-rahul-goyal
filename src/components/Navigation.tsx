@@ -49,7 +49,7 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
     <header
       id="main-navigation"
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-[#fcfcfc]/90 backdrop-blur-md border-b border-brand-200 py-4 shadow-none' : 'bg-transparent py-6'
+        scrolled || isOpen ? 'bg-[#fcfcfc]/95 backdrop-blur-md border-b border-brand-200 py-4 shadow-none' : 'bg-transparent py-6'
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
@@ -122,7 +122,7 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
                   id={`mobile-nav-item-${item.id}`}
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`text-left py-2 font-display text-sm font-semibold uppercase tracking-widest cursor-pointer ${
+                  className={`text-left w-full py-3 font-display text-sm font-semibold uppercase tracking-widest cursor-pointer ${
                     activeSection === item.id ? 'text-brand-900 border-l-2 border-brand-900 pl-3' : 'text-brand-500 pl-0'
                   }`}
                 >

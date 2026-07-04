@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowRight, Linkedin, Mail, MapPin, Briefcase, Settings, Play, X, Edit, Lock } from 'lucide-react';
+import { ArrowRight, Linkedin, Mail, MapPin, Briefcase, Settings, Play, X, Edit, Lock, Globe, MoreVertical, RefreshCw } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 
 interface HeroProps {
@@ -11,6 +11,14 @@ interface HeroProps {
 export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
   const { personalInfo, setIsEditorOpen } = usePortfolio();
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [indexingStatus, setIndexingStatus] = useState<'idle' | 'loading' | 'success'>('idle');
+
+  const handleReindex = () => {
+    setIndexingStatus('loading');
+    setTimeout(() => {
+      setIndexingStatus('success');
+    }, 1500);
+  };
 
   // Animation container variants for staggered effect
   const containerVariants = {
@@ -103,6 +111,8 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             >
               {personalInfo.bio}
             </motion.p>
+
+
 
             {/* Meta Tags (Location & Main Focus) */}
             <motion.div

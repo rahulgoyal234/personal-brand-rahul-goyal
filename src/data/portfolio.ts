@@ -16,7 +16,7 @@ export const PERSONAL_INFO = {
   linkedin: 'https://www.linkedin.com/in/rahulgoyal48/',
   twitter: 'https://twitter.com/rahulgoyal',
   resumeUrl: '#resume',
-  isAvatarLocked: true,
+  isAvatarLocked: false,
 };
 
 export const PROJECTS: Project[] = [
