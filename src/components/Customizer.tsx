@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Upload, Link as LinkIcon, RotateCcw, Check, Sparkles, User, Image as ImageIcon, Video, Trash2, Play, AlertCircle, Film, Plus, Edit, FolderOpen, Lock, Unlock, Download, UploadCloud, Camera, VideoOff, RefreshCw, Sliders, ZoomIn, RotateCw, Move, Mail, FlipHorizontal, FlipVertical, ArrowLeft, ArrowRight, ArrowUp, ArrowDown } from 'lucide-react';
+import { X, Upload, Link as LinkIcon, RotateCcw, Check, Sparkles, User, Image as ImageIcon, Video, Trash2, Play, AlertCircle, Film, Plus, Edit, FolderOpen, Lock, Unlock, Download, UploadCloud, Camera, VideoOff, RefreshCw, Sliders, ZoomIn, RotateCw, Move, Mail, FlipHorizontal, FlipVertical, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Globe } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { Project } from '../types';
 
@@ -2055,6 +2055,18 @@ export default function Customizer() {
                       className="w-full px-3 py-2 bg-white border border-neutral-200 font-sans text-xs focus:outline-none focus:border-black rounded-none transition-colors"
                       required
                     />
+                    <div className="mt-2 p-2.5 bg-amber-50/50 border border-amber-200/60 text-[10px] leading-relaxed text-amber-900 font-sans space-y-1.5">
+                      <p className="font-semibold uppercase tracking-wider text-[8px] font-mono text-amber-800 flex items-center gap-1">
+                        <Globe className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
+                        <span>Google Search Index Caching Guide:</span>
+                      </p>
+                      <p>
+                        We have successfully optimized your site's HTML header, Open Graph meta tags, and structured JSON-LD schema with the title <strong>"Rahul Goyal — Lawyer"</strong>.
+                      </p>
+                      <p>
+                        If Google Search results still display <strong>"Rahul Goyal — Full Stack Engineer"</strong>, this is because Google has not yet re-crawled your site since you customized it. To speed this up, log into your <a href="https://search.google.com/search-console" target="_blank" rel="noreferrer" className="underline font-semibold hover:text-amber-950">Google Search Console</a> and click <strong>"Request Indexing"</strong> for your domain <code>rahul-goyal.com</code> to clear their cached title!
+                      </p>
+                    </div>
                   </div>
 
                   <div className="space-y-1">
