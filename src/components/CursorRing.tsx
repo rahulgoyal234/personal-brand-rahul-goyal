@@ -32,6 +32,7 @@ export default function CursorRing() {
 
     let isVisible = false;
     let isCursorActive = false;
+    let isMouseDown = false;
     let animationFrameId: number;
     let lastInputTime = 0;
     let isTouch = false;
@@ -47,7 +48,7 @@ export default function CursorRing() {
     const showCursor = () => {
       isVisible = true;
       dot.style.opacity = '1';
-      ring.style.opacity = '0.5';
+      ring.style.opacity = '1';
     };
 
     const hideCursor = () => {
@@ -105,9 +106,20 @@ export default function CursorRing() {
       lastInputTime = Date.now();
       targetRingScale = 1.0;
       targetDotScale = 1.0;
-      ring.style.borderColor = 'rgba(17, 17, 17, 0.3)';
+      ring.style.borderColor = 'rgba(255, 255, 255, 0.45)';
       ring.style.backgroundColor = 'transparent';
       hideCursor();
+    };
+
+    const onMouseDown = () => {
+      isMouseDown = true;
+    };
+
+    const onMouseUp = (e: MouseEvent) => {
+      isMouseDown = false;
+      if (isCursorActive) {
+        checkInteractiveElement(e.clientX, e.clientY);
+      }
     };
 
     const animate = () => {
@@ -117,15 +129,38 @@ export default function CursorRing() {
         dotY += (mouseY - dotY) * 0.45;
 
         // Beautiful smooth trailing for the outer ring follower
-        ringX += (mouseX - ringX) * 0.18;
-        ringY += (mouseY - ringY) * 0.18;
+        const rx = mouseX - ringX;
+        const ry = mouseY - ringY;
+        ringX += rx * 0.18;
+        ringY += ry * 0.18;
+
+        // Dynamic scale modifications based on mouse click state
+        let currentTargetRingScale = targetRingScale;
+        let currentTargetDotScale = targetDotScale;
+
+        if (isMouseDown) {
+          currentTargetRingScale = 0.55;
+          currentTargetDotScale = 1.5;
+        }
 
         // Smooth spring interpolation for scale
-        currentDotScale += (targetDotScale - currentDotScale) * 0.2;
-        currentRingScale += (targetRingScale - currentRingScale) * 0.2;
+        currentDotScale += (currentTargetDotScale - currentDotScale) * 0.25;
+        currentRingScale += (currentTargetRingScale - currentRingScale) * 0.25;
+
+        // Calculate velocity-based stretching for a fluid organic feel
+        const distance = Math.sqrt(rx * rx + ry * ry);
+        const maxStretch = 0.45;
+        // Skip stretch when clicked so it feels completely solid and snappy
+        const stretch = isMouseDown ? 0 : Math.min(distance * 0.006, maxStretch);
+        const angle = Math.atan2(ry, rx);
 
         dot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0) translate(-50%, -50%) scale(${currentDotScale})`;
-        ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%) scale(${currentRingScale})`;
+        
+        if (stretch > 0.01) {
+          ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%) rotate(${angle}rad) scale(${currentRingScale + stretch}, ${currentRingScale - stretch * 0.35})`;
+        } else {
+          ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%) scale(${currentRingScale})`;
+        }
       }
       animationFrameId = requestAnimationFrame(animate);
     };
@@ -141,14 +176,14 @@ export default function CursorRing() {
         );
 
         if (interactive) {
-          targetRingScale = 1.55;
-          targetDotScale = 1.5;
-          ring.style.borderColor = 'rgba(17, 17, 17, 0.8)';
-          ring.style.backgroundColor = 'rgba(17, 17, 17, 0.05)';
+          targetRingScale = 1.6;
+          targetDotScale = 0.3; // Shrink inner dot to let the outer framing ring serve as the interactive target lens
+          ring.style.borderColor = 'rgba(255, 255, 255, 0.9)';
+          ring.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
         } else {
           targetRingScale = 1.0;
           targetDotScale = 1.0;
-          ring.style.borderColor = 'rgba(17, 17, 17, 0.3)';
+          ring.style.borderColor = 'rgba(255, 255, 255, 0.45)';
           ring.style.backgroundColor = 'transparent';
         }
       } catch (err) {
@@ -169,7 +204,7 @@ export default function CursorRing() {
       } else {
         targetRingScale = 1.0;
         targetDotScale = 1.0;
-        ring.style.borderColor = 'rgba(17, 17, 17, 0.3)';
+        ring.style.borderColor = 'rgba(255, 255, 255, 0.45)';
         ring.style.backgroundColor = 'transparent';
       }
     };
@@ -187,6 +222,8 @@ export default function CursorRing() {
     window.addEventListener('mousemove', onMouseMove, { passive: true });
     window.addEventListener('mouseover', onMouseOver, { passive: true });
     window.addEventListener('mouseout', onMouseOut, { passive: true });
+    window.addEventListener('mousedown', onMouseDown, { passive: true });
+    window.addEventListener('mouseup', onMouseUp, { passive: true });
     window.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('touchmove', onTouchMove, { passive: true });
     window.addEventListener('touchend', onTouchEnd, { passive: true });
@@ -222,6 +259,8 @@ export default function CursorRing() {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mouseover', onMouseOver);
       window.removeEventListener('mouseout', onMouseOut);
+      window.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mouseup', onMouseUp);
       window.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('touchmove', onTouchMove);
       window.removeEventListener('touchend', onTouchEnd);
@@ -241,7 +280,7 @@ export default function CursorRing() {
     <>
       <div
         ref={dotRef}
-        className="fixed top-0 left-0 w-1.5 h-1.5 bg-[#111111] rounded-full pointer-events-none z-[9999] opacity-0 transition-opacity duration-300 ease-out"
+        className="fixed top-0 left-0 w-1.5 h-1.5 bg-white rounded-full pointer-events-none z-[9999] mix-blend-difference opacity-0 transition-opacity duration-300 ease-out"
         style={{
           transform: 'translate3d(0,0,0) translate(-50%, -50%) scale(1)',
           willChange: 'transform',
@@ -249,11 +288,11 @@ export default function CursorRing() {
       />
       <div
         ref={ringRef}
-        className="fixed top-0 left-0 border border-[#111111] rounded-full pointer-events-none z-[9999] opacity-0 transition-[opacity,background-color,border-color] duration-300 ease-out"
+        className="fixed top-0 left-0 border border-white rounded-full pointer-events-none z-[9999] mix-blend-difference opacity-0 transition-[opacity,background-color,border-color] duration-300 ease-out"
         style={{
-          width: '36px',
-          height: '36px',
-          borderColor: 'rgba(17, 17, 17, 0.3)',
+          width: '32px',
+          height: '32px',
+          borderColor: 'rgba(255, 255, 255, 0.45)',
           transform: 'translate3d(0,0,0) translate(-50%, -50%) scale(1)',
           willChange: 'transform',
         }}

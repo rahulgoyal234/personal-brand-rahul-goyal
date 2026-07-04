@@ -1,5 +1,5 @@
 import { Project, Experience, Education, SkillGroup } from '../types';
-import avatarImg from '../assets/images/rahul_avatar_1783067061163.jpg';
+import avatarImg from '../assets/images/avatar.jpg';
 import writJurisdictionImg from '../assets/images/writ_jurisdiction_thumbnail_1782986850417.jpg';
 import privateLawCollegesImg from '../assets/images/private_law_colleges_thumbnail_1782986865708.jpg';
 
