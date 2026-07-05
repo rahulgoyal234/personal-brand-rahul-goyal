@@ -255,7 +255,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             className="md:col-span-5 flex justify-center md:justify-end"
           >
             <div 
-              className="relative group w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 cursor-pointer select-none"
+              className="relative group w-full max-w-[250px] xs:max-w-[280px] sm:max-w-[320px] md:max-w-[300px] lg:max-w-[340px] xl:max-w-[380px] aspect-square cursor-pointer select-none"
             >
               {/* Back framing accent */}
               <div className="absolute inset-0 border border-brand-200 rotate-1 group-hover:rotate-4 group-hover:scale-[1.02] group-active:rotate-4 group-active:scale-[1.02] transition-all duration-500 rounded-none bg-neutral-50"></div>

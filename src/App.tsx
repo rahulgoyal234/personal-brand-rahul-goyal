@@ -6,7 +6,7 @@ import Contact from './components/Contact';
 import Customizer from './components/Customizer';
 import CursorRing from './components/CursorRing';
 import { usePortfolio } from './context/PortfolioContext';
-import { Linkedin, Mail, ChevronUp, Sliders } from 'lucide-react';
+import { Linkedin, Mail, ChevronUp } from 'lucide-react';
 
 export default function App() {
   const { personalInfo, setIsEditorOpen } = usePortfolio();
@@ -166,17 +166,6 @@ export default function App() {
           <ChevronUp className="w-4 h-4" />
         </button>
       )}
-
-      {/* Floating Customizer trigger at bottom-left */}
-      <button
-        id="floating-customizer-trigger"
-        onClick={() => setIsEditorOpen(true)}
-        className="fixed bottom-6 left-6 flex items-center space-x-2 bg-neutral-950 text-white border border-neutral-800 px-3.5 py-3 hover:bg-neutral-900 transition-all duration-300 cursor-pointer z-40 shadow-md hover:scale-105 active:scale-95 font-mono text-[9px] uppercase tracking-widest font-bold"
-        title="Open Writings Customizer"
-      >
-        <Sliders className="w-3.5 h-3.5 text-neutral-400" />
-        <span>Customize</span>
-      </button>
 
       {/* Slide-over Profile Settings Panel */}
       <Customizer />
