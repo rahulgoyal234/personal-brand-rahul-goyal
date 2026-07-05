@@ -24,6 +24,7 @@ export default function CursorRing() {
     let isVisible = false;
     let isCursorActive = false;
     let isMouseDown = false;
+    let isTouch = false;
     let animationFrameId: number;
 
     const enableCustomCursor = () => {
@@ -60,8 +61,39 @@ export default function CursorRing() {
     };
 
     const onMouseMove = (e: MouseEvent) => {
+      isTouch = false;
       enableCustomCursor();
       updateCoordinates(e.clientX, e.clientY);
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      isTouch = true;
+      enableCustomCursor();
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        updateCoordinates(touch.clientX, touch.clientY);
+        checkInteractiveElement(touch.clientX, touch.clientY);
+      }
+      isMouseDown = true;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      isTouch = true;
+      enableCustomCursor();
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        updateCoordinates(touch.clientX, touch.clientY);
+        checkInteractiveElement(touch.clientX, touch.clientY);
+      }
+    };
+
+    const onTouchEnd = () => {
+      isMouseDown = false;
+      targetRingScale = 1.0;
+      targetDotScale = 1.0;
+      ring.style.borderColor = 'rgba(255, 255, 255, 0.45)';
+      ring.style.backgroundColor = 'transparent';
+      hideCursor();
     };
 
     const onMouseDown = () => {
@@ -92,8 +124,13 @@ export default function CursorRing() {
         let currentTargetDotScale = targetDotScale;
 
         if (isMouseDown) {
-          currentTargetRingScale = 0.55;
-          currentTargetDotScale = 1.5;
+          if (isTouch) {
+            currentTargetRingScale = 1.35; // Grow ring to form a beautiful feedback halo visible around finger pad
+            currentTargetDotScale = 0.5;   // Shrink dot to not feel crowded
+          } else {
+            currentTargetRingScale = 0.55; // Precise desktop shrink effect
+            currentTargetDotScale = 1.5;
+          }
         }
 
         // Smooth spring interpolation for scale
@@ -177,6 +214,10 @@ export default function CursorRing() {
     window.addEventListener('mouseout', onMouseOut, { passive: true });
     window.addEventListener('mousedown', onMouseDown, { passive: true });
     window.addEventListener('mouseup', onMouseUp, { passive: true });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', onTouchEnd, { passive: true });
     document.addEventListener('mouseleave', onMouseLeaveWindow);
     document.addEventListener('mouseenter', onMouseEnterWindow);
 
@@ -210,6 +251,10 @@ export default function CursorRing() {
       window.removeEventListener('mouseout', onMouseOut);
       window.removeEventListener('mousedown', onMouseDown);
       window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchEnd);
       document.removeEventListener('mouseleave', onMouseLeaveWindow);
       document.removeEventListener('mouseenter', onMouseEnterWindow);
       cancelAnimationFrame(animationFrameId);
