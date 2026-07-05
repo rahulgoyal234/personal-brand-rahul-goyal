@@ -210,66 +210,72 @@ export default function Customizer() {
   // Handle local file uploads with smart compression to prevent localStorage QuotaExceeded errors
   const processFile = (file: File) => {
     if (personalInfo.isAvatarLocked) return;
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const rawBase64 = reader.result as string;
+    if (file) {
+      // Create high-performance, low-memory Object URL instead of Reading as base64 string first
+      const blobUrl = URL.createObjectURL(file);
+      const img = new Image();
+      
+      img.onload = () => {
+        const maxDimension = 1600; // Perfect retina-crisp limit for profile photo
+        let w = img.width;
+        let h = img.height;
         
-        // Dynamic client-side compression
-        const img = new Image();
-        img.onload = () => {
-          const maxDimension = 1200; // High resolution limit for crisp display on Retina/high-res screens
-          let w = img.width;
-          let h = img.height;
-          
-          if (w > maxDimension || h > maxDimension) {
-            if (w > h) {
-              h = Math.round((h * maxDimension) / w);
-              w = maxDimension;
-            } else {
-              w = Math.round((w * maxDimension) / h);
-              h = maxDimension;
-            }
-          }
-          
-          const canvas = document.createElement('canvas');
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          
-          if (ctx) {
-            ctx.drawImage(img, 0, 0, w, h);
-            try {
-              // Convert to jpeg with 0.88 quality for crispness and compact file size (~100-150KB)
-              const compressedBase64 = canvas.toDataURL('image/jpeg', 0.88);
-              updatePersonalInfo({ avatar: compressedBase64 });
-              resetEditingStates(compressedBase64);
-              setTempUrl('');
-              triggerSaveSuccess();
-            } catch (err) {
-              console.error("Compression failed, using raw base64 as fallback", err);
-              updatePersonalInfo({ avatar: rawBase64 });
-              resetEditingStates(rawBase64);
-              setTempUrl('');
-              triggerSaveSuccess();
-            }
+        if (w > maxDimension || h > maxDimension) {
+          if (w > h) {
+            h = Math.round((h * maxDimension) / w);
+            w = maxDimension;
           } else {
-            updatePersonalInfo({ avatar: rawBase64 });
-            resetEditingStates(rawBase64);
+            w = Math.round((w * maxDimension) / h);
+            h = maxDimension;
+          }
+        }
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, w, h);
+          try {
+            // Highly pristine 0.95 quality for crisp original detail with zero compression artifacts
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.95);
+            updatePersonalInfo({ avatar: compressedBase64 });
+            resetEditingStates(compressedBase64);
             setTempUrl('');
             triggerSaveSuccess();
+          } catch (err) {
+            console.error("Compression failed, using generic PNG as fallback", err);
+            try {
+              const fallbackBase64 = canvas.toDataURL('image/png');
+              updatePersonalInfo({ avatar: fallbackBase64 });
+              resetEditingStates(fallbackBase64);
+              setTempUrl('');
+              triggerSaveSuccess();
+            } catch (fallbackErr) {
+              console.error("Fallback image rendering failed", fallbackErr);
+            }
           }
-        };
-        img.onerror = () => {
-          // Fallback if load fails
+        }
+        URL.revokeObjectURL(blobUrl);
+      };
+      
+      img.onerror = () => {
+        console.error("Failed to load image via ObjectURL");
+        URL.revokeObjectURL(blobUrl);
+        // Robust fallback to FileReader if ObjectURL fails or isn't supported
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const rawBase64 = reader.result as string;
           updatePersonalInfo({ avatar: rawBase64 });
           resetEditingStates(rawBase64);
           setTempUrl('');
           triggerSaveSuccess();
         };
-        img.src = rawBase64;
+        reader.readAsDataURL(file);
       };
-      reader.readAsDataURL(file);
+      
+      img.src = blobUrl;
     }
   };
 
@@ -832,11 +838,60 @@ export default function Customizer() {
   const handleProjectImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProjectImage(reader.result as string);
+      const blobUrl = URL.createObjectURL(file);
+      const img = new Image();
+      
+      img.onload = () => {
+        const maxDimension = 1600; // Optimal widescreen card preview size with retina clarity
+        let w = img.width;
+        let h = img.height;
+        
+        if (w > maxDimension || h > maxDimension) {
+          if (w > h) {
+            h = Math.round((h * maxDimension) / w);
+            w = maxDimension;
+          } else {
+            w = Math.round((w * maxDimension) / h);
+            h = maxDimension;
+          }
+        }
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, w, h);
+          try {
+            // Highly pristine 0.95 quality for crisp original detail with zero compression artifacts
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.95);
+            setProjectImage(compressedBase64);
+          } catch (err) {
+            console.error("Project image compression failed, fallback to generic PNG", err);
+            try {
+              const fallbackBase64 = canvas.toDataURL('image/png');
+              setProjectImage(fallbackBase64);
+            } catch (fallbackErr) {
+              console.error("Fallback project image rendering failed", fallbackErr);
+            }
+          }
+        }
+        URL.revokeObjectURL(blobUrl);
       };
-      reader.readAsDataURL(file);
+      
+      img.onerror = () => {
+        console.error("Failed to load project image via ObjectURL");
+        URL.revokeObjectURL(blobUrl);
+        // Fallback to FileReader
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setProjectImage(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      };
+      
+      img.src = blobUrl;
     }
   };
 

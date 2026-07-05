@@ -21,50 +21,62 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
 
   const handleDirectFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const rawBase64 = reader.result as string;
+    if (file) {
+      // Create highly memory-efficient Object URL instead of FileReader base64 strings to prevent crashes
+      const blobUrl = URL.createObjectURL(file);
+      const img = new Image();
+      
+      img.onload = () => {
+        const maxDimension = 1600; // Ultra high resolution limit for razor-sharp display on 4K/Retina screens
+        let w = img.width;
+        let h = img.height;
         
-        // Dynamic client-side compression
-        const img = new Image();
-        img.onload = () => {
-          const maxDimension = 1200; // High resolution limit for crisp display on Retina/high-res screens
-          let w = img.width;
-          let h = img.height;
-          
-          if (w > maxDimension || h > maxDimension) {
-            if (w > h) {
-              h = Math.round((h * maxDimension) / w);
-              w = maxDimension;
-            } else {
-              w = Math.round((w * maxDimension) / h);
-              h = maxDimension;
-            }
-          }
-          
-          const canvas = document.createElement('canvas');
-          canvas.width = w;
-          canvas.height = h;
-          const ctx = canvas.getContext('2d');
-          
-          if (ctx) {
-            ctx.drawImage(img, 0, 0, w, h);
-            try {
-              // Convert to jpeg with 0.88 quality for crispness and compact file size (~100-150KB)
-              const compressedBase64 = canvas.toDataURL('image/jpeg', 0.88);
-              updatePersonalInfo({ avatar: compressedBase64 });
-            } catch (err) {
-              console.error("Compression failed, using raw base64 as fallback", err);
-              updatePersonalInfo({ avatar: rawBase64 });
-            }
+        if (w > maxDimension || h > maxDimension) {
+          if (w > h) {
+            h = Math.round((h * maxDimension) / w);
+            w = maxDimension;
           } else {
-            updatePersonalInfo({ avatar: rawBase64 });
+            w = Math.round((w * maxDimension) / h);
+            h = maxDimension;
           }
-        };
-        img.src = rawBase64;
+        }
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, w, h);
+          try {
+            // Highly pristine 0.95 quality for crisp original detail with zero compression artifacts
+            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.95);
+            updatePersonalInfo({ avatar: compressedBase64 });
+          } catch (err) {
+            console.error("Compression failed, trying fallback to generic canvas URL", err);
+            try {
+              const fallbackBase64 = canvas.toDataURL('image/png');
+              updatePersonalInfo({ avatar: fallbackBase64 });
+            } catch (fallbackErr) {
+              console.error("Fallback image rendering failed", fallbackErr);
+            }
+          }
+        }
+        URL.revokeObjectURL(blobUrl);
       };
-      reader.readAsDataURL(file);
+      
+      img.onerror = () => {
+        console.error("Failed to load image via ObjectURL");
+        URL.revokeObjectURL(blobUrl);
+        // Robust fallback to reader if ObjectURL is not fully supported
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          updatePersonalInfo({ avatar: reader.result as string });
+        };
+        reader.readAsDataURL(file);
+      };
+      
+      img.src = blobUrl;
     }
   };
 
@@ -281,9 +293,9 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   </div>
                 </div>
               ) : (
-                <div 
-                  onClick={() => !personalInfo.isAvatarLocked && fileInputRef.current?.click()}
-                  className={`absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] ${
+                <label 
+                  htmlFor={!personalInfo.isAvatarLocked ? "hero-file-input" : undefined}
+                  className={`absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] block ${
                     !personalInfo.isAvatarLocked ? 'cursor-pointer' : 'cursor-default'
                   }`}
                 >
@@ -305,13 +317,14 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                       className="w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03]"
                     />
                   )}
-                </div>
+                </label>
               )}
 
               {/* Unique hidden file input for high-fidelity multi-browser upload */}
               {!personalInfo.isAvatarLocked && (
                 <input
                   ref={fileInputRef}
+                  id="hero-file-input"
                   type="file"
                   onChange={handleDirectFileChange}
                   accept="image/*"
@@ -322,18 +335,17 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             {/* Elegant floating photo controls - Rendered on top of image wrapper */}
             {!personalInfo.isAvatarLocked && (
               <div className="absolute -top-3.5 -left-3.5 z-30">
-                <button
-                  type="button"
+                <label
+                  htmlFor="hero-file-input"
                   onClick={(e) => {
                     e.stopPropagation();
-                    fileInputRef.current?.click();
                   }}
-                  className="bg-neutral-950 text-white border border-neutral-800 px-3.5 py-2 sm:px-2.5 sm:py-1.5 flex items-center space-x-2 sm:space-x-1.5 font-mono text-[9px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md font-bold min-h-[36px] sm:min-h-0 hover:bg-neutral-900 relative block"
+                  className="bg-neutral-950 text-white border border-neutral-800 px-3.5 py-2 sm:px-2.5 sm:py-1.5 flex items-center space-x-2 sm:space-x-1.5 font-mono text-[9px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md font-bold min-h-[36px] sm:min-h-0 hover:bg-neutral-900 relative block text-center justify-center"
                   title="Directly select and upload a picture from your device"
                 >
                   <Upload className="w-3.5 h-3.5 sm:w-3 sm:h-3 text-neutral-400" />
                   <span>Upload Photo</span>
-                </button>
+                </label>
               </div>
             )}
 
