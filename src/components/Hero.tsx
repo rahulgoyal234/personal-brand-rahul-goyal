@@ -97,8 +97,14 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
   };
 
   const renderFormattedHeading = (text: string) => {
-    const defaultText = "Delivering strategic legal solutions with clarity and precision.";
-    const targetText = text || defaultText;
+    const defaultText = "Making the complex, comprehensible.";
+    let targetText = text || defaultText;
+    
+    // Fallback if targetText is empty or is literally "Rahul Goyal"
+    if (!targetText || targetText.trim().toLowerCase() === 'rahul goyal') {
+      targetText = "Making the complex, comprehensible.";
+    }
+    
     const words = targetText.trim().split(' ');
     if (words.length < 2) return targetText;
     
@@ -154,7 +160,9 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 variants={itemVariants}
                 className="font-display text-[11px] uppercase tracking-[0.3em] text-neutral-400 mt-2 font-bold"
               >
-                {personalInfo.name} | {personalInfo.title}
+                {personalInfo.name.toLowerCase() === 'rahul goyal' 
+                  ? "Corporate Law • Intellectual Property • Tech Governance" 
+                  : `${personalInfo.name} | ${personalInfo.title}`}
               </motion.p>
             </div>
 
