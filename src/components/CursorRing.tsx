@@ -5,15 +5,6 @@ export default function CursorRing() {
   const ringRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Completely disable custom cursor on touch/mobile devices to avoid physical tap conflicts or hijacking
-    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches || 
-                          'ontouchstart' in window || 
-                          navigator.maxTouchPoints > 0;
-    
-    if (isTouchDevice) {
-      return;
-    }
-
     const dot = dotRef.current;
     const ring = ringRef.current;
     if (!dot || !ring) return;
@@ -34,8 +25,6 @@ export default function CursorRing() {
     let isCursorActive = false;
     let isMouseDown = false;
     let animationFrameId: number;
-    let lastInputTime = 0;
-    let isTouch = false;
 
     const enableCustomCursor = () => {
       if (isCursorActive) return;
@@ -71,44 +60,8 @@ export default function CursorRing() {
     };
 
     const onMouseMove = (e: MouseEvent) => {
-      // Prevent mouse coordinates if we recently got a touch event (to avoid duplicate handling)
-      if (Date.now() - lastInputTime < 1000 && isTouch) return;
-      
-      isTouch = false;
       enableCustomCursor();
       updateCoordinates(e.clientX, e.clientY);
-    };
-
-    const onTouchStart = (e: TouchEvent) => {
-      isTouch = true;
-      lastInputTime = Date.now();
-      enableCustomCursor();
-      if (e.touches.length > 0) {
-        const touch = e.touches[0];
-        updateCoordinates(touch.clientX, touch.clientY);
-        checkInteractiveElement(touch.clientX, touch.clientY);
-      }
-    };
-
-    const onTouchMove = (e: TouchEvent) => {
-      isTouch = true;
-      lastInputTime = Date.now();
-      enableCustomCursor();
-      if (e.touches.length > 0) {
-        const touch = e.touches[0];
-        updateCoordinates(touch.clientX, touch.clientY);
-        checkInteractiveElement(touch.clientX, touch.clientY);
-      }
-    };
-
-    const onTouchEnd = () => {
-      isTouch = true;
-      lastInputTime = Date.now();
-      targetRingScale = 1.0;
-      targetDotScale = 1.0;
-      ring.style.borderColor = 'rgba(255, 255, 255, 0.45)';
-      ring.style.backgroundColor = 'transparent';
-      hideCursor();
     };
 
     const onMouseDown = () => {
@@ -224,10 +177,6 @@ export default function CursorRing() {
     window.addEventListener('mouseout', onMouseOut, { passive: true });
     window.addEventListener('mousedown', onMouseDown, { passive: true });
     window.addEventListener('mouseup', onMouseUp, { passive: true });
-    window.addEventListener('touchstart', onTouchStart, { passive: true });
-    window.addEventListener('touchmove', onTouchMove, { passive: true });
-    window.addEventListener('touchend', onTouchEnd, { passive: true });
-    window.addEventListener('touchcancel', onTouchEnd, { passive: true });
     document.addEventListener('mouseleave', onMouseLeaveWindow);
     document.addEventListener('mouseenter', onMouseEnterWindow);
 
@@ -261,10 +210,6 @@ export default function CursorRing() {
       window.removeEventListener('mouseout', onMouseOut);
       window.removeEventListener('mousedown', onMouseDown);
       window.removeEventListener('mouseup', onMouseUp);
-      window.removeEventListener('touchstart', onTouchStart);
-      window.removeEventListener('touchmove', onTouchMove);
-      window.removeEventListener('touchend', onTouchEnd);
-      window.removeEventListener('touchcancel', onTouchEnd);
       document.removeEventListener('mouseleave', onMouseLeaveWindow);
       document.removeEventListener('mouseenter', onMouseEnterWindow);
       cancelAnimationFrame(animationFrameId);
@@ -284,6 +229,7 @@ export default function CursorRing() {
         style={{
           transform: 'translate3d(0,0,0) translate(-50%, -50%) scale(1)',
           willChange: 'transform',
+          pointerEvents: 'none',
         }}
       />
       <div
@@ -295,6 +241,7 @@ export default function CursorRing() {
           borderColor: 'rgba(255, 255, 255, 0.45)',
           transform: 'translate3d(0,0,0) translate(-50%, -50%) scale(1)',
           willChange: 'transform',
+          pointerEvents: 'none',
         }}
       />
     </>

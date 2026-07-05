@@ -6,7 +6,9 @@ import privateLawCollegesImg from '../assets/images/private_law_colleges_thumbna
 export const PERSONAL_INFO = {
   name: 'Rahul Goyal',
   title: 'Lawyer',
-  bio: 'A law graduate from KIIT School of Law, Bhubaneswar, specializing in Corporate & Commercial Law, Intellectual Property (IP), and Data Protection. I am passionate about navigating complex regulatory policies, drafting transactional contracts, and research-driven advocacy in emerging technology frameworks, cyber law, and artificial intelligence governance.',
+  bio: `I'm Rahul Goyal - a lawyer who reads fine print so you don't have to.
+
+I work in corporate law, IP, and tech policy, turning tangled regulation into clear, confident moves. Contracts that hold up. Advice that's straight, not stuffy. Legal ground that's safe to build on.`,
   shortBio: 'Making the complex, comprehensible.',
   location: 'New Delhi, India',
   email: 'rahulgyl48@gmail.com',

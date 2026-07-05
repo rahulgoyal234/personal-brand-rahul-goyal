@@ -5,8 +5,12 @@ import { usePortfolio } from '../context/PortfolioContext';
 export default function Contact() {
   const { personalInfo } = usePortfolio();
 
+  const showLocation = personalInfo.location && 
+    personalInfo.location.toLowerCase() !== 'new delhi, india' && 
+    personalInfo.location.toLowerCase() !== 'new delhi';
+
   return (
-    <section id="contact" className="py-20 md:py-28 border-t border-brand-200 bg-[#fcfcfc] relative">
+    <section id="contact" className="py-20 md:py-28 border-t border-brand-200 bg-[#fcfcfc] relative scroll-mt-20">
       <div className="max-w-3xl mx-auto px-6 text-center space-y-12 animate-fade-in">
         
         {/* Header */}
@@ -20,7 +24,7 @@ export default function Contact() {
         </div>
 
         {/* Contact Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+        <div className={`grid grid-cols-1 ${showLocation ? 'sm:grid-cols-2 max-w-2xl' : 'max-w-sm'} gap-6 mx-auto`}>
           <div className="flex flex-col items-center justify-center text-center p-8 bg-white border border-neutral-200 rounded-none space-y-4 shadow-xs hover:border-black transition-all duration-300">
             <div className="p-3 border border-black text-black rounded-none">
               <Mail className="w-5 h-5" />
@@ -36,17 +40,19 @@ export default function Contact() {
             </div>
           </div>
 
-          <div className="flex flex-col items-center justify-center text-center p-8 bg-white border border-neutral-200 rounded-none space-y-4 shadow-xs hover:border-black transition-all duration-300">
-            <div className="p-3 border border-black text-black rounded-none">
-              <MapPin className="w-5 h-5" />
+          {showLocation && (
+            <div className="flex flex-col items-center justify-center text-center p-8 bg-white border border-neutral-200 rounded-none space-y-4 shadow-xs hover:border-black transition-all duration-300">
+              <div className="p-3 border border-black text-black rounded-none">
+                <MapPin className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="block text-neutral-400 text-[8px] font-mono uppercase tracking-widest mb-1">Based In</span>
+                <span className="text-neutral-800 font-semibold text-xs sm:text-sm uppercase tracking-wider block">
+                  {personalInfo.location}
+                </span>
+              </div>
             </div>
-            <div>
-              <span className="block text-neutral-400 text-[8px] font-mono uppercase tracking-widest mb-1">Based In</span>
-              <span className="text-neutral-800 font-semibold text-xs sm:text-sm uppercase tracking-wider block">
-                {personalInfo.location}
-              </span>
-            </div>
-          </div>
+          )}
         </div>
 
       </div>

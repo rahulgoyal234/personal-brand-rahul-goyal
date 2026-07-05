@@ -22,7 +22,7 @@ export default function Portfolio() {
   });
 
   return (
-    <section id="portfolio" className="py-20 md:py-28 border-t border-brand-200 bg-[#fcfcfc]">
+    <section id="portfolio" className="py-20 md:py-28 border-t border-brand-200 bg-[#fcfcfc] scroll-mt-20">
       <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 space-y-6 md:space-y-0 pb-8 border-b border-neutral-100">

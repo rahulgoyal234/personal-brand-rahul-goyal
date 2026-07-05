@@ -122,7 +122,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
   return (
     <section
       id="about"
-      className="relative min-h-[90vh] flex items-center justify-center pt-24 pb-16 md:py-32 overflow-hidden"
+      className="relative min-h-[90vh] flex items-center justify-center pt-24 pb-16 md:py-32 overflow-hidden scroll-mt-20"
     >
       {/* Background soft geometric pattern */}
       <div className="absolute inset-0 z-0 opacity-[0.02] pointer-events-none select-none">
@@ -155,22 +155,22 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               >
                 {renderFormattedHeading(personalInfo.shortBio)}
               </motion.h1>
-              <motion.p
-                id="hero-subheading"
-                variants={itemVariants}
-                className="font-display text-[11px] uppercase tracking-[0.3em] text-neutral-400 mt-2 font-bold"
-              >
-                {personalInfo.name.toLowerCase() === 'rahul goyal' 
-                  ? "Corporate Law • Intellectual Property • Tech Governance" 
-                  : `${personalInfo.name} | ${personalInfo.title}`}
-              </motion.p>
+              {personalInfo.name.toLowerCase() !== 'rahul goyal' && (
+                <motion.p
+                  id="hero-subheading"
+                  variants={itemVariants}
+                  className="font-display text-[11px] uppercase tracking-[0.3em] text-neutral-400 mt-2 font-bold"
+                >
+                  {`${personalInfo.name} | ${personalInfo.title}`}
+                </motion.p>
+              )}
             </div>
 
             {/* Detailed Bio paragraph */}
             <motion.p
               id="hero-bio"
               variants={itemVariants}
-              className="text-neutral-500 text-sm leading-relaxed max-w-md font-light"
+              className="text-neutral-500 text-sm leading-relaxed max-w-md font-light whitespace-pre-line"
             >
               {personalInfo.bio}
             </motion.p>
@@ -178,17 +178,20 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
 
 
             {/* Meta Tags (Location & Main Focus) */}
-            <motion.div
-              id="hero-metadata"
-              variants={itemVariants}
-              className="flex flex-wrap items-center gap-y-2 gap-x-6 text-[11px] text-neutral-400 font-mono uppercase tracking-wider"
-            >
-              <div className="flex items-center space-x-1.5">
-                <MapPin className="w-3.5 h-3.5 text-brand-400" />
-                <span>{personalInfo.location}</span>
-              </div>
-
-            </motion.div>
+            {personalInfo.location && 
+             personalInfo.location.toLowerCase() !== 'new delhi, india' && 
+             personalInfo.location.toLowerCase() !== 'new delhi' && (
+              <motion.div
+                id="hero-metadata"
+                variants={itemVariants}
+                className="flex flex-wrap items-center gap-y-2 gap-x-6 text-[11px] text-neutral-400 font-mono uppercase tracking-wider"
+              >
+                <div className="flex items-center space-x-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-brand-400" />
+                  <span>{personalInfo.location}</span>
+                </div>
+              </motion.div>
+            )}
 
             {/* Social Links */}
             <motion.div id="hero-social-links" variants={itemVariants} className="flex items-center space-x-3 pt-2">

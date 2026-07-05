@@ -30,19 +30,13 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
   const handleNavClick = (id: string) => {
     setActiveSection(id);
     setIsOpen(false);
-    const element = document.getElementById(id);
-    if (element) {
-      const offset = 80;
-      const bodyRect = document.body.getBoundingClientRect().top;
-      const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
-    }
+    
+    setTimeout(() => {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 120);
   };
 
   return (
@@ -54,15 +48,19 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
     >
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
-        <button
-          id="nav-logo"
-          onClick={() => handleNavClick('about')}
-          className="group flex flex-col items-start cursor-pointer text-left"
-        >
-          <span className="font-display text-lg font-bold tracking-tight text-brand-900 leading-none">
-            {personalInfo.name}
-          </span>
-        </button>
+        {personalInfo.name.toLowerCase() !== 'rahul goyal' ? (
+          <button
+            id="nav-logo"
+            onClick={() => handleNavClick('about')}
+            className="group flex flex-col items-start cursor-pointer text-left"
+          >
+            <span className="font-display text-lg font-bold tracking-tight text-brand-900 leading-none">
+              {personalInfo.name}
+            </span>
+          </button>
+        ) : (
+          <div className="w-4 h-4" />
+        )}
 
         {/* Desktop Nav */}
         <nav id="desktop-nav" className="hidden md:flex items-center gap-10 text-[11px] uppercase tracking-[0.2em] font-semibold">
