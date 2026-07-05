@@ -972,10 +972,16 @@ export default function Customizer() {
                       </div>
 
                       {!personalInfo.isAvatarLocked && (
-                        <div className="pt-2 border-t border-neutral-100 flex items-center justify-between">
-                          <span className="text-[9px] font-sans text-neutral-500">
-                            Want to crop, rotate, or apply aesthetic filters?
-                          </span>
+                        <div className="pt-2.5 border-t border-neutral-100 flex flex-col sm:flex-row gap-2 justify-between items-center">
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="w-full sm:w-auto px-3.5 py-1.5 bg-neutral-900 hover:bg-black text-white font-mono text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[30px]"
+                          >
+                            <Upload className="w-3.5 h-3.5 text-neutral-300" />
+                            <span>Upload New Photo</span>
+                          </button>
+                          
                           <button
                             type="button"
                             onClick={() => {
@@ -988,9 +994,9 @@ export default function Customizer() {
                               setCustomBrightness(100);
                               setCustomContrast(100);
                             }}
-                            className="px-3 py-1.5 border border-neutral-300 hover:border-black text-neutral-800 hover:text-black font-mono text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer flex items-center gap-1 bg-white min-h-[30px]"
+                            className="w-full sm:w-auto px-3.5 py-1.5 border border-neutral-300 hover:border-black text-neutral-800 hover:text-black font-mono text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 bg-white min-h-[30px]"
                           >
-                            <Sliders className="w-3 h-3 text-neutral-500" />
+                            <Sliders className="w-3.5 h-3.5 text-neutral-500" />
                             <span>Crop & Fine-Tune</span>
                           </button>
                         </div>
@@ -2061,10 +2067,10 @@ export default function Customizer() {
                         <span>Google Search Index Caching Guide:</span>
                       </p>
                       <p>
-                        We have successfully optimized your site's HTML header, Open Graph meta tags, and structured JSON-LD schema with the title <strong>"Rahul Goyal — Lawyer"</strong>.
+                        We have successfully optimized your site's HTML header, Open Graph meta tags, and structured JSON-LD schema with the title <strong>"{formData.name} | {formData.title}"</strong>.
                       </p>
                       <p>
-                        If Google Search results still display <strong>"Rahul Goyal — Full Stack Engineer"</strong>, this is because Google has not yet re-crawled your site since you customized it. To speed this up, log into your <a href="https://search.google.com/search-console" target="_blank" rel="noreferrer" className="underline font-semibold hover:text-amber-950">Google Search Console</a> and click <strong>"Request Indexing"</strong> for your domain <code>rahul-goyal.com</code> to clear their cached title!
+                        If Google Search results still display <strong>"{formData.name} | Full Stack Engineer"</strong>, this is because Google has not yet re-crawled your site since you customized it. To speed this up, log into your <a href="https://search.google.com/search-console" target="_blank" rel="noreferrer" className="underline font-semibold hover:text-amber-950">Google Search Console</a> and click <strong>"Request Indexing"</strong> for your domain <code>rahul-goyal.com</code> to clear their cached title!
                       </p>
                     </div>
                   </div>

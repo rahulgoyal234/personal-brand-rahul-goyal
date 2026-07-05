@@ -82,7 +82,7 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
 
         {/* Action Button & Socials */}
         <div className="hidden md:flex items-center space-x-6">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 mr-2">
             <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="text-neutral-500 hover:text-black transition-colors" title="LinkedIn">
               <Linkedin className="w-4 h-4" />
             </a>
@@ -90,6 +90,15 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
               <Mail className="w-4 h-4" />
             </a>
           </div>
+          
+          <button
+            onClick={() => setIsEditorOpen(true)}
+            className="flex items-center space-x-1.5 px-3 py-1.5 bg-neutral-900 hover:bg-black text-white font-mono text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer min-h-[30px]"
+            title="Edit layout, photos, writing publications, and more"
+          >
+            <Sliders className="w-3.5 h-3.5 text-neutral-300" />
+            <span>Customize Site</span>
+          </button>
         </div>
 
         {/* Mobile Hamburger Button */}
@@ -131,6 +140,17 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
               ))}
 
               <div className="pt-4 border-t border-brand-200 flex flex-col space-y-3">
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    setIsEditorOpen(true);
+                  }}
+                  className="w-full flex items-center justify-center space-x-2 py-3 bg-neutral-900 hover:bg-black text-white font-mono text-[10px] uppercase tracking-wider font-bold transition-all cursor-pointer min-h-[44px]"
+                >
+                  <Sliders className="w-4 h-4 text-neutral-300" />
+                  <span>Customize Site</span>
+                </button>
+
                 {/* Social icons in mobile view */}
                 <div className="flex items-center justify-center space-x-6 py-2">
                   <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="text-brand-500 hover:text-brand-900 transition-colors">

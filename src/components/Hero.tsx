@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowRight, Linkedin, Mail, MapPin, Briefcase, Settings, Play, X, Edit, Lock, Globe, MoreVertical, RefreshCw } from 'lucide-react';
+import { ArrowRight, Linkedin, Mail, MapPin, Briefcase, Settings, Play, X, Edit, Lock, Globe, MoreVertical, RefreshCw, Upload } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 
 interface HeroProps {
@@ -9,9 +9,64 @@ interface HeroProps {
 }
 
 export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
-  const { personalInfo, setIsEditorOpen } = usePortfolio();
+  const { personalInfo, updatePersonalInfo, setIsEditorOpen } = usePortfolio();
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [indexingStatus, setIndexingStatus] = useState<'idle' | 'loading' | 'success'>('idle');
+  const [avatarLoadError, setAvatarLoadError] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    setAvatarLoadError(false);
+  }, [personalInfo.avatar]);
+
+  const handleDirectFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const rawBase64 = reader.result as string;
+        
+        // Dynamic client-side compression
+        const img = new Image();
+        img.onload = () => {
+          const maxDimension = 500; // Optimal resolution for an avatar
+          let w = img.width;
+          let h = img.height;
+          
+          if (w > maxDimension || h > maxDimension) {
+            if (w > h) {
+              h = Math.round((h * maxDimension) / w);
+              w = maxDimension;
+            } else {
+              w = Math.round((w * maxDimension) / h);
+              h = maxDimension;
+            }
+          }
+          
+          const canvas = document.createElement('canvas');
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, w, h);
+            try {
+              // Convert to jpeg with 0.82 quality to get highly compact file size (<40KB)
+              const compressedBase64 = canvas.toDataURL('image/jpeg', 0.82);
+              updatePersonalInfo({ avatar: compressedBase64 });
+            } catch (err) {
+              console.error("Compression failed, using raw base64 as fallback", err);
+              updatePersonalInfo({ avatar: rawBase64 });
+            }
+          } else {
+            updatePersonalInfo({ avatar: rawBase64 });
+          }
+        };
+        img.src = rawBase64;
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleReindex = () => {
     setIndexingStatus('loading');
@@ -99,7 +154,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 variants={itemVariants}
                 className="font-display text-[11px] uppercase tracking-[0.3em] text-neutral-400 mt-2 font-bold"
               >
-                {personalInfo.name} — {personalInfo.title}
+                {personalInfo.name} | {personalInfo.title}
               </motion.p>
             </div>
 
@@ -195,13 +250,24 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   personalInfo.introVideo || !personalInfo.isAvatarLocked ? 'cursor-pointer' : 'cursor-default'
                 }`}
               >
-                <img
-                  id="hero-portrait-img"
-                  src={personalInfo.avatar}
-                  alt={personalInfo.name}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03]"
-                />
+                {avatarLoadError || !personalInfo.avatar ? (
+                  <div className="w-full h-full bg-neutral-100 flex flex-col items-center justify-center p-6 text-center">
+                    <div className="w-12 h-12 rounded-full bg-neutral-200 flex items-center justify-center mb-3">
+                      <Upload className="w-6 h-6 text-neutral-500 animate-bounce" />
+                    </div>
+                    <span className="font-sans text-xs font-bold text-neutral-800">Add Your Portrait</span>
+                    <span className="font-mono text-[8px] text-neutral-400 uppercase tracking-widest mt-1">Supports JPG, PNG</span>
+                  </div>
+                ) : (
+                  <img
+                    id="hero-portrait-img"
+                    src={personalInfo.avatar}
+                    alt={personalInfo.name}
+                    referrerPolicy="no-referrer"
+                    onError={() => setAvatarLoadError(true)}
+                    className="w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03]"
+                  />
+                )}
 
                 {/* Animated overlay when video is active */}
                 {personalInfo.introVideo && (
@@ -214,18 +280,42 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 )}
               </div>
 
-              {/* Elegant floating "Edit Photo" button - Rendered on top of image wrapper */}
+              {/* Hidden Direct File Input */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleDirectFileChange}
+                accept="image/*"
+                className="hidden"
+              />
+
+              {/* Elegant floating photo controls - Rendered on top of image wrapper */}
               {!personalInfo.isAvatarLocked && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsEditorOpen(true);
-                  }}
-                  className="absolute -top-3.5 -left-3.5 z-30 bg-white border px-4 py-2.5 sm:px-2.5 sm:py-1.5 flex items-center space-x-2 sm:space-x-1.5 font-mono text-[10px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md font-bold min-h-[40px] sm:min-h-0 text-black border-neutral-300 hover:border-black text-neutral-800"
-                >
-                  <Edit className="w-3.5 h-3.5 sm:w-3 sm:h-3 text-neutral-600" />
-                  <span>Edit Photo</span>
-                </button>
+                <div className="absolute -top-3.5 -left-3.5 z-30 flex flex-col gap-1.5 sm:flex-row sm:gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      fileInputRef.current?.click();
+                    }}
+                    className="bg-neutral-950 text-white border border-neutral-800 px-3.5 py-2 sm:px-2.5 sm:py-1.5 flex items-center space-x-2 sm:space-x-1.5 font-mono text-[9px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md font-bold min-h-[36px] sm:min-h-0 hover:bg-neutral-900"
+                    title="Directly select and upload a picture from your device"
+                  >
+                    <Upload className="w-3.5 h-3.5 sm:w-3 sm:h-3 text-neutral-400" />
+                    <span>Upload Photo</span>
+                  </button>
+                  
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsEditorOpen(true);
+                    }}
+                    className="bg-white text-black border border-neutral-300 px-3.5 py-2 sm:px-2.5 sm:py-1.5 flex items-center space-x-2 sm:space-x-1.5 font-mono text-[9px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md font-bold min-h-[36px] sm:min-h-0 hover:border-black hover:text-black"
+                    title="Fine-tune with filters, cropping, or webcam snapshot"
+                  >
+                    <Edit className="w-3.5 h-3.5 sm:w-3 sm:h-3 text-neutral-600" />
+                    <span>Fine-Tune</span>
+                  </button>
+                </div>
               )}
 
               {/* Optional pulsing "Intro Video" badge at top right - Rendered on top of image wrapper */}
@@ -309,7 +399,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               <div className="p-4 bg-neutral-950 border-t border-neutral-900 flex justify-between items-center">
                 <div>
                   <span className="block text-[8px] font-mono text-neutral-500 uppercase tracking-widest">Introduction video</span>
-                  <h4 className="text-xs font-sans font-bold text-neutral-200 uppercase tracking-wide">{personalInfo.name} — Profile Pitch</h4>
+                  <h4 className="text-xs font-sans font-bold text-neutral-200 uppercase tracking-wide">{personalInfo.name} | Profile Pitch</h4>
                 </div>
                 <div className="text-[9px] font-mono text-neutral-400 uppercase border border-neutral-900 px-2.5 py-0.5">
                   {personalInfo.introVideoType === 'file' ? 'Local Upload' : 'External Stream'}
