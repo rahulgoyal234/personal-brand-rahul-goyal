@@ -218,7 +218,7 @@ export default function Customizer() {
         // Dynamic client-side compression
         const img = new Image();
         img.onload = () => {
-          const maxDimension = 500; // Optimal resolution for an avatar
+          const maxDimension = 1200; // High resolution limit for crisp display on Retina/high-res screens
           let w = img.width;
           let h = img.height;
           
@@ -240,8 +240,8 @@ export default function Customizer() {
           if (ctx) {
             ctx.drawImage(img, 0, 0, w, h);
             try {
-              // Convert to jpeg with 0.82 quality to get highly compact file size (<40KB)
-              const compressedBase64 = canvas.toDataURL('image/jpeg', 0.82);
+              // Convert to jpeg with 0.88 quality for crispness and compact file size (~100-150KB)
+              const compressedBase64 = canvas.toDataURL('image/jpeg', 0.88);
               updatePersonalInfo({ avatar: compressedBase64 });
               resetEditingStates(compressedBase64);
               setTempUrl('');
@@ -973,14 +973,18 @@ export default function Customizer() {
 
                       {!personalInfo.isAvatarLocked && (
                         <div className="pt-2.5 border-t border-neutral-100 flex flex-col sm:flex-row gap-2 justify-between items-center">
-                          <button
-                            type="button"
-                            onClick={() => fileInputRef.current?.click()}
-                            className="w-full sm:w-auto px-3.5 py-1.5 bg-neutral-900 hover:bg-black text-white font-mono text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[30px]"
+                          <label
+                            className="w-full sm:w-auto px-3.5 py-1.5 bg-neutral-900 hover:bg-black text-white font-mono text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 min-h-[30px] relative"
                           >
                             <Upload className="w-3.5 h-3.5 text-neutral-300" />
                             <span>Upload New Photo</span>
-                          </button>
+                            <input
+                              type="file"
+                              onChange={handleFileChange}
+                              accept="image/*"
+                              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            />
+                          </label>
                           
                           <button
                             type="button"
@@ -1391,25 +1395,32 @@ export default function Customizer() {
                     </p>
                   </div>
 
-                  {/* Option 1: Drag and Drop Upload */}
+                   {/* Option 1: Drag and Drop Upload */}
                   <div className={`space-y-2 ${personalInfo.isAvatarLocked ? 'opacity-50 pointer-events-none' : ''}`}>
                     <label className="text-[9px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">
                       Option A.1: {personalInfo.isAvatarLocked ? 'Drag & Drop or Browse (Locked)' : 'Drag & Drop or Browse'}
                     </label>
-                    <div
+                    <label
                       tabIndex={0}
                       onDragEnter={personalInfo.isAvatarLocked ? undefined : handleDrag}
                       onDragOver={personalInfo.isAvatarLocked ? undefined : handleDrag}
                       onDragLeave={personalInfo.isAvatarLocked ? undefined : handleDrag}
                       onDrop={personalInfo.isAvatarLocked ? undefined : handleDrop}
                       onPaste={personalInfo.isAvatarLocked ? undefined : handlePaste}
-                      onClick={personalInfo.isAvatarLocked ? undefined : () => fileInputRef.current?.click()}
-                      className={`border border-dashed p-8 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-3 bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black ${
+                      className={`border border-dashed p-8 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-3 bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black relative block ${
                         dragActive 
                           ? 'border-black bg-neutral-50 scale-[0.99]' 
                           : 'border-neutral-300 hover:border-neutral-600 hover:bg-neutral-50/50'
                       }`}
                     >
+                      <input
+                        type="file"
+                        disabled={!!personalInfo.isAvatarLocked}
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        title=""
+                      />
                       {personalInfo.isAvatarLocked ? <Lock className="w-6 h-6 text-neutral-400" /> : <Upload className="w-6 h-6 text-neutral-400" />}
                       <div className="space-y-1">
                         <p className="font-sans text-xs font-semibold text-neutral-800">
@@ -1427,30 +1438,13 @@ export default function Customizer() {
                       </div>
                       
                       {/* Robust touch-target button for mobile device support */}
-                      <button
-                        type="button"
-                        disabled={!!personalInfo.isAvatarLocked}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (!personalInfo.isAvatarLocked) {
-                            fileInputRef.current?.click();
-                          }
-                        }}
-                        className="px-3.5 py-2 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 hover:border-neutral-800 text-neutral-800 font-mono text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-sm rounded-none min-h-[36px]"
+                      <div
+                        className="px-3.5 py-2 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 hover:border-neutral-800 text-neutral-800 font-mono text-[9px] uppercase tracking-wider font-bold transition-all inline-flex items-center gap-1.5 shadow-sm rounded-none min-h-[36px] relative z-20 pointer-events-none"
                       >
                         <Upload className="w-3 h-3 text-neutral-600" />
                         <span>Select Photo</span>
-                      </button>
-
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        disabled={!!personalInfo.isAvatarLocked}
-                        onChange={handleFileChange}
-                        accept="image/*"
-                        className="hidden"
-                      />
-                    </div>
+                      </div>
+                    </label>
                   </div>
 
                   {/* Option A.2: Take Photo with Webcam (Alternative Manual) */}

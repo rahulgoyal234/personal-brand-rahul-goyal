@@ -9,7 +9,7 @@ interface HeroProps {
 }
 
 export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
-  const { personalInfo, updatePersonalInfo, setIsEditorOpen } = usePortfolio();
+  const { personalInfo, updatePersonalInfo } = usePortfolio();
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [indexingStatus, setIndexingStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [avatarLoadError, setAvatarLoadError] = useState(false);
@@ -29,7 +29,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
         // Dynamic client-side compression
         const img = new Image();
         img.onload = () => {
-          const maxDimension = 500; // Optimal resolution for an avatar
+          const maxDimension = 1200; // High resolution limit for crisp display on Retina/high-res screens
           let w = img.width;
           let h = img.height;
           
@@ -51,8 +51,8 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
           if (ctx) {
             ctx.drawImage(img, 0, 0, w, h);
             try {
-              // Convert to jpeg with 0.82 quality to get highly compact file size (<40KB)
-              const compressedBase64 = canvas.toDataURL('image/jpeg', 0.82);
+              // Convert to jpeg with 0.88 quality for crispness and compact file size (~100-150KB)
+              const compressedBase64 = canvas.toDataURL('image/jpeg', 0.88);
               updatePersonalInfo({ avatar: compressedBase64 });
             } catch (err) {
               console.error("Compression failed, using raw base64 as fallback", err);
@@ -243,7 +243,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   if (personalInfo.introVideo) {
                     setIsVideoModalOpen(true);
                   } else if (!personalInfo.isAvatarLocked) {
-                    setIsEditorOpen(true);
+                    fileInputRef.current?.click();
                   }
                 }}
                 className={`absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] ${
@@ -291,7 +291,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
 
               {/* Elegant floating photo controls - Rendered on top of image wrapper */}
               {!personalInfo.isAvatarLocked && (
-                <div className="absolute -top-3.5 -left-3.5 z-30 flex flex-col gap-1.5 sm:flex-row sm:gap-2">
+                <div className="absolute -top-3.5 -left-3.5 z-30">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -302,18 +302,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   >
                     <Upload className="w-3.5 h-3.5 sm:w-3 sm:h-3 text-neutral-400" />
                     <span>Upload Photo</span>
-                  </button>
-                  
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsEditorOpen(true);
-                    }}
-                    className="bg-white text-black border border-neutral-300 px-3.5 py-2 sm:px-2.5 sm:py-1.5 flex items-center space-x-2 sm:space-x-1.5 font-mono text-[9px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md font-bold min-h-[36px] sm:min-h-0 hover:border-black hover:text-black"
-                    title="Fine-tune with filters, cropping, or webcam snapshot"
-                  >
-                    <Edit className="w-3.5 h-3.5 sm:w-3 sm:h-3 text-neutral-600" />
-                    <span>Fine-Tune</span>
                   </button>
                 </div>
               )}
