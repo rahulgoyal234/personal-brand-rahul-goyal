@@ -255,7 +255,9 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             className="md:col-span-5 flex justify-center md:justify-end"
           >
             <div 
-              className="relative group w-full max-w-[250px] xs:max-w-[280px] sm:max-w-[320px] md:max-w-[300px] lg:max-w-[340px] xl:max-w-[380px] aspect-square cursor-pointer select-none"
+              className={`relative group w-full max-w-[250px] xs:max-w-[280px] sm:max-w-[320px] md:max-w-[300px] lg:max-w-[340px] xl:max-w-[380px] aspect-square select-none ${
+                personalInfo.introVideo ? 'cursor-pointer' : 'cursor-default'
+              }`}
             >
               {/* Back framing accent */}
               <div className="absolute inset-0 border border-brand-200 rotate-1 group-hover:rotate-4 group-hover:scale-[1.02] group-active:rotate-4 group-active:scale-[1.02] transition-all duration-500 rounded-none bg-neutral-50"></div>
@@ -268,11 +270,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 >
                   {avatarLoadError || !personalInfo.avatar ? (
                     <div className="w-full h-full bg-neutral-100 flex flex-col items-center justify-center p-6 text-center">
-                      <div className="w-12 h-12 rounded-full bg-neutral-200 flex items-center justify-center mb-3">
-                        <Upload className="w-6 h-6 text-neutral-500 animate-bounce" />
-                      </div>
-                      <span className="font-sans text-xs font-bold text-neutral-800">Add Your Portrait</span>
-                      <span className="font-mono text-[8px] text-neutral-400 uppercase tracking-widest mt-1">Supports JPG, PNG</span>
+                      <span className="font-sans text-xs font-bold text-neutral-800">No Portrait</span>
                     </div>
                   ) : (
                     <img
@@ -294,18 +292,11 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 </div>
               ) : (
                 <div 
-                  onClick={() => !personalInfo.isAvatarLocked && fileInputRef.current?.click()}
-                  className={`absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] block ${
-                    !personalInfo.isAvatarLocked ? 'cursor-pointer' : 'cursor-default'
-                  }`}
+                  className="absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] block cursor-default"
                 >
                   {avatarLoadError || !personalInfo.avatar ? (
                     <div className="w-full h-full bg-neutral-100 flex flex-col items-center justify-center p-6 text-center">
-                      <div className="w-12 h-12 rounded-full bg-neutral-200 flex items-center justify-center mb-3">
-                        <Upload className="w-6 h-6 text-neutral-500 animate-bounce" />
-                      </div>
-                      <span className="font-sans text-xs font-bold text-neutral-800">Add Your Portrait</span>
-                      <span className="font-mono text-[8px] text-neutral-400 uppercase tracking-widest mt-1">Supports JPG, PNG</span>
+                      <span className="font-sans text-xs font-bold text-neutral-800">No Portrait</span>
                     </div>
                   ) : (
                     <img
@@ -319,36 +310,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   )}
                 </div>
               )}
-
-              {/* Unique hidden file input for high-fidelity multi-browser upload */}
-              {!personalInfo.isAvatarLocked && (
-                <input
-                  ref={fileInputRef}
-                  id="hero-file-input"
-                  type="file"
-                  onChange={handleDirectFileChange}
-                  accept="image/*"
-                  className="hidden"
-                />
-              )}
-
-            {/* Elegant floating photo controls - Rendered on top of image wrapper */}
-            {!personalInfo.isAvatarLocked && (
-              <div className="absolute -top-3.5 -left-3.5 z-30">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    fileInputRef.current?.click();
-                  }}
-                  className="bg-neutral-950 text-white border border-neutral-800 px-3.5 py-2 sm:px-2.5 sm:py-1.5 flex items-center space-x-2 sm:space-x-1.5 font-mono text-[9px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md font-bold min-h-[36px] sm:min-h-0 hover:bg-neutral-900 relative flex items-center justify-center text-center"
-                  title="Directly select and upload a picture from your device"
-                >
-                  <Upload className="w-3.5 h-3.5 sm:w-3 sm:h-3 text-neutral-400" />
-                  <span>Upload Photo</span>
-                </button>
-              </div>
-            )}
 
               {/* Optional pulsing "Intro Video" badge at top right - Rendered on top of image wrapper */}
               {personalInfo.introVideo && (
