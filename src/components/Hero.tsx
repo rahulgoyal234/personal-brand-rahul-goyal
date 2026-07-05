@@ -293,8 +293,8 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   </div>
                 </div>
               ) : (
-                <label 
-                  htmlFor={!personalInfo.isAvatarLocked ? "hero-file-input" : undefined}
+                <div 
+                  onClick={() => !personalInfo.isAvatarLocked && fileInputRef.current?.click()}
                   className={`absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] block ${
                     !personalInfo.isAvatarLocked ? 'cursor-pointer' : 'cursor-default'
                   }`}
@@ -317,7 +317,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                       className="w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03]"
                     />
                   )}
-                </label>
+                </div>
               )}
 
               {/* Unique hidden file input for high-fidelity multi-browser upload */}
@@ -335,17 +335,18 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             {/* Elegant floating photo controls - Rendered on top of image wrapper */}
             {!personalInfo.isAvatarLocked && (
               <div className="absolute -top-3.5 -left-3.5 z-30">
-                <label
-                  htmlFor="hero-file-input"
+                <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation();
+                    fileInputRef.current?.click();
                   }}
-                  className="bg-neutral-950 text-white border border-neutral-800 px-3.5 py-2 sm:px-2.5 sm:py-1.5 flex items-center space-x-2 sm:space-x-1.5 font-mono text-[9px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md font-bold min-h-[36px] sm:min-h-0 hover:bg-neutral-900 relative block text-center justify-center"
+                  className="bg-neutral-950 text-white border border-neutral-800 px-3.5 py-2 sm:px-2.5 sm:py-1.5 flex items-center space-x-2 sm:space-x-1.5 font-mono text-[9px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md font-bold min-h-[36px] sm:min-h-0 hover:bg-neutral-900 relative flex items-center justify-center text-center"
                   title="Directly select and upload a picture from your device"
                 >
                   <Upload className="w-3.5 h-3.5 sm:w-3 sm:h-3 text-neutral-400" />
                   <span>Upload Photo</span>
-                </label>
+                </button>
               </div>
             )}
 
