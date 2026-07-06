@@ -16,7 +16,9 @@ export default function Customizer() {
     resetProjects, 
     isEditorOpen, 
     setIsEditorOpen,
-    importPortfolio
+    importPortfolio,
+    isSyncing,
+    hasLoadedRemote
   } = usePortfolio();
   
   const [activeTab, setActiveTab] = useState<'photo' | 'video' | 'info' | 'portfolio'>('photo');
@@ -925,9 +927,12 @@ export default function Customizer() {
                   <Sparkles className="w-4 h-4 text-neutral-800" />
                   <span>Writings Customizer</span>
                 </h3>
-                <p className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider mt-0.5">
-                  Configure your professional avatar & profile
-                </p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className={`w-1.5 h-1.5 rounded-full ${isSyncing ? 'bg-amber-500 animate-pulse' : hasLoadedRemote ? 'bg-emerald-500' : 'bg-neutral-400'}`} />
+                  <span className="text-[8px] font-mono font-bold uppercase tracking-wider text-neutral-500">
+                    {isSyncing ? 'Syncing to Server...' : hasLoadedRemote ? 'Synced Across Devices' : 'Connecting...'}
+                  </span>
+                </div>
               </div>
               <button
                 id="close-customizer-btn"
@@ -1021,7 +1026,7 @@ export default function Customizer() {
                             {personalInfo.title}
                           </div>
                           <div className="text-[9px] font-mono px-2 py-0.5 inline-block border bg-neutral-50 text-neutral-600 tracking-wide font-medium">
-                            {personalInfo.avatar.startsWith('data:') ? 'Custom Upload (Base64)' : personalInfo.avatar.startsWith('http') ? 'Custom URL' : 'Default Asset'}
+                            {personalInfo.avatar.startsWith('data:') ? 'Custom Upload (Base64)' : personalInfo.avatar.startsWith('/') ? 'Cloud Synced Photo' : personalInfo.avatar.startsWith('http') ? 'Custom URL' : 'Default Asset'}
                           </div>
                         </div>
                       </div>

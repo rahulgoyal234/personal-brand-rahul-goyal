@@ -32,18 +32,24 @@ interface PortfolioContextProps {
   isEditorOpen: boolean;
   setIsEditorOpen: (open: boolean) => void;
   importPortfolio: (personalInfo: PersonalInfoType, projects: Project[]) => void;
+  isSyncing: boolean;
+  hasLoadedRemote: boolean;
+  syncStateWithServer: (info: PersonalInfoType, projs: Project[]) => Promise<void>;
 }
 
 const PortfolioContext = createContext<PortfolioContextProps | undefined>(undefined);
 
 export function PortfolioProvider({ children }: { children: React.ReactNode }) {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [hasLoadedRemote, setHasLoadedRemote] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
+
   const [personalInfo, setPersonalInfo] = useState<PersonalInfoType>(() => {
     try {
       const saved = localStorage.getItem('rahul_goyal_personal_info');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (!parsed.avatar || parsed.avatar.includes('rahul_avatar_1783067061163') || parsed.avatar.includes('rahul_avatar_1782920001963')) {
+        if (!parsed.avatar || (!parsed.avatar.startsWith('data:') && !parsed.avatar.startsWith('http') && !parsed.avatar.startsWith('/'))) {
           parsed.avatar = PERSONAL_INFO.avatar;
         }
         if (parsed.linkedin === 'https://linkedin.com/in/rahulgoyal' || parsed.linkedin === 'https://linkedin.com/in/rahulgoyal/') {
@@ -99,7 +105,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           if (defaultProj) {
             let updated = { ...p };
             // Force the official default images for default projects unless it's a custom base64 uploaded image (starts with data:)
-            if (!p.image || p.image.includes('images.unsplash.com') || (!p.image.startsWith('data:') && p.image !== defaultProj.image)) {
+            if (!p.image || p.image.includes('images.unsplash.com') || (!p.image.startsWith('data:') && p.image !== defaultProj.image && !p.image.startsWith('/'))) {
               updated.image = defaultProj.image;
             }
             // If the saved demoUrl is the old default top-level link, upgrade it
@@ -132,9 +138,76 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
     return PROJECTS;
   });
 
+  // Sync with Server helper function
+  const syncStateWithServer = async (info: PersonalInfoType, projs: Project[]) => {
+    setIsSyncing(true);
+    try {
+      const response = await fetch('/api/portfolio-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ personalInfo: info, projects: projs }),
+      });
+      if (response.ok) {
+        const result = await response.json();
+        if (result.personalInfo && result.personalInfo.avatar !== info.avatar) {
+          setPersonalInfo(result.personalInfo);
+          try {
+            localStorage.setItem('rahul_goyal_personal_info', JSON.stringify(result.personalInfo));
+          } catch (e) {
+            console.error('Error saving updated avatar path:', e);
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Failed to sync state with backend server:', e);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  // Initial remote fetch on load
+  useEffect(() => {
+    async function loadRemoteData() {
+      try {
+        const response = await fetch('/api/portfolio-data');
+        if (response.ok) {
+          const remoteData = await response.json();
+          if (remoteData) {
+            if (remoteData.personalInfo) {
+              setPersonalInfo(remoteData.personalInfo);
+              try {
+                localStorage.setItem('rahul_goyal_personal_info', JSON.stringify(remoteData.personalInfo));
+              } catch (e) {
+                console.error('LocalStorage save failed:', e);
+              }
+            }
+            if (remoteData.projects) {
+              setProjects(remoteData.projects);
+              try {
+                localStorage.setItem('rahul_goyal_projects', JSON.stringify(remoteData.projects));
+              } catch (e) {
+                console.error('LocalStorage save failed:', e);
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Failed to fetch remote synced portfolio data:', e);
+      } finally {
+        setHasLoadedRemote(true);
+      }
+    }
+    loadRemoteData();
+  }, []);
+
   useEffect(() => {
     try {
       localStorage.setItem('rahul_goyal_personal_info', JSON.stringify(personalInfo));
+      if (hasLoadedRemote) {
+        syncStateWithServer(personalInfo, projects);
+      }
     } catch (e) {
       console.error('Error saving custom personal info:', e);
     }
@@ -150,6 +223,9 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       localStorage.setItem('rahul_goyal_projects', JSON.stringify(projects));
+      if (hasLoadedRemote) {
+        syncStateWithServer(personalInfo, projects);
+      }
     } catch (e) {
       console.error('Error saving custom projects:', e);
     }
@@ -209,6 +285,9 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
         isEditorOpen,
         setIsEditorOpen,
         importPortfolio,
+        isSyncing,
+        hasLoadedRemote,
+        syncStateWithServer,
       }}
     >
       {children}
