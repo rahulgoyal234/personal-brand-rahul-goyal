@@ -80,15 +80,6 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
 
         {/* Action Button & Socials */}
         <div className="hidden md:flex items-center space-x-6">
-          <button
-            onClick={() => {
-              updatePersonalInfo({ isAvatarLocked: false });
-              setIsEditorOpen(true);
-            }}
-            className="px-3 py-1.5 border border-brand-200 hover:border-black text-[10px] font-mono uppercase tracking-widest transition-all cursor-pointer font-bold"
-          >
-            Customize
-          </button>
           <div className="flex items-center space-x-4">
             <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="text-neutral-500 hover:text-black transition-colors" title="LinkedIn">
               <Linkedin className="w-4 h-4" />
@@ -138,16 +129,6 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
               ))}
 
               <div className="pt-4 border-t border-brand-200 flex flex-col space-y-3">
-                <button
-                  onClick={() => {
-                    updatePersonalInfo({ isAvatarLocked: false });
-                    setIsEditorOpen(true);
-                    setIsOpen(false);
-                  }}
-                  className="w-full text-center py-2 bg-black text-white hover:bg-neutral-800 text-[10px] font-mono uppercase tracking-widest cursor-pointer font-bold"
-                >
-                  Customize Portfolio
-                </button>
                 {/* Social icons in mobile view */}
                 <div className="flex items-center justify-center space-x-6 py-2">
                   <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="text-brand-500 hover:text-brand-900 transition-colors">

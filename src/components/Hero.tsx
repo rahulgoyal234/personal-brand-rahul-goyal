@@ -255,7 +255,9 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             className="md:col-span-5 flex justify-center md:justify-end"
           >
             <div 
-              className="relative group w-full max-w-[250px] xs:max-w-[280px] sm:max-w-[320px] md:max-w-[300px] lg:max-w-[340px] xl:max-w-[380px] aspect-square select-none cursor-pointer"
+              className={`relative group w-full max-w-[250px] xs:max-w-[280px] sm:max-w-[320px] md:max-w-[300px] lg:max-w-[340px] xl:max-w-[380px] aspect-square select-none ${
+                personalInfo.introVideo ? 'cursor-pointer' : 'cursor-default'
+              }`}
             >
               {/* Back framing accent */}
               <div className="absolute inset-0 border border-brand-200 rotate-1 group-hover:rotate-4 group-hover:scale-[1.02] group-active:rotate-4 group-active:scale-[1.02] transition-all duration-500 rounded-none bg-neutral-50"></div>
@@ -290,11 +292,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 </div>
               ) : (
                 <div 
-                  onClick={() => {
-                    updatePersonalInfo({ isAvatarLocked: false });
-                    setIsEditorOpen(true);
-                  }}
-                  className="absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] cursor-pointer"
+                  className="absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] cursor-default"
                 >
                   {avatarLoadError || !personalInfo.avatar ? (
                     <div className="w-full h-full bg-neutral-100 flex flex-col items-center justify-center p-6 text-center">
@@ -310,13 +308,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                       className="w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03]"
                     />
                   )}
-                  {/* Elegant overlay to invite the user to customize/upload */}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white gap-2">
-                    <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm border border-white flex items-center justify-center scale-95 group-hover:scale-100 transition-transform duration-300">
-                      <Upload className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="font-mono text-[8px] uppercase tracking-[0.2em] font-bold">Upload / Customize Photo</span>
-                  </div>
                 </div>
               )}
 
