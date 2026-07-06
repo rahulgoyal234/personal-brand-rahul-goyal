@@ -18,7 +18,8 @@ export default function Customizer() {
     setIsEditorOpen,
     importPortfolio,
     isSyncing,
-    hasLoadedRemote
+    hasLoadedRemote,
+    syncStateWithServer
   } = usePortfolio();
   
   const [activeTab, setActiveTab] = useState<'photo' | 'video' | 'info' | 'portfolio'>('photo');
@@ -1067,7 +1068,6 @@ export default function Customizer() {
                       )}
                     </div>
                   </div>
-
                   {/* INTERACTIVE PHOTO CUSTOMIZER PANEL */}
                   {imageToCustomize && !personalInfo.isAvatarLocked && (
                     <div ref={workshopRef} className="p-4 bg-brand-50/40 border border-brand-200/80 space-y-4 rounded-none">
@@ -1835,37 +1835,83 @@ export default function Customizer() {
                     </div>
                   </div>
 
-                  {/* Option D: Device Sync / Backup */}
-                  <div className="p-4 bg-brand-50/50 border border-brand-100 space-y-3 mt-4">
-                    <div className="flex items-center space-x-2">
-                      <Sparkles className="w-4 h-4 text-brand-900" />
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-900">
-                        Option D: Sync Across Devices
-                      </span>
+                  {/* Option D: Cloud Sync & Manual Photo Upload */}
+                  <div className="p-4 bg-emerald-50/45 border border-emerald-100 space-y-3 mt-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Globe className="w-4 h-4 text-emerald-800 animate-spin-slow" />
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-emerald-900">
+                          Option D: Multi-Device Sync & Direct Upload
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className={`w-1.5 h-1.5 rounded-full ${isSyncing ? 'bg-amber-500 animate-pulse' : 'bg-emerald-500'}`} />
+                        <span className="text-[8px] font-mono font-bold uppercase text-neutral-500">
+                          {isSyncing ? 'Syncing...' : 'Connected'}
+                        </span>
+                      </div>
                     </div>
+                    
                     <p className="text-[9px] font-sans text-neutral-600 leading-normal">
-                      Since customized data and uploaded photos are saved inside your browser's local cache, they don't automatically sync to your other devices. Use this tool to easily download your custom portfolio and restore it on another computer or phone!
+                      Your changes and uploaded photos are fully persistent! When you select an image manually, it is processed, compressed, and written directly to the cloud backend server. It will automatically load and sync on any other device (desktop, laptop, tablet, or phone) running this app!
                     </p>
-                    <div className="flex gap-2 pt-1">
-                      <button
-                        type="button"
-                        onClick={handleExportConfig}
-                        className="flex-1 py-2 bg-neutral-900 hover:bg-neutral-800 text-white font-mono text-[9px] uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                      >
-                        <Download className="w-3 h-3" />
-                        <span>Export Backup</span>
-                      </button>
-                      
-                      <label className="flex-1 py-2 border border-neutral-300 hover:border-neutral-900 text-neutral-800 font-mono text-[9px] uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer text-center bg-white">
-                        <UploadCloud className="w-3 h-3 text-neutral-500" />
-                        <span>Import Backup</span>
+
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      {/* Direct Manual File Upload */}
+                      <label className={`py-2 px-3 border border-emerald-200 hover:border-emerald-600 hover:bg-emerald-50/50 text-emerald-800 font-mono text-[9px] uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer text-center bg-white ${personalInfo.isAvatarLocked ? 'opacity-50 pointer-events-none' : ''}`}>
+                        <UploadCloud className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Upload Photo Manually</span>
                         <input
                           type="file"
-                          accept=".json"
-                          onChange={handleImportConfig}
+                          accept="image/*"
+                          disabled={!!personalInfo.isAvatarLocked}
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              processFile(file);
+                            }
+                          }}
                           className="hidden"
                         />
                       </label>
+
+                      {/* Manual Sync Trigger */}
+                      <button
+                        type="button"
+                        disabled={isSyncing}
+                        onClick={async () => {
+                          await syncStateWithServer(personalInfo, projects);
+                          triggerSaveSuccess();
+                        }}
+                        className="py-2 px-3 bg-neutral-900 hover:bg-neutral-800 text-white font-mono text-[9px] uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      >
+                        <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
+                        <span>{isSyncing ? 'Syncing...' : 'Force Cloud Sync'}</span>
+                      </button>
+                    </div>
+
+                    {/* Classic backup tools as secondary collapsed option */}
+                    <div className="pt-2 border-t border-emerald-100/60 flex items-center justify-between">
+                      <span className="text-[8px] font-mono text-neutral-400 uppercase tracking-wider">Local Backup Tools (Offline Mode)</span>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={handleExportConfig}
+                          className="text-[8px] font-mono font-bold text-neutral-600 hover:text-black uppercase tracking-wider underline cursor-pointer"
+                        >
+                          Export .json
+                        </button>
+                        <span className="text-neutral-300 text-[8px]">|</span>
+                        <label className="text-[8px] font-mono font-bold text-neutral-600 hover:text-black uppercase tracking-wider underline cursor-pointer">
+                          Import .json
+                          <input
+                            type="file"
+                            accept=".json"
+                            onChange={handleImportConfig}
+                            className="hidden"
+                          />
+                        </label>
+                      </div>
                     </div>
                   </div>
 
