@@ -4,6 +4,12 @@ import { X, Upload, Link as LinkIcon, RotateCcw, Check, Sparkles, User, Image as
 import { usePortfolio } from '../context/PortfolioContext';
 import { Project } from '../types';
 
+// Real and AI Portrait Assets
+import rahulAvatarSuit from '../assets/images/rahul_avatar_1783067061163.jpg';
+import rahulAvatarGlasses from '../assets/images/rahul_avatar_1782920001963.jpg';
+import aiAvatarBlack from '../assets/images/avatar_1783346962733.jpg';
+import aiAvatarGrey from '../assets/images/avatar_1783347248558.jpg';
+
 export default function Customizer() {
   const { 
     personalInfo, 
@@ -1829,6 +1835,75 @@ export default function Customizer() {
                           >
                             <img src={item.url} alt={item.name} className="w-6 h-6 object-cover flex-shrink-0" />
                             <span className="text-[8px] font-sans text-neutral-600 line-clamp-1">{item.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 pt-3 border-t border-brand-100">
+                      <label className="text-[9px] font-mono font-bold text-amber-600 uppercase tracking-widest block flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 text-amber-500" />
+                        C.3: Discovered Real & AI Portraits
+                      </label>
+                      <p className="text-[9px] font-sans text-neutral-500 leading-normal">
+                        Select one of your uploaded real photographs or generated portraits to set it as your default portfolio portrait immediately:
+                      </p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[
+                          {
+                            name: 'Real Portrait (Suit & Tie)',
+                            filename: 'rahul_avatar_1783067061163.jpg',
+                            asset: rahulAvatarSuit,
+                            badge: 'Professional'
+                          },
+                          {
+                            name: 'Real Portrait (Glasses & Office)',
+                            filename: 'rahul_avatar_1782920001963.jpg',
+                            asset: rahulAvatarGlasses,
+                            badge: 'Alternative'
+                          },
+                          {
+                            name: 'AI Generated (Black Shirt)',
+                            filename: 'avatar_1783346962733.jpg',
+                            asset: aiAvatarBlack,
+                            badge: 'AI Portrait'
+                          },
+                          {
+                            name: 'AI Generated (Grey BG)',
+                            filename: 'avatar_1783347248558.jpg',
+                            asset: aiAvatarGrey,
+                            badge: 'AI Portrait'
+                          }
+                        ].map((item, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            disabled={!!personalInfo.isAvatarLocked}
+                            onClick={async () => {
+                              try {
+                                const res = await fetch('/api/select-avatar', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ filename: item.filename })
+                                });
+                                if (res.ok) {
+                                  updatePersonalInfo({ avatar: `/api/avatar.jpg?v=${Date.now()}` });
+                                  setImageToCustomize(null);
+                                  triggerSaveSuccess();
+                                }
+                              } catch (err) {
+                                console.error('Error setting photo:', err);
+                              }
+                            }}
+                            className="group flex flex-col justify-between p-2 border border-neutral-200 bg-white hover:border-black text-left transition-all cursor-pointer relative"
+                          >
+                            <div className="flex items-center gap-2 w-full">
+                              <img src={item.asset} alt={item.name} className="w-8 h-8 object-cover flex-shrink-0 border border-neutral-100" />
+                              <div className="flex-1 min-w-0">
+                                <span className="text-[8px] font-sans font-bold text-neutral-800 block line-clamp-1">{item.name}</span>
+                                <span className="text-[7px] font-mono uppercase bg-neutral-100 px-1 py-0.5 rounded text-neutral-600 mt-0.5 inline-block">{item.badge}</span>
+                              </div>
+                            </div>
                           </button>
                         ))}
                       </div>

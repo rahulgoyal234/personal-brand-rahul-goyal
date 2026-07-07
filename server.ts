@@ -12,6 +12,8 @@ async function startServer() {
     const persistedPath = path.join(process.cwd(), 'avatar_persisted.jpg');
     const defaultPath = path.join(process.cwd(), 'src', 'assets', 'images', 'avatar.jpg');
     
+    console.log(`[AvatarRequest] Received request for avatar. Persisted path: ${persistedPath} (exists: ${fs.existsSync(persistedPath)}), Default path: ${defaultPath} (exists: ${fs.existsSync(defaultPath)})`);
+    
     if (fs.existsSync(persistedPath)) {
       res.setHeader('Content-Type', 'image/jpeg');
       return res.sendFile(persistedPath);
@@ -19,7 +21,42 @@ async function startServer() {
       res.setHeader('Content-Type', 'image/jpeg');
       return res.sendFile(defaultPath);
     } else {
+      console.log('[AvatarRequest] Avatar not found anywhere!');
       res.status(404).send('Avatar Not Found');
+    }
+  });
+
+  // Select a preset/discovered photo to copy as default avatar
+  app.post('/api/select-avatar', express.json(), (req, res) => {
+    try {
+      const { filename } = req.body;
+      if (!filename) {
+        return res.status(400).json({ error: 'Missing filename' });
+      }
+
+      // Safe filename verification to prevent traversal
+      const cleanFilename = path.basename(filename);
+      const sourcePath = path.join(process.cwd(), 'src', 'assets', 'images', cleanFilename);
+
+      if (!fs.existsSync(sourcePath)) {
+        return res.status(404).json({ error: `Source image ${cleanFilename} not found` });
+      }
+
+      const buffer = fs.readFileSync(sourcePath);
+      
+      // Save root backup
+      const persistedPath = path.join(process.cwd(), 'avatar_persisted.jpg');
+      fs.writeFileSync(persistedPath, buffer);
+
+      // Save to src workspace path
+      const targetPath = path.join(process.cwd(), 'src', 'assets', 'images', 'avatar.jpg');
+      fs.writeFileSync(targetPath, buffer);
+
+      console.log(`[SelectAvatar] Successfully copied ${cleanFilename} to default paths.`);
+      return res.json({ success: true, avatarUrl: '/api/avatar.jpg' });
+    } catch (error) {
+      console.error('[SelectAvatar] Error:', error);
+      return res.status(500).json({ error: 'Failed to copy selected avatar' });
     }
   });
 

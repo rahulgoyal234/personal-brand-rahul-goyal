@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { Menu, X, Linkedin, Mail } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 
@@ -104,45 +103,39 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
       </div>
 
       {/* Mobile Drawer Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            id="mobile-nav-drawer"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="md:hidden border-b border-brand-200 bg-[#fcfcfc]"
-          >
-            <div className="px-6 py-6 space-y-4 flex flex-col">
-              {navItems.map((item) => (
-                <button
-                  id={`mobile-nav-item-${item.id}`}
-                  key={item.id}
-                  onClick={() => handleNavClick(item.id)}
-                  className={`text-left w-full py-3 font-display text-sm font-semibold uppercase tracking-widest cursor-pointer ${
-                    activeSection === item.id ? 'text-brand-900 border-l-2 border-brand-900 pl-3' : 'text-brand-500 pl-0'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              ))}
+      {isOpen && (
+        <div
+          id="mobile-nav-drawer"
+          className="md:hidden border-b border-brand-200 bg-[#fcfcfc] transition-all duration-200 overflow-hidden"
+        >
+          <div className="px-6 py-6 space-y-4 flex flex-col">
+            {navItems.map((item) => (
+              <button
+                id={`mobile-nav-item-${item.id}`}
+                key={item.id}
+                onClick={() => handleNavClick(item.id)}
+                className={`text-left w-full py-3 font-display text-sm font-semibold uppercase tracking-widest cursor-pointer ${
+                  activeSection === item.id ? 'text-brand-900 border-l-2 border-brand-900 pl-3' : 'text-brand-500 pl-0'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
 
-              <div className="pt-4 border-t border-brand-200 flex flex-col space-y-3">
-                {/* Social icons in mobile view */}
-                <div className="flex items-center justify-center space-x-6 py-2">
-                  <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="text-brand-500 hover:text-brand-900 transition-colors">
-                    <Linkedin className="w-4 h-4" />
-                  </a>
-                  <a href={`mailto:${personalInfo.email}`} className="text-brand-500 hover:text-brand-900 transition-colors">
-                    <Mail className="w-4 h-4" />
-                  </a>
-                </div>
+            <div className="pt-4 border-t border-brand-200 flex flex-col space-y-3">
+              {/* Social icons in mobile view */}
+              <div className="flex items-center justify-center space-x-6 py-2">
+                <a href={personalInfo.linkedin} target="_blank" rel="noreferrer" className="text-brand-500 hover:text-brand-900 transition-colors">
+                  <Linkedin className="w-4 h-4" />
+                </a>
+                <a href={`mailto:${personalInfo.email}`} className="text-brand-500 hover:text-brand-900 transition-colors">
+                  <Mail className="w-4 h-4" />
+                </a>
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

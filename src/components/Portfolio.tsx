@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { ExternalLink, Github, ArrowRight, X, ChevronRight, BarChart2, Star, Zap } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { Project } from '../types';
@@ -55,141 +54,125 @@ export default function Portfolio() {
         </div>
 
         {/* Projects Grid */}
-        <motion.div
+        <div
           id="projects-grid"
-          layout
           className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-12"
         >
-          <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project) => (
-              <motion.article
-                id={`project-card-${project.id}`}
-                layout
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-                key={project.id}
-                className="group flex flex-col h-full bg-[#fcfcfc] border border-neutral-200/60 rounded-none overflow-hidden hover:border-black transition-all duration-300"
-              >
-                {/* Visual Thumbnail */}
-                <div className="relative overflow-hidden aspect-video bg-neutral-100 cursor-pointer" onClick={() => setActiveProject(project)}>
-                  <img
-                    id={`project-img-${project.id}`}
-                    src={project.image}
-                    alt={project.title}
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 scale-100 group-hover:scale-102 transition-all duration-500"
-                  />
-                  {/* Category overlay */}
-                  <span className="absolute top-4 left-4 bg-white/95 px-2 py-0.5 border border-black text-[9px] font-mono font-semibold tracking-wider text-black uppercase">
-                    {project.category}
-                  </span>
+          {filteredProjects.map((project) => (
+            <article
+              id={`project-card-${project.id}`}
+              key={project.id}
+              className="group flex flex-col h-full bg-[#fcfcfc] border border-neutral-200/60 rounded-none overflow-hidden hover:border-black transition-all duration-300"
+            >
+              {/* Visual Thumbnail */}
+              <div className="relative overflow-hidden aspect-video bg-neutral-100 cursor-pointer" onClick={() => setActiveProject(project)}>
+                <img
+                  id={`project-img-${project.id}`}
+                  src={project.image}
+                  alt={project.title}
+                  referrerPolicy="no-referrer"
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 scale-100 group-hover:scale-102 transition-all duration-500"
+                />
+                {/* Category overlay */}
+                <span className="absolute top-4 left-4 bg-white/95 px-2 py-0.5 border border-black text-[9px] font-mono font-semibold tracking-wider text-black uppercase">
+                  {project.category}
+                </span>
+              </div>
+
+              {/* Info block */}
+              <div className="flex flex-col flex-1 p-6 sm:p-8 space-y-4">
+                <div className="space-y-2 flex-1">
+                  <h3 className="font-sans text-lg font-normal tracking-tight text-brand-900 flex items-center justify-between">
+                    <span>{project.title}</span>
+                    <button
+                      onClick={() => setActiveProject(project)}
+                      className="text-neutral-400 hover:text-black transition-colors md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
+                      title="View details"
+                    >
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </h3>
+                  <p className="text-xs text-neutral-500 font-light leading-relaxed">
+                    {project.description}
+                  </p>
                 </div>
 
-                {/* Info block */}
-                <div className="flex flex-col flex-1 p-6 sm:p-8 space-y-4">
-                  <div className="space-y-2 flex-1">
-                    <h3 className="font-sans text-lg font-normal tracking-tight text-brand-900 flex items-center justify-between">
-                      <span>{project.title}</span>
-                      <button
-                        onClick={() => setActiveProject(project)}
-                        className="text-neutral-400 hover:text-black transition-colors md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
-                        title="View details"
-                      >
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
-                    </h3>
-                    <p className="text-xs text-neutral-500 font-light leading-relaxed">
-                      {project.description}
-                    </p>
-                  </div>
+                {/* Tag List */}
+                <div className="flex flex-wrap gap-1.5 pt-2">
+                  {project.tags.slice(0, 4).map((tag) => (
+                    <span
+                      key={tag}
+                      className="bg-neutral-100 text-neutral-600 border border-neutral-200 text-[9px] font-mono font-medium px-2 py-0.5 rounded-none uppercase"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                  {project.tags.length > 4 && (
+                    <span className="text-[9px] font-mono font-medium text-neutral-400 px-1 py-0.5">
+                      +{project.tags.length - 4} MORE
+                    </span>
+                  )}
+                </div>
 
-                  {/* Tag List */}
-                  <div className="flex flex-wrap gap-1.5 pt-2">
-                    {project.tags.slice(0, 4).map((tag) => (
-                      <span
-                        key={tag}
-                        className="bg-neutral-100 text-neutral-600 border border-neutral-200 text-[9px] font-mono font-medium px-2 py-0.5 rounded-none uppercase"
+                {/* Actions Bar */}
+                <div className="flex items-center justify-between pt-4 border-t border-neutral-100">
+                  <button
+                    id={`project-details-btn-${project.id}`}
+                    onClick={() => setActiveProject(project)}
+                    className="text-[10px] font-mono font-bold text-neutral-800 hover:text-black hover:underline flex items-center space-x-1 uppercase tracking-wider cursor-pointer"
+                  >
+                    <span>Read Writing Abstract</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+
+                  <div className="flex items-center space-x-3 text-neutral-400">
+                    {project.githubUrl && (
+                      <a
+                        id={`project-github-link-${project.id}`}
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="hover:text-black transition-colors cursor-pointer"
+                        title="View Repository"
                       >
-                        {tag}
-                      </span>
-                    ))}
-                    {project.tags.length > 4 && (
-                      <span className="text-[9px] font-mono font-medium text-neutral-400 px-1 py-0.5">
-                        +{project.tags.length - 4} MORE
-                      </span>
+                        <Github className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+                    {project.demoUrl && (
+                      <a
+                        id={`project-demo-link-${project.id}`}
+                        href={project.demoUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="hover:text-black transition-colors cursor-pointer"
+                        title="Launch Demo"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
                     )}
                   </div>
-
-                  {/* Actions Bar */}
-                  <div className="flex items-center justify-between pt-4 border-t border-neutral-100">
-                    <button
-                      id={`project-details-btn-${project.id}`}
-                      onClick={() => setActiveProject(project)}
-                      className="text-[10px] font-mono font-bold text-neutral-800 hover:text-black hover:underline flex items-center space-x-1 uppercase tracking-wider cursor-pointer"
-                    >
-                      <span>Read Writing Abstract</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </button>
-
-                    <div className="flex items-center space-x-3 text-neutral-400">
-                      {project.githubUrl && (
-                        <a
-                          id={`project-github-link-${project.id}`}
-                          href={project.githubUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="hover:text-black transition-colors cursor-pointer"
-                          title="View Repository"
-                        >
-                          <Github className="w-3.5 h-3.5" />
-                        </a>
-                      )}
-                      {project.demoUrl && (
-                        <a
-                          id={`project-demo-link-${project.id}`}
-                          href={project.demoUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="hover:text-black transition-colors cursor-pointer"
-                          title="Launch Demo"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
                 </div>
-              </motion.article>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+              </div>
+            </article>
+          ))}
+        </div>
       </div>
 
       {/* CASE STUDY DETAIL MODAL */}
-      <AnimatePresence>
-          {activeProject && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              {/* Overlay background */}
-              <motion.div
-                id="modal-overlay"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.4 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setActiveProject(null)}
-                className="absolute inset-0 bg-black"
-              />
+      {activeProject && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Overlay background */}
+          <div
+            id="modal-overlay"
+            onClick={() => setActiveProject(null)}
+            className="absolute inset-0 bg-black/40"
+          />
 
-              {/* Modal window */}
-              <motion.div
-                id="project-detail-modal"
-                initial={{ opacity: 0, scale: 0.98, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.98, y: 10 }}
-                transition={{ duration: 0.2 }}
-                className="relative bg-[#fcfcfc] border border-neutral-300 w-full max-w-3xl max-h-[85vh] rounded-none overflow-y-auto shadow-none z-10 flex flex-col"
-              >
+          {/* Modal window */}
+          <div
+            id="project-detail-modal"
+            className="relative bg-[#fcfcfc] border border-neutral-300 w-full max-w-3xl max-h-[85vh] rounded-none overflow-y-auto shadow-none z-10 flex flex-col"
+          >
                 {/* Header controls */}
                 <div className="sticky top-0 bg-[#fcfcfc]/95 backdrop-blur-md px-6 py-4 border-b border-neutral-200 flex items-center justify-between z-20">
                   <div className="flex items-center space-x-2">
@@ -323,10 +306,9 @@ export default function Portfolio() {
                     )}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
           )}
-        </AnimatePresence>
       </section>
     );
   }

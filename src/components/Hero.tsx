@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, Linkedin, Mail, MapPin, Briefcase, Settings, Play, X, Edit, Lock, Globe, MoreVertical, RefreshCw, Upload } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 
@@ -13,70 +12,100 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [indexingStatus, setIndexingStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [avatarLoadError, setAvatarLoadError] = useState(false);
+  const [avatarVersion, setAvatarVersion] = useState(() => Date.now());
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     setAvatarLoadError(false);
+    setAvatarVersion(Date.now());
   }, [personalInfo.avatar]);
+
+  const processAndUploadFile = (file: File) => {
+    // Create highly memory-efficient Object URL instead of FileReader base64 strings to prevent crashes
+    const blobUrl = URL.createObjectURL(file);
+    const img = new Image();
+    
+    img.onload = () => {
+      const maxDimension = 1600; // Ultra high resolution limit for razor-sharp display on 4K/Retina screens
+      let w = img.width;
+      let h = img.height;
+      
+      if (w > maxDimension || h > maxDimension) {
+        if (w > h) {
+          h = Math.round((h * maxDimension) / w);
+          w = maxDimension;
+        } else {
+          w = Math.round((w * maxDimension) / h);
+          h = maxDimension;
+        }
+      }
+      
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      
+      if (ctx) {
+        ctx.drawImage(img, 0, 0, w, h);
+        try {
+          // Highly pristine 0.95 quality for crisp original detail with zero compression artifacts
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.95);
+          updatePersonalInfo({ avatar: compressedBase64 });
+        } catch (err) {
+          console.error("Compression failed, trying fallback to generic canvas URL", err);
+          try {
+            const fallbackBase64 = canvas.toDataURL('image/png');
+            updatePersonalInfo({ avatar: fallbackBase64 });
+          } catch (fallbackErr) {
+            console.error("Fallback image rendering failed", fallbackErr);
+          }
+        }
+      }
+      URL.revokeObjectURL(blobUrl);
+    };
+    
+    img.onerror = () => {
+      console.error("Failed to load image via ObjectURL");
+      URL.revokeObjectURL(blobUrl);
+      // Robust fallback to reader if ObjectURL is not fully supported
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        updatePersonalInfo({ avatar: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    };
+    
+    img.src = blobUrl;
+  };
 
   const handleDirectFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Create highly memory-efficient Object URL instead of FileReader base64 strings to prevent crashes
-      const blobUrl = URL.createObjectURL(file);
-      const img = new Image();
-      
-      img.onload = () => {
-        const maxDimension = 1600; // Ultra high resolution limit for razor-sharp display on 4K/Retina screens
-        let w = img.width;
-        let h = img.height;
-        
-        if (w > maxDimension || h > maxDimension) {
-          if (w > h) {
-            h = Math.round((h * maxDimension) / w);
-            w = maxDimension;
-          } else {
-            w = Math.round((w * maxDimension) / h);
-            h = maxDimension;
-          }
-        }
-        
-        const canvas = document.createElement('canvas');
-        canvas.width = w;
-        canvas.height = h;
-        const ctx = canvas.getContext('2d');
-        
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, w, h);
-          try {
-            // Highly pristine 0.95 quality for crisp original detail with zero compression artifacts
-            const compressedBase64 = canvas.toDataURL('image/jpeg', 0.95);
-            updatePersonalInfo({ avatar: compressedBase64 });
-          } catch (err) {
-            console.error("Compression failed, trying fallback to generic canvas URL", err);
-            try {
-              const fallbackBase64 = canvas.toDataURL('image/png');
-              updatePersonalInfo({ avatar: fallbackBase64 });
-            } catch (fallbackErr) {
-              console.error("Fallback image rendering failed", fallbackErr);
-            }
-          }
-        }
-        URL.revokeObjectURL(blobUrl);
-      };
-      
-      img.onerror = () => {
-        console.error("Failed to load image via ObjectURL");
-        URL.revokeObjectURL(blobUrl);
-        // Robust fallback to reader if ObjectURL is not fully supported
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          updatePersonalInfo({ avatar: reader.result as string });
-        };
-        reader.readAsDataURL(file);
-      };
-      
-      img.src = blobUrl;
+      processAndUploadFile(file);
+    }
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setIsDragging(true);
+    } else if (e.type === "dragleave") {
+      setIsDragging(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    
+    if (personalInfo.isAvatarLocked) return;
+    
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      processAndUploadFile(file);
     }
   };
 
@@ -151,41 +180,35 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
       <div className="max-w-6xl mx-auto px-6 w-full relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 items-center">
           {/* Main Info Columns */}
-          <motion.div
+          <div
             id="hero-content"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
             className="md:col-span-7 flex flex-col items-start text-left space-y-6"
           >
             {/* Heading Name & Role */}
             <div className="space-y-4">
-              <motion.h1
+              <h1
                 id="hero-heading"
-                variants={itemVariants}
                 className="font-sans text-4xl sm:text-5xl lg:text-6xl font-extralight tracking-tighter text-brand-900 leading-[1.1]"
               >
                 {renderFormattedHeading(personalInfo.shortBio)}
-              </motion.h1>
+              </h1>
               {personalInfo.name.toLowerCase() !== 'rahul goyal' && (
-                <motion.p
+                <p
                   id="hero-subheading"
-                  variants={itemVariants}
                   className="font-display text-[11px] uppercase tracking-[0.3em] text-neutral-400 mt-2 font-bold"
                 >
                   {`${personalInfo.name} | ${personalInfo.title}`}
-                </motion.p>
+                </p>
               )}
             </div>
 
             {/* Detailed Bio paragraph */}
-            <motion.p
+            <p
               id="hero-bio"
-              variants={itemVariants}
               className="text-neutral-500 text-sm leading-relaxed max-w-md font-light whitespace-pre-line"
             >
               {personalInfo.bio}
-            </motion.p>
+            </p>
 
 
 
@@ -193,20 +216,19 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             {personalInfo.location && 
              personalInfo.location.toLowerCase() !== 'new delhi, india' && 
              personalInfo.location.toLowerCase() !== 'new delhi' && (
-              <motion.div
+              <div
                 id="hero-metadata"
-                variants={itemVariants}
                 className="flex flex-wrap items-center gap-y-2 gap-x-6 text-[11px] text-neutral-400 font-mono uppercase tracking-wider"
               >
                 <div className="flex items-center space-x-1.5">
                   <MapPin className="w-3.5 h-3.5 text-brand-400" />
                   <span>{personalInfo.location}</span>
                 </div>
-              </motion.div>
+              </div>
             )}
 
             {/* Social Links */}
-            <motion.div id="hero-social-links" variants={itemVariants} className="flex items-center space-x-3 pt-2">
+            <div id="hero-social-links" className="flex items-center space-x-3 pt-2">
               <a
                 id="hero-social-linkedin"
                 href={personalInfo.linkedin}
@@ -225,10 +247,10 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               >
                 <Mail className="w-4 h-4" />
               </a>
-            </motion.div>
+            </div>
 
             {/* Call To Action Buttons */}
-            <motion.div id="hero-actions" variants={itemVariants} className="flex items-center gap-6 pt-4">
+            <div id="hero-actions" className="flex items-center gap-6 pt-4">
               <button
                 id="hero-cta-portfolio"
                 onClick={onPortfolioClick}
@@ -243,18 +265,19 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               >
                 Get in Touch
               </button>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
           {/* Portrait Column */}
-          <motion.div
+          <div
             id="hero-portrait-container"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: 'spring', stiffness: 50, damping: 15, delay: 0.2 }}
             className="md:col-span-5 flex justify-center md:justify-end"
           >
             <div 
+              onDragEnter={handleDrag}
+              onDragOver={handleDrag}
+              onDragLeave={handleDrag}
+              onDrop={handleDrop}
               className={`relative group w-full max-w-[250px] xs:max-w-[280px] sm:max-w-[320px] md:max-w-[300px] lg:max-w-[340px] xl:max-w-[380px] aspect-square select-none ${
                 personalInfo.introVideo ? 'cursor-pointer' : 'cursor-default'
               }`}
@@ -262,6 +285,22 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               {/* Back framing accent */}
               <div className="absolute inset-0 border border-brand-200 rotate-1 group-hover:rotate-4 group-hover:scale-[1.02] group-active:rotate-4 group-active:scale-[1.02] transition-all duration-500 rounded-none bg-neutral-50"></div>
               
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleDirectFileChange}
+                accept="image/*"
+                className="hidden"
+              />
+
+              {/* Drag over upload overlay */}
+              {isDragging && !personalInfo.isAvatarLocked && (
+                <div className="absolute inset-0 bg-black/70 backdrop-blur-xs z-40 flex flex-col items-center justify-center text-white p-4 border-2 border-dashed border-emerald-500 animate-pulse transition-all">
+                  <Upload className="w-8 h-8 mb-2 text-emerald-400" />
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-center">Drop to Upload Portrait</span>
+                </div>
+              )}
+
               {/* Main image card wrapper */}
               {personalInfo.introVideo ? (
                 <div 
@@ -275,7 +314,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   ) : (
                     <img
                       id="hero-portrait-img"
-                      src={personalInfo.avatar}
+                      src={personalInfo.avatar.startsWith('data:') ? personalInfo.avatar : `${personalInfo.avatar}?v=${avatarVersion}`}
                       alt={personalInfo.name}
                       referrerPolicy="no-referrer"
                       onError={() => setAvatarLoadError(true)}
@@ -301,7 +340,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   ) : (
                     <img
                       id="hero-portrait-img"
-                      src={personalInfo.avatar}
+                      src={personalInfo.avatar.startsWith('data:') ? personalInfo.avatar : `${personalInfo.avatar}?v=${avatarVersion}`}
                       alt={personalInfo.name}
                       referrerPolicy="no-referrer"
                       onError={() => setAvatarLoadError(true)}
@@ -309,6 +348,22 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                     />
                   )}
                 </div>
+              )}
+
+              {/* Absolute hovering Action Badges */}
+              {!personalInfo.isAvatarLocked && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    fileInputRef.current?.click();
+                  }}
+                  className="absolute bottom-3 right-3 z-30 bg-white/90 hover:bg-white backdrop-blur-md text-brand-900 border border-brand-200/50 px-2 py-1 flex items-center space-x-1 font-mono text-[8px] tracking-wider uppercase shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+                  title="Upload custom portrait photo"
+                >
+                  <Upload className="w-2.5 h-2.5 text-brand-600 animate-bounce" />
+                  <span>Upload Photo</span>
+                </button>
               )}
 
               {/* Optional pulsing "Intro Video" badge at top right - Rendered on top of image wrapper */}
@@ -331,77 +386,68 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 <span className="text-brand-600 font-bold">Based in New Delhi, India</span>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
 
       {/* Immersive Video Theater Modal */}
-      <AnimatePresence>
-        {isVideoModalOpen && personalInfo.introVideo && (
-          <div id="video-modal-container" className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop with elegant blur */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsVideoModalOpen(false)}
-              className="absolute inset-0 bg-black/85 backdrop-blur-sm"
-            />
-            
-            {/* Playback Box */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ type: 'spring', duration: 0.5 }}
-              className="relative w-full max-w-4xl bg-black border border-neutral-800 shadow-2xl overflow-hidden z-10"
-            >
-              {/* Close Button overlay */}
-              <div className="absolute top-4 right-4 z-20">
-                <button
-                  id="close-video-modal-btn"
-                  onClick={() => setIsVideoModalOpen(false)}
-                  className="p-1.5 bg-black/60 hover:bg-black/90 text-neutral-400 hover:text-white border border-neutral-800 transition-colors cursor-pointer"
-                  title="Close Video"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
+      {isVideoModalOpen && personalInfo.introVideo && (
+        <div id="video-modal-container" className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop with elegant blur */}
+          <div
+            onClick={() => setIsVideoModalOpen(false)}
+            className="absolute inset-0 bg-black/85 backdrop-blur-sm"
+          />
+          
+          {/* Playback Box */}
+          <div
+            className="relative w-full max-w-4xl bg-black border border-neutral-800 shadow-2xl overflow-hidden z-10"
+          >
+            {/* Close Button overlay */}
+            <div className="absolute top-4 right-4 z-20">
+              <button
+                id="close-video-modal-btn"
+                onClick={() => setIsVideoModalOpen(false)}
+                className="p-1.5 bg-black/60 hover:bg-black/90 text-neutral-400 hover:text-white border border-neutral-800 transition-colors cursor-pointer"
+                title="Close Video"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
 
-              {/* Responsive aspect video player */}
-              <div className="relative aspect-video w-full flex items-center justify-center bg-black">
-                {personalInfo.introVideoType === 'file' || personalInfo.introVideoType === 'url' ? (
-                  <video 
-                    src={personalInfo.introVideo} 
-                    controls 
-                    autoPlay
-                    className="w-full h-full object-contain"
-                  />
-                ) : (
-                  <iframe
-                    src={`${personalInfo.introVideo}${personalInfo.introVideo.includes('?') ? '&' : '?'}autoplay=1`}
-                    title="Intro Video Profile Player"
-                    className="w-full h-full border-none"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                )}
-              </div>
+            {/* Responsive aspect video player */}
+            <div className="relative aspect-video w-full flex items-center justify-center bg-black">
+              {personalInfo.introVideoType === 'file' || personalInfo.introVideoType === 'url' ? (
+                <video 
+                  src={personalInfo.introVideo} 
+                  controls 
+                  autoPlay
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <iframe
+                  src={`${personalInfo.introVideo}${personalInfo.introVideo.includes('?') ? '&' : '?'}autoplay=1`}
+                  title="Intro Video Profile Player"
+                  className="w-full h-full border-none"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              )}
+            </div>
 
-              {/* Informative footer */}
-              <div className="p-4 bg-neutral-950 border-t border-neutral-900 flex justify-between items-center">
-                <div>
-                  <span className="block text-[8px] font-mono text-neutral-500 uppercase tracking-widest">Introduction video</span>
-                  <h4 className="text-xs font-sans font-bold text-neutral-200 uppercase tracking-wide">{personalInfo.name} | Profile Pitch</h4>
-                </div>
-                <div className="text-[9px] font-mono text-neutral-400 uppercase border border-neutral-900 px-2.5 py-0.5">
-                  {personalInfo.introVideoType === 'file' ? 'Local Upload' : 'External Stream'}
-                </div>
+            {/* Informative footer */}
+            <div className="p-4 bg-neutral-950 border-t border-neutral-900 flex justify-between items-center">
+              <div>
+                <span className="block text-[8px] font-mono text-neutral-500 uppercase tracking-widest">Introduction video</span>
+                <h4 className="text-xs font-sans font-bold text-neutral-200 uppercase tracking-wide">{personalInfo.name} | Profile Pitch</h4>
               </div>
-            </motion.div>
+              <div className="text-[9px] font-mono text-neutral-400 uppercase border border-neutral-900 px-2.5 py-0.5">
+                {personalInfo.introVideoType === 'file' ? 'Local Upload' : 'External Stream'}
+              </div>
+            </div>
           </div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
     </section>
   );
 }

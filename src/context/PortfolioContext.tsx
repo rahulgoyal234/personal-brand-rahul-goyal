@@ -49,7 +49,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem('rahul_goyal_personal_info');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (!parsed.avatar || (!parsed.avatar.startsWith('data:') && !parsed.avatar.startsWith('http') && !parsed.avatar.startsWith('/'))) {
+        if (!parsed.avatar || parsed.avatar.includes('unsplash.com')) {
           parsed.avatar = PERSONAL_INFO.avatar;
         }
         if (parsed.linkedin === 'https://linkedin.com/in/rahulgoyal' || parsed.linkedin === 'https://linkedin.com/in/rahulgoyal/') {
@@ -176,6 +176,9 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           const remoteData = await response.json();
           if (remoteData) {
             if (remoteData.personalInfo) {
+              if (!remoteData.personalInfo.avatar || remoteData.personalInfo.avatar.includes('unsplash.com')) {
+                remoteData.personalInfo.avatar = PERSONAL_INFO.avatar;
+              }
               setPersonalInfo(remoteData.personalInfo);
               try {
                 localStorage.setItem('rahul_goyal_personal_info', JSON.stringify(remoteData.personalInfo));
@@ -234,6 +237,10 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
   const updatePersonalInfo = (updates: Partial<PersonalInfoType>) => {
     setPersonalInfo((prev) => {
       const merged = { ...prev, ...updates };
+      // Keep the updated avatar if provided, otherwise default to the official dynamic endpoint
+      if (!merged.avatar) {
+        merged.avatar = PERSONAL_INFO.avatar;
+      }
       return merged;
     });
   };
@@ -267,6 +274,9 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
   };
 
   const importPortfolio = (newPersonalInfo: PersonalInfoType, newProjects: Project[]) => {
+    if (!newPersonalInfo.avatar || newPersonalInfo.avatar.includes('unsplash.com')) {
+      newPersonalInfo.avatar = PERSONAL_INFO.avatar;
+    }
     setPersonalInfo(newPersonalInfo);
     setProjects(newProjects);
   };
