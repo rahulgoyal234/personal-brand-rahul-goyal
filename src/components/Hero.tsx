@@ -295,6 +295,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               <div className="absolute inset-0 border border-brand-200 rotate-1 group-hover:rotate-4 group-hover:scale-[1.02] group-active:rotate-4 group-active:scale-[1.02] transition-all duration-500 rounded-none bg-neutral-50"></div>
               
               <input
+                id="avatar-file-input"
                 type="file"
                 ref={fileInputRef}
                 onChange={handleDirectFileChange}
@@ -339,12 +340,8 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   </div>
                 </div>
               ) : (
-                <div 
-                  onClick={() => {
-                    if (!personalInfo.isAvatarLocked) {
-                      fileInputRef.current?.click();
-                    }
-                  }}
+                <label 
+                  htmlFor={!personalInfo.isAvatarLocked ? "avatar-file-input" : undefined}
                   className={`absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] ${
                     !personalInfo.isAvatarLocked ? 'cursor-pointer' : 'cursor-default'
                   }`}
@@ -373,23 +370,19 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                       )}
                     </div>
                   )}
-                </div>
+                </label>
               )}
 
               {/* Absolute hovering Action Badges */}
               {!personalInfo.isAvatarLocked && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    fileInputRef.current?.click();
-                  }}
+                <label
+                  htmlFor="avatar-file-input"
                   className="absolute bottom-4 right-4 md:bottom-3 md:right-3 z-30 bg-white/95 hover:bg-white active:scale-95 text-brand-900 border border-brand-200/50 px-4 py-3 md:px-2.5 md:py-1.5 flex items-center space-x-2 font-mono text-[10px] md:text-[8px] tracking-wider uppercase shadow-md transition-all duration-300 hover:scale-105 cursor-pointer rounded-none min-h-[44px] md:min-h-0 min-w-[110px] md:min-w-0 justify-center"
                   title="Upload custom portrait photo"
                 >
                   <Upload className="w-3.5 h-3.5 md:w-2.5 md:h-2.5 text-brand-600 animate-bounce" />
                   <span>Upload Photo</span>
-                </button>
+                </label>
               )}
 
               {/* Optional pulsing "Intro Video" badge at top right - Rendered on top of image wrapper */}

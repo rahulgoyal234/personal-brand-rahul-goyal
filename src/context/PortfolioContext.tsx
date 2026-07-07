@@ -87,6 +87,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           parsed.shortBio = PERSONAL_INFO.shortBio;
         }
         const merged = { ...PERSONAL_INFO, ...parsed };
+        merged.isAvatarLocked = false;
         return merged;
       }
     } catch (e) {
