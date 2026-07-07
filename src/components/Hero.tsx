@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { ArrowRight, Linkedin, Mail, MapPin, Briefcase, Settings, Play, X, Edit, Lock, Globe, MoreVertical, RefreshCw, Upload } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
+import { motion } from 'motion/react';
 
 interface HeroProps {
   onContactClick: () => void;
@@ -178,14 +179,19 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 w-full relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 items-center">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 items-center"
+        >
           {/* Main Info Columns */}
           <div
             id="hero-content"
             className="md:col-span-7 flex flex-col items-start text-left space-y-6"
           >
             {/* Heading Name & Role */}
-            <div className="space-y-4">
+            <motion.div variants={itemVariants} className="space-y-4">
               <h1
                 id="hero-heading"
                 className="font-sans text-4xl sm:text-5xl lg:text-6xl font-extralight tracking-tighter text-brand-900 leading-[1.1]"
@@ -200,15 +206,16 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   {`${personalInfo.name} | ${personalInfo.title}`}
                 </p>
               )}
-            </div>
+            </motion.div>
 
             {/* Detailed Bio paragraph */}
-            <p
+            <motion.p
               id="hero-bio"
+              variants={itemVariants}
               className="text-neutral-500 text-sm leading-relaxed max-w-md font-light whitespace-pre-line"
             >
               {personalInfo.bio}
-            </p>
+            </motion.p>
 
 
 
@@ -216,19 +223,20 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             {personalInfo.location && 
              personalInfo.location.toLowerCase() !== 'new delhi, india' && 
              personalInfo.location.toLowerCase() !== 'new delhi' && (
-              <div
+              <motion.div
                 id="hero-metadata"
+                variants={itemVariants}
                 className="flex flex-wrap items-center gap-y-2 gap-x-6 text-[11px] text-neutral-400 font-mono uppercase tracking-wider"
               >
                 <div className="flex items-center space-x-1.5">
                   <MapPin className="w-3.5 h-3.5 text-brand-400" />
                   <span>{personalInfo.location}</span>
                 </div>
-              </div>
+              </motion.div>
             )}
 
             {/* Social Links */}
-            <div id="hero-social-links" className="flex items-center space-x-3 pt-2">
+            <motion.div id="hero-social-links" variants={itemVariants} className="flex items-center space-x-3 pt-2">
               <a
                 id="hero-social-linkedin"
                 href={personalInfo.linkedin}
@@ -247,10 +255,10 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               >
                 <Mail className="w-4 h-4" />
               </a>
-            </div>
+            </motion.div>
 
             {/* Call To Action Buttons */}
-            <div id="hero-actions" className="flex items-center gap-6 pt-4">
+            <motion.div id="hero-actions" variants={itemVariants} className="flex items-center gap-6 pt-4">
               <button
                 id="hero-cta-portfolio"
                 onClick={onPortfolioClick}
@@ -265,12 +273,13 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               >
                 Get in Touch
               </button>
-            </div>
+            </motion.div>
           </div>
 
           {/* Portrait Column */}
-          <div
+          <motion.div
             id="hero-portrait-container"
+            variants={itemVariants}
             className="md:col-span-5 flex justify-center md:justify-end"
           >
             <div 
@@ -386,8 +395,8 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 <span className="text-brand-600 font-bold">Based in New Delhi, India</span>
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
 
       {/* Immersive Video Theater Modal */}
