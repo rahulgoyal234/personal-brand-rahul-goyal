@@ -340,21 +340,38 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 </div>
               ) : (
                 <div 
-                  className="absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] cursor-default"
+                  onClick={() => {
+                    if (!personalInfo.isAvatarLocked) {
+                      fileInputRef.current?.click();
+                    }
+                  }}
+                  className={`absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] ${
+                    !personalInfo.isAvatarLocked ? 'cursor-pointer' : 'cursor-default'
+                  }`}
                 >
                   {avatarLoadError || !personalInfo.avatar ? (
                     <div className="w-full h-full bg-neutral-100 flex flex-col items-center justify-center p-6 text-center">
                       <span className="font-sans text-xs font-bold text-neutral-800">No Portrait</span>
                     </div>
                   ) : (
-                    <img
-                      id="hero-portrait-img"
-                      src={personalInfo.avatar.startsWith('data:') ? personalInfo.avatar : `${personalInfo.avatar}?v=${avatarVersion}`}
-                      alt={personalInfo.name}
-                      referrerPolicy="no-referrer"
-                      onError={() => setAvatarLoadError(true)}
-                      className="w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03]"
-                    />
+                    <div className="relative w-full h-full">
+                      <img
+                        id="hero-portrait-img"
+                        src={personalInfo.avatar.startsWith('data:') ? personalInfo.avatar : `${personalInfo.avatar}?v=${avatarVersion}`}
+                        alt={personalInfo.name}
+                        referrerPolicy="no-referrer"
+                        onError={() => setAvatarLoadError(true)}
+                        className="w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03]"
+                      />
+                      {/* Interactive Tap-to-Upload helper text on mobile */}
+                      {!personalInfo.isAvatarLocked && (
+                        <div className="absolute inset-0 bg-black/0 active:bg-black/10 md:hover:bg-black/25 transition-all duration-300 flex items-center justify-center">
+                          <div className="bg-black/60 text-white font-mono text-[9px] px-2.5 py-1.5 uppercase tracking-wider rounded-none opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
+                            Change Photo
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
@@ -367,10 +384,10 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                     e.stopPropagation();
                     fileInputRef.current?.click();
                   }}
-                  className="absolute bottom-3 right-3 z-30 bg-white/90 hover:bg-white backdrop-blur-md text-brand-900 border border-brand-200/50 px-2 py-1 flex items-center space-x-1 font-mono text-[8px] tracking-wider uppercase shadow-sm transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer"
+                  className="absolute bottom-4 right-4 md:bottom-3 md:right-3 z-30 bg-white/95 hover:bg-white active:scale-95 text-brand-900 border border-brand-200/50 px-4 py-3 md:px-2.5 md:py-1.5 flex items-center space-x-2 font-mono text-[10px] md:text-[8px] tracking-wider uppercase shadow-md transition-all duration-300 hover:scale-105 cursor-pointer rounded-none min-h-[44px] md:min-h-0 min-w-[110px] md:min-w-0 justify-center"
                   title="Upload custom portrait photo"
                 >
-                  <Upload className="w-2.5 h-2.5 text-brand-600 animate-bounce" />
+                  <Upload className="w-3.5 h-3.5 md:w-2.5 md:h-2.5 text-brand-600 animate-bounce" />
                   <span>Upload Photo</span>
                 </button>
               )}
