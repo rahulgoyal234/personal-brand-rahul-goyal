@@ -1515,82 +1515,7 @@ export default function Customizer() {
                     </label>
                   </div>
 
-                  {/* Option A.2: Take Photo with Webcam (Alternative Manual) */}
-                  <div className={`space-y-2 ${personalInfo.isAvatarLocked ? 'opacity-50 pointer-events-none' : ''}`}>
-                    <label className="text-[9px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">
-                      Option A.2: {personalInfo.isAvatarLocked ? 'Take Photo with Webcam (Locked)' : 'Take Photo with Webcam'}
-                    </label>
-                    <div className="border border-neutral-200 bg-white p-4 space-y-3">
-                      {!isCameraActive ? (
-                        <div className="flex flex-col items-center justify-center py-6 space-y-3 text-center">
-                          <Camera className="w-8 h-8 text-neutral-400" />
-                          <div className="space-y-1">
-                            <p className="font-sans text-xs font-semibold text-neutral-800">
-                              Capture a custom profile snapshot directly
-                            </p>
-                            <p className="text-[9px] font-mono text-neutral-400 uppercase tracking-wider">
-                              Requires camera permission in browser
-                            </p>
-                          </div>
-                          <button
-                            type="button"
-                            disabled={!!personalInfo.isAvatarLocked}
-                            onClick={startCamera}
-                            className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white font-mono text-[9px] uppercase tracking-widest font-bold transition-all cursor-pointer flex items-center gap-1.5 shadow-sm rounded-none min-h-[36px]"
-                          >
-                            <Camera className="w-3.5 h-3.5" />
-                            <span>Activate Webcam</span>
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="space-y-4">
-                          <div className="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden border border-neutral-300">
-                            <video
-                              ref={videoRef}
-                              autoPlay
-                              playsInline
-                              muted
-                              className="w-full h-full object-cover scale-x-[-1]"
-                            />
-                            {/* Guideline Mask Overlay */}
-                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                              <div className="w-32 h-32 border-2 border-dashed border-white/60 rounded-full bg-black/20" />
-                            </div>
-                            <div className="absolute top-2 left-2 bg-red-600 text-white text-[8px] font-mono font-bold uppercase px-1.5 py-0.5 tracking-wider animate-pulse flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 bg-white rounded-full" />
-                              <span>Live Feed</span>
-                            </div>
-                          </div>
 
-                          {cameraError && (
-                            <p className="text-[9px] font-mono text-red-600 uppercase tracking-wider leading-relaxed">
-                              Error: {cameraError}
-                            </p>
-                          )}
-
-                          <div className="flex gap-2">
-                            <button
-                              type="button"
-                              onClick={capturePhoto}
-                              className="flex-1 py-2 bg-brand-900 hover:bg-brand-950 text-white font-mono text-[9px] uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
-                            >
-                              <Camera className="w-3.5 h-3.5" />
-                              <span>Capture Snapshot</span>
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => stopCamera()}
-                              className="px-4 py-2 border border-neutral-300 hover:border-neutral-900 text-neutral-600 hover:text-black font-mono text-[9px] uppercase tracking-wider font-bold transition-all cursor-pointer bg-white"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                      
-                      <canvas ref={canvasRef} className="hidden" />
-                    </div>
-                  </div>
 
                   {/* Option A.3: Traditional Manual File Selector */}
                   <div className={`space-y-2 ${personalInfo.isAvatarLocked ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -1994,72 +1919,7 @@ export default function Customizer() {
                     </div>
                   </div>
 
-                  {/* Option E: Selfie Snapshot (Live Camera) */}
-                  <div className={`p-4 bg-brand-50/50 border border-brand-100 space-y-3 mt-4 ${personalInfo.isAvatarLocked ? 'opacity-50 pointer-events-none' : ''}`}>
-                    <div className="flex items-center space-x-2">
-                      <Camera className="w-4 h-4 text-brand-900" />
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-brand-900">
-                        Option E: Take a Selfie Live
-                      </span>
-                    </div>
-                    <p className="text-[9px] font-sans text-neutral-600 leading-normal">
-                      Use your device's front or back camera to capture a live profile picture. It will automatically crop into a clean square photo.
-                    </p>
 
-                    {isCameraActive ? (
-                      <div className="space-y-3">
-                        <div className="relative w-full max-w-[280px] mx-auto aspect-square bg-black border border-neutral-300 overflow-hidden">
-                          {cameraError ? (
-                            <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center text-red-600 space-y-2">
-                              <VideoOff className="w-8 h-8" />
-                              <span className="text-[10px] font-mono uppercase tracking-wider">{cameraError}</span>
-                            </div>
-                          ) : (
-                            <video
-                              ref={videoRef}
-                              autoPlay
-                              playsInline
-                              muted
-                              className="w-full h-full object-cover scale-x-[-1]"
-                            />
-                          )}
-                        </div>
-                        
-                        <div className="flex gap-2 justify-center">
-                          {!cameraError && (
-                            <button
-                              type="button"
-                              onClick={capturePhoto}
-                              className="px-4 py-2 bg-black hover:bg-neutral-800 text-white font-mono text-[10px] uppercase tracking-widest font-bold transition-all cursor-pointer flex items-center gap-1.5"
-                            >
-                              <Camera className="w-3.5 h-3.5" />
-                              <span>Capture Photo</span>
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            onClick={() => stopCamera()}
-                            className="px-4 py-2 border border-neutral-300 hover:border-neutral-800 text-neutral-800 font-mono text-[10px] uppercase tracking-widest font-bold transition-all cursor-pointer bg-white"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        disabled={!!personalInfo.isAvatarLocked}
-                        onClick={startCamera}
-                        className="w-full py-2 bg-neutral-900 hover:bg-neutral-800 text-white font-mono text-[9px] uppercase tracking-wider font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <Camera className="w-3.5 h-3.5" />
-                        <span>Open Device Camera</span>
-                      </button>
-                    )}
-
-                    {/* Hidden canvas for taking snapshot */}
-                    <canvas ref={canvasRef} className="hidden" />
-                  </div>
                 </div>
               )}
 
