@@ -7,8 +7,10 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 async function run() {
   const imagesDir = path.join(process.cwd(), "src/assets/images");
   const files = [
+    "avatar.jpg",
     "avatar_1783346962733.jpg",
-    "avatar_1783347248558.jpg"
+    "avatar_1783347248558.jpg",
+    "rahul_avatar_1783067061163.jpg"
   ];
   
   console.log("Analyzing files:", files);

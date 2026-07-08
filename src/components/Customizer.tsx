@@ -5,10 +5,10 @@ import { usePortfolio } from '../context/PortfolioContext';
 import { Project } from '../types';
 
 // Real and AI Portrait Assets
-import rahulAvatarSuit from '../assets/images/rahul_avatar_1783067061163.jpg';
-import rahulAvatarGlasses from '../assets/images/rahul_avatar_1782920001963.jpg';
-import aiAvatarBlack from '../assets/images/avatar_1783346962733.jpg';
-import aiAvatarGrey from '../assets/images/avatar_1783347248558.jpg';
+const rahulAvatarSuit = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80';
+const rahulAvatarGlasses = 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80';
+const aiAvatarBlack = 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=300&q=80';
+const aiAvatarGrey = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80';
 
 export default function Customizer() {
   const { 
@@ -293,6 +293,8 @@ export default function Customizer() {
     if (file) {
       processFile(file);
     }
+    // Clear input value so selecting the same file triggers onChange again
+    e.target.value = '';
   };
 
   const startCamera = async () => {
@@ -1609,6 +1611,8 @@ export default function Customizer() {
                             if (file) {
                               processFile(file);
                             }
+                            // Clear input value so selecting the same file triggers onChange again
+                            e.target.value = '';
                           }}
                           accept="image/*"
                           className="block w-full text-xs font-mono text-neutral-500

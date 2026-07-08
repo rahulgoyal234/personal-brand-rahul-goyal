@@ -9,12 +9,22 @@ async function startServer() {
 
   // Serve the custom dynamic avatar
   app.get('/api/avatar.jpg', (req, res) => {
+    const rootJpg = path.join(process.cwd(), 'avatar.jpg');
+    const rootPng = path.join(process.cwd(), 'avatar.png');
+    const rootJpeg = path.join(process.cwd(), 'avatar.jpeg');
     const persistedPath = path.join(process.cwd(), 'avatar_persisted.jpg');
     const defaultPath = path.join(process.cwd(), 'src', 'assets', 'images', 'avatar.jpg');
     
-    console.log(`[AvatarRequest] Received request for avatar. Persisted path: ${persistedPath} (exists: ${fs.existsSync(persistedPath)}), Default path: ${defaultPath} (exists: ${fs.existsSync(defaultPath)})`);
-    
-    if (fs.existsSync(persistedPath)) {
+    if (fs.existsSync(rootJpg)) {
+      res.setHeader('Content-Type', 'image/jpeg');
+      return res.sendFile(rootJpg);
+    } else if (fs.existsSync(rootPng)) {
+      res.setHeader('Content-Type', 'image/png');
+      return res.sendFile(rootPng);
+    } else if (fs.existsSync(rootJpeg)) {
+      res.setHeader('Content-Type', 'image/jpeg');
+      return res.sendFile(rootJpeg);
+    } else if (fs.existsSync(persistedPath)) {
       res.setHeader('Content-Type', 'image/jpeg');
       return res.sendFile(persistedPath);
     } else if (fs.existsSync(defaultPath)) {

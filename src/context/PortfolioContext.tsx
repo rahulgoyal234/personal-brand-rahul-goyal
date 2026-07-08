@@ -87,7 +87,8 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           parsed.shortBio = PERSONAL_INFO.shortBio;
         }
         const merged = { ...PERSONAL_INFO, ...parsed };
-        merged.isAvatarLocked = false;
+        merged.avatar = '/api/avatar.jpg';
+        merged.isAvatarLocked = parsed.isAvatarLocked !== undefined ? parsed.isAvatarLocked : false;
         return merged;
       }
     } catch (e) {
@@ -177,9 +178,8 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           const remoteData = await response.json();
           if (remoteData) {
             if (remoteData.personalInfo) {
-              if (!remoteData.personalInfo.avatar || remoteData.personalInfo.avatar.includes('unsplash.com')) {
-                remoteData.personalInfo.avatar = PERSONAL_INFO.avatar;
-              }
+              remoteData.personalInfo.avatar = '/api/avatar.jpg';
+              remoteData.personalInfo.isAvatarLocked = remoteData.personalInfo.isAvatarLocked !== undefined ? remoteData.personalInfo.isAvatarLocked : false;
               setPersonalInfo(remoteData.personalInfo);
               try {
                 localStorage.setItem('rahul_goyal_personal_info', JSON.stringify(remoteData.personalInfo));
