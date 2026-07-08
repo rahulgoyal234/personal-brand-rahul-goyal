@@ -88,7 +88,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
         }
         const merged = { ...PERSONAL_INFO, ...parsed };
         merged.avatar = '/api/avatar.jpg';
-        merged.isAvatarLocked = parsed.isAvatarLocked !== undefined ? parsed.isAvatarLocked : false;
+        merged.isAvatarLocked = false;
         return merged;
       }
     } catch (e) {
@@ -179,7 +179,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           if (remoteData) {
             if (remoteData.personalInfo) {
               remoteData.personalInfo.avatar = '/api/avatar.jpg';
-              remoteData.personalInfo.isAvatarLocked = remoteData.personalInfo.isAvatarLocked !== undefined ? remoteData.personalInfo.isAvatarLocked : false;
+              remoteData.personalInfo.isAvatarLocked = false;
               setPersonalInfo(remoteData.personalInfo);
               try {
                 localStorage.setItem('rahul_goyal_personal_info', JSON.stringify(remoteData.personalInfo));
