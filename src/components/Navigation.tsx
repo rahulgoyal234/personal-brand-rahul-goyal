@@ -46,20 +46,8 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-        {/* Logo */}
-        {personalInfo.name.toLowerCase() !== 'rahul goyal' ? (
-          <button
-            id="nav-logo"
-            onClick={() => handleNavClick('about')}
-            className="group flex flex-col items-start cursor-pointer text-left"
-          >
-            <span className="font-display text-lg font-bold tracking-tight text-brand-900 leading-none">
-              {personalInfo.name}
-            </span>
-          </button>
-        ) : (
-          <div className="w-4 h-4" />
-        )}
+        {/* Empty spacer to maintain layout balance */}
+        <div className="w-5 h-5" />
 
         {/* Desktop Nav */}
         <nav id="desktop-nav" className="hidden md:flex items-center gap-10 text-[11px] uppercase tracking-[0.2em] font-semibold">

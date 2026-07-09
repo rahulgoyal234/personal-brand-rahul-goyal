@@ -5,9 +5,7 @@ import { usePortfolio } from '../context/PortfolioContext';
 export default function Contact() {
   const { personalInfo } = usePortfolio();
 
-  const showLocation = personalInfo.location && 
-    personalInfo.location.toLowerCase() !== 'new delhi, india' && 
-    personalInfo.location.toLowerCase() !== 'new delhi';
+  const showLocation = !!personalInfo.location;
 
   return (
     <section id="contact" className="py-20 md:py-28 border-t border-brand-200 bg-[#fcfcfc] relative scroll-mt-20">

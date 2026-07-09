@@ -68,9 +68,14 @@ export default function Portfolio() {
               <div className="relative overflow-hidden aspect-video bg-neutral-100 cursor-pointer" onClick={() => setActiveProject(project)}>
                 <img
                   id={`project-img-${project.id}`}
-                  src={project.image}
+                  src={project.image || 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80'}
                   alt={project.title}
                   referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null;
+                    target.src = 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80';
+                  }}
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 scale-100 group-hover:scale-102 transition-all duration-500"
                 />
                 {/* Category overlay */}
@@ -195,17 +200,22 @@ export default function Portfolio() {
                 <div className="relative aspect-video w-full bg-neutral-200 border-b border-neutral-200">
                   <img
                     id="modal-project-img"
-                    src={activeProject.image}
+                    src={activeProject.image || 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80'}
                     alt={activeProject.title}
                     referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.onerror = null;
+                      target.src = 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80';
+                    }}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                  <div className="absolute bottom-6 left-6 right-6 text-white">
-                    <h3 className="font-sans text-2xl sm:text-3xl font-extralight tracking-tight mb-1">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                  <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 text-white">
+                    <h3 className="font-sans text-lg xs:text-xl sm:text-3xl font-extralight tracking-tight mb-1 leading-tight">
                       {activeProject.title}
                     </h3>
-                    <p className="text-xs text-neutral-200 max-w-xl font-light">
+                    <p className="text-[10px] sm:text-xs text-neutral-200 max-w-xl font-light line-clamp-2 sm:line-clamp-none">
                       {activeProject.description}
                     </p>
                   </div>
@@ -246,10 +256,10 @@ export default function Portfolio() {
                       <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-neutral-900 border-b border-neutral-200 pb-2">
                         Writing Details
                       </h4>
-                      <div className="grid grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                         {activeProject.stats.map((stat) => (
-                          <div key={stat.label} className="bg-[#f5f5f5] border border-neutral-200 p-4 text-center rounded-none">
-                            <span className="block text-neutral-900 font-sans text-lg font-light">
+                          <div key={stat.label} className="bg-[#f5f5f5] border border-neutral-200 p-3 sm:p-4 text-center rounded-none">
+                            <span className="block text-neutral-900 font-sans text-base sm:text-lg font-light">
                               {stat.value}
                             </span>
                             <span className="block text-neutral-400 text-[8px] font-mono uppercase tracking-widest mt-0.5">

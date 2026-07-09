@@ -97,42 +97,62 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
     return PERSONAL_INFO;
   });
 
+  const sanitizeProjectsList = (projs: any[]): Project[] => {
+    let list = [...projs];
+    
+    // Ensure all default projects are present
+    PROJECTS.forEach((dp) => {
+      const index = list.findIndex((p) => p.id === dp.id);
+      if (index === -1) {
+        list.push(dp);
+      }
+    });
+
+    return list.map((p: any) => {
+      const defaultProj = PROJECTS.find((dp) => dp.id === p.id);
+      if (defaultProj) {
+        let updated = { ...p };
+        // Always force the official default images for all default projects to ensure high-quality, up-to-date thumbnails are displayed
+        updated.image = defaultProj.image;
+        // If the saved demoUrl is the old default top-level link, upgrade it
+        if (p.id === 'private-law-colleges' && (!p.demoUrl || p.demoUrl === 'https://www.barandbench.com' || p.demoUrl === 'https://www.barandbench.com/')) {
+          updated.demoUrl = defaultProj.demoUrl;
+        }
+        if (p.id === 'judicial-independence' && (!p.demoUrl || p.demoUrl === 'https://www.ijllr.com' || p.demoUrl === 'https://www.ijllr.com/')) {
+          updated.demoUrl = defaultProj.demoUrl;
+        }
+        if (p.id === 'writ-jurisdiction' && (!p.demoUrl || p.demoUrl === 'https://www.manupatra.com' || p.demoUrl === 'https://www.manupatra.com/')) {
+          updated.demoUrl = defaultProj.demoUrl;
+        }
+        if (p.id === 'patent-claim-modification' && (!p.demoUrl || p.demoUrl === 'https://theippress.com' || p.demoUrl === 'https://theippress.com/')) {
+          updated.demoUrl = defaultProj.demoUrl;
+        }
+        if (p.id === 'unconventional-trademarks' && (!p.demoUrl || p.demoUrl === 'https://theippress.com' || p.demoUrl === 'https://theippress.com/')) {
+          updated.demoUrl = defaultProj.demoUrl;
+        }
+        if (p.id === 'ai-governance' && (!p.demoUrl || p.demoUrl === 'https://www.pj.gob.pe' || p.demoUrl === 'https://www.pj.gob.pe/')) {
+          updated.demoUrl = defaultProj.demoUrl;
+        }
+        return updated;
+      }
+      
+      // For any custom/user-added articles, ensure they also have a high-quality fallback thumbnail if missing
+      if (!p.image || typeof p.image !== 'string' || p.image.trim() === '') {
+        return {
+          ...p,
+          image: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80'
+        };
+      }
+      return p;
+    });
+  };
+
   const [projects, setProjects] = useState<Project[]>(() => {
     try {
       const saved = localStorage.getItem('rahul_goyal_projects');
       if (saved) {
         const parsed = JSON.parse(saved);
-        return parsed.map((p: any) => {
-          const defaultProj = PROJECTS.find((dp) => dp.id === p.id);
-          if (defaultProj) {
-            let updated = { ...p };
-            // Force the official default images for default projects unless it's a custom base64 uploaded image (starts with data:)
-            if (!p.image || p.image.includes('images.unsplash.com') || (!p.image.startsWith('data:') && p.image !== defaultProj.image && !p.image.startsWith('/'))) {
-              updated.image = defaultProj.image;
-            }
-            // If the saved demoUrl is the old default top-level link, upgrade it
-            if (p.id === 'private-law-colleges' && (!p.demoUrl || p.demoUrl === 'https://www.barandbench.com' || p.demoUrl === 'https://www.barandbench.com/')) {
-              updated.demoUrl = defaultProj.demoUrl;
-            }
-            if (p.id === 'judicial-independence' && (!p.demoUrl || p.demoUrl === 'https://www.ijllr.com' || p.demoUrl === 'https://www.ijllr.com/')) {
-              updated.demoUrl = defaultProj.demoUrl;
-            }
-            if (p.id === 'writ-jurisdiction' && (!p.demoUrl || p.demoUrl === 'https://www.manupatra.com' || p.demoUrl === 'https://www.manupatra.com/')) {
-              updated.demoUrl = defaultProj.demoUrl;
-            }
-            if (p.id === 'patent-claim-modification' && (!p.demoUrl || p.demoUrl === 'https://theippress.com' || p.demoUrl === 'https://theippress.com/')) {
-              updated.demoUrl = defaultProj.demoUrl;
-            }
-            if (p.id === 'unconventional-trademarks' && (!p.demoUrl || p.demoUrl === 'https://theippress.com' || p.demoUrl === 'https://theippress.com/')) {
-              updated.demoUrl = defaultProj.demoUrl;
-            }
-            if (p.id === 'ai-governance' && (!p.demoUrl || p.demoUrl === 'https://www.pj.gob.pe' || p.demoUrl === 'https://www.pj.gob.pe/')) {
-              updated.demoUrl = defaultProj.demoUrl;
-            }
-            return updated;
-          }
-          return p;
-        });
+        return sanitizeProjectsList(parsed);
       }
     } catch (e) {
       console.error('Error loading custom projects:', e);
@@ -188,9 +208,10 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
               }
             }
             if (remoteData.projects) {
-              setProjects(remoteData.projects);
+              const sanitizedProjects = sanitizeProjectsList(remoteData.projects);
+              setProjects(sanitizedProjects);
               try {
-                localStorage.setItem('rahul_goyal_projects', JSON.stringify(remoteData.projects));
+                localStorage.setItem('rahul_goyal_projects', JSON.stringify(sanitizedProjects));
               } catch (e) {
                 console.error('LocalStorage save failed:', e);
               }
@@ -279,7 +300,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       newPersonalInfo.avatar = PERSONAL_INFO.avatar;
     }
     setPersonalInfo(newPersonalInfo);
-    setProjects(newProjects);
+    setProjects(sanitizeProjectsList(newProjects));
   };
 
   return (

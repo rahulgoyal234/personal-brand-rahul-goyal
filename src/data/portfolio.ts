@@ -26,7 +26,7 @@ export const PROJECTS: Project[] = [
     description: 'A comparative cross-border legal study analyzing the regulatory frameworks, governance systems, and AI applications in mitigating environmental challenges in India and Peru.',
     longDescription: 'This peer-reviewed comparative research paper explores how artificial intelligence can be integrated into environmental sustainability governance. It contrasts India’s legislative mechanisms and digital initiatives with Peru’s environmental policy frameworks, evaluating the role of judicial bodies, constitutional guidelines, and regulatory authorities in enforcing AI-driven environmental mandates.',
     tags: ['Artificial Intelligence', 'Environmental Law', 'Comparative Governance', 'Policy Reform'],
-    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=800&q=80',
     demoUrl: 'https://revistas.pj.gob.pe/revista/index.php/ropj/article/view/1138', // Revista Oficial del Poder Judicial
     highlights: [
       'Published in the REVISTA OFICIAL DEL PODER JUDICIAL (Official Journal of the Judicial Branch of Peru).',
@@ -47,7 +47,7 @@ export const PROJECTS: Project[] = [
     description: 'An in-depth analysis of color, sound, smell, and motion trademarks, discussing how progressive IP law impacts modern corporate branding and consumer perception.',
     longDescription: 'Unconventional trademarks represent the active frontier of intellectual property. This research analysis explores registration hurdles, distinctiveness requirements, and commercial implications of non-visual and sensory marks under Indian and international trademark regimes, charting how they integrate with corporate branding.',
     tags: ['Trademark Law', 'Intellectual Property', 'Branding Strategy', 'Anti-Dissection Rule'],
-    image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=800&q=80',
     demoUrl: 'https://www.theippress.com/2024/12/01/how-do-unconventional-trademarks-impact-branding-and-marketing-strategies/',
     highlights: [
       'Deconstructed the "Anti-Dissection" and "Dominant Feature" principles in the context of complex multi-sensory brand assets.',
@@ -67,7 +67,7 @@ export const PROJECTS: Project[] = [
     description: 'A critical review of recent judicial trends in Indian patent law, examining modern standards for amending and modifying patent claims during prosecution.',
     longDescription: 'Patent claims define the legal boundaries of technological protection. This study examines recent landmark orders from the Delhi High Court and the Indian Patent Office regarding patent amendments under Section 59 of the Indian Patents Act, clarifying the permissible scope of claim modifications to withstand prior art challenges.',
     tags: ['Patent Law', 'Claim Modification', 'Delhi High Court', 'Patent Prosecution'],
-    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
     demoUrl: 'https://www.theippress.com/2024/10/01/trailblazing-decisions-transform-indian-patent-law-a-new-chapter-of-adaptability-in-claim-modification/',
     highlights: [
       'Investigated the legal boundaries of Section 59 of the Indian Patents Act, 1970.',
@@ -87,7 +87,7 @@ export const PROJECTS: Project[] = [
     description: 'A comprehensive constitutional study on the maintainability of writ petitions under Article 226 when alternative statutory remedies exist.',
     longDescription: 'Writ jurisdiction is a powerful constitutional remedy of High Courts. This article examines self-imposed judicial restrictions, exploring the circumstances under which alternative statutory remedies block writ jurisdiction, and cataloging exceptions established by the Supreme Court of India.',
     tags: ['Constitutional Law', 'Writ Jurisdiction', 'Article 226', 'Judicial Precedents'],
-    image: 'https://images.unsplash.com/photo-1505664194779-8bebcb95ae84?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
     demoUrl: 'https://articles.manupatra.com/article-details/EXISTENCE-OF-ALTERNATIVE-REMEDY-AS-AN-OBSTACLE-FOR-AVAILING-WRIT-JURISDICTION',
     highlights: [
       'Published on the Manupatra research database, widely referenced by litigation practitioners.',
@@ -107,7 +107,7 @@ export const PROJECTS: Project[] = [
     description: 'A deep academic inquiry into the structural, financial, and functional independence of the Indian judiciary, exploring constitutional safeguards and contemporary challenges.',
     longDescription: 'Judicial independence is a cornerstone of the basic structure of the Indian Constitution. This paper investigates appointment mechanisms (Collegium system vs. NJAC), security of tenure, financial autonomy, and functional separation of powers, evaluating modern pressures and reforms.',
     tags: ['Constitutional Law', 'Judiciary', 'Basic Structure', 'Appointment Reform'],
-    image: 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80',
     demoUrl: 'https://www.ijllr.com/post/extensive-study-on-independence-of-judiciary', // Indian Journal of Law and Legal Research
     highlights: [
       'Published in the Indian Journal of Law and Legal Research (IJLLR) with ISSN: 2582-8878.',

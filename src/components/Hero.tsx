@@ -219,20 +219,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
 
 
 
-            {/* Meta Tags (Location & Main Focus) */}
-            {personalInfo.location && (
-              <motion.div
-                id="hero-metadata"
-                variants={itemVariants}
-                className="flex items-center gap-y-2 gap-x-6 text-[11px] text-neutral-400 font-mono uppercase tracking-wider"
-              >
-                <div className="flex items-center space-x-2 bg-neutral-50 border border-brand-200/50 px-3.5 py-1.5 rounded-none shadow-none">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                  <span className="text-brand-600 font-bold">{personalInfo.location}</span>
-                </div>
-              </motion.div>
-            )}
-
             {/* Social Links */}
             <motion.div id="hero-social-links" variants={itemVariants} className="flex items-center space-x-3 pt-2">
               <a
@@ -291,7 +277,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             className="md:col-span-5 flex justify-center md:justify-end"
           >
             <div 
-              className={`relative group w-full max-w-[250px] xs:max-w-[280px] sm:max-w-[320px] md:max-w-[300px] lg:max-w-[340px] xl:max-w-[380px] aspect-square select-none ${
+              className={`relative group w-full max-w-[240px] xs:max-w-[270px] sm:max-w-[310px] md:max-w-[290px] lg:max-w-[330px] xl:max-w-[360px] aspect-[4/5] select-none ${
                 personalInfo.introVideo ? 'cursor-pointer' : 'cursor-default'
               }`}
             >
@@ -312,15 +298,15 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   )}
                   {personalInfo.avatar && (
                     <img
-                      id="hero-portrait-img"
-                      src={personalInfo.avatar.startsWith('data:') ? personalInfo.avatar : `${personalInfo.avatar}?v=${avatarVersion}`}
-                      alt={personalInfo.name}
-                      referrerPolicy="no-referrer"
-                      onLoad={() => setAvatarLoadError(false)}
-                      onError={() => setAvatarLoadError(true)}
-                      className={`w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03] relative z-10 ${
-                        avatarLoadError ? 'opacity-0 invisible' : 'opacity-100 visible'
-                      }`}
+                       id="hero-portrait-img"
+                       src={personalInfo.avatar.startsWith('data:') ? personalInfo.avatar : `${personalInfo.avatar}?v=${avatarVersion}`}
+                       alt={personalInfo.name}
+                       referrerPolicy="no-referrer"
+                       onLoad={() => setAvatarLoadError(false)}
+                       onError={() => setAvatarLoadError(true)}
+                       className={`w-full h-full object-cover object-[center_25%] transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03] relative z-10 ${
+                         avatarLoadError ? 'opacity-0 invisible' : 'opacity-100 visible'
+                       }`}
                     />
                   )}
 
@@ -349,7 +335,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                         referrerPolicy="no-referrer"
                         onLoad={() => setAvatarLoadError(false)}
                         onError={() => setAvatarLoadError(true)}
-                        className={`w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03] ${
+                        className={`w-full h-full object-cover object-[center_25%] transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03] ${
                           avatarLoadError ? 'opacity-0 invisible' : 'opacity-100 visible'
                         }`}
                       />
@@ -371,12 +357,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   <span>Intro Video</span>
                 </div>
               )}
-
-              {/* Minimal floating tech accent */}
-              <div className="absolute -bottom-4 -left-4 bg-white border border-brand-200 px-3 py-1.5 rounded-none shadow-none flex items-center space-x-2 font-mono text-[9px] tracking-widest">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                <span className="text-brand-600 font-bold">Based in New Delhi, India</span>
-              </div>
             </div>
           </motion.div>
         </motion.div>
