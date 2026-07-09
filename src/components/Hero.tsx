@@ -200,14 +200,12 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               >
                 {renderFormattedHeading(personalInfo.shortBio)}
               </h1>
-              {personalInfo.name.toLowerCase() !== 'rahul goyal' && (
-                <p
-                  id="hero-subheading"
-                  className="font-display text-[11px] uppercase tracking-[0.3em] text-neutral-400 mt-2 font-bold"
-                >
-                  {`${personalInfo.name} | ${personalInfo.title}`}
-                </p>
-              )}
+              <p
+                id="hero-subheading"
+                className="font-display text-[11px] uppercase tracking-[0.3em] text-neutral-400 mt-2 font-bold"
+              >
+                {`${personalInfo.name} | ${personalInfo.title}`}
+              </p>
             </motion.div>
 
             {/* Detailed Bio paragraph */}
@@ -222,17 +220,15 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
 
 
             {/* Meta Tags (Location & Main Focus) */}
-            {personalInfo.location && 
-             personalInfo.location.toLowerCase() !== 'new delhi, india' && 
-             personalInfo.location.toLowerCase() !== 'new delhi' && (
+            {personalInfo.location && (
               <motion.div
                 id="hero-metadata"
                 variants={itemVariants}
-                className="flex flex-wrap items-center gap-y-2 gap-x-6 text-[11px] text-neutral-400 font-mono uppercase tracking-wider"
+                className="flex items-center gap-y-2 gap-x-6 text-[11px] text-neutral-400 font-mono uppercase tracking-wider"
               >
-                <div className="flex items-center space-x-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-brand-400" />
-                  <span>{personalInfo.location}</span>
+                <div className="flex items-center space-x-2 bg-neutral-50 border border-brand-200/50 px-3.5 py-1.5 rounded-none shadow-none">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span className="text-brand-600 font-bold">{personalInfo.location}</span>
                 </div>
               </motion.div>
             )}
@@ -260,7 +256,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             </motion.div>
 
             {/* Call To Action Buttons */}
-            <motion.div id="hero-actions" variants={itemVariants} className="flex items-center gap-6 pt-4">
+            <motion.div id="hero-actions" variants={itemVariants} className="flex flex-wrap items-center gap-6 pt-4">
               <button
                 id="hero-cta-portfolio"
                 onClick={onPortfolioClick}
@@ -268,6 +264,16 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               >
                 View Writings
               </button>
+              {personalInfo.introVideo && (
+                <button
+                  id="hero-cta-video"
+                  onClick={() => setIsVideoModalOpen(true)}
+                  className="bg-neutral-100 border border-neutral-200 text-black px-7 py-3.5 text-[11px] uppercase tracking-widest font-bold hover:bg-neutral-200 transition-all rounded-none cursor-pointer flex items-center gap-2"
+                >
+                  <Play className="w-3 h-3 fill-current translate-x-0.5" />
+                  Play Intro Video
+                </button>
+              )}
               <button
                 id="hero-cta-contact"
                 onClick={onContactClick}
@@ -285,10 +291,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             className="md:col-span-5 flex justify-center md:justify-end"
           >
             <div 
-              onDragEnter={handleDrag}
-              onDragOver={handleDrag}
-              onDragLeave={handleDrag}
-              onDrop={handleDrop}
               className={`relative group w-full max-w-[250px] xs:max-w-[280px] sm:max-w-[320px] md:max-w-[300px] lg:max-w-[340px] xl:max-w-[380px] aspect-square select-none ${
                 personalInfo.introVideo ? 'cursor-pointer' : 'cursor-default'
               }`}
@@ -296,25 +298,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               {/* Back framing accent */}
               <div className="absolute inset-0 border border-brand-200 rotate-1 group-hover:rotate-4 group-hover:scale-[1.02] group-active:rotate-4 group-active:scale-[1.02] transition-all duration-500 rounded-none bg-neutral-50"></div>
               
-              {!personalInfo.isAvatarLocked && (
-                <input
-                  id="avatar-file-input"
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleDirectFileChange}
-                  accept="image/*"
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-40"
-                  title="Upload custom portrait photo"
-                />
-              )}
-
-              {/* Drag over upload overlay */}
-              {isDragging && !personalInfo.isAvatarLocked && (
-                <div className="absolute inset-0 bg-black/70 backdrop-blur-xs z-40 flex flex-col items-center justify-center text-white p-4 border-2 border-dashed border-emerald-500 animate-pulse transition-all">
-                  <Upload className="w-8 h-8 mb-2 text-emerald-400" />
-                  <span className="font-mono text-[9px] uppercase tracking-widest text-center">Drop to Upload Portrait</span>
-                </div>
-              )}
 
               {/* Main image card wrapper */}
               {personalInfo.introVideo ? (
@@ -322,22 +305,26 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   onClick={() => setIsVideoModalOpen(true)}
                   className="absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] cursor-pointer"
                 >
-                  {avatarLoadError || !personalInfo.avatar ? (
-                    <div className="w-full h-full bg-neutral-100 flex flex-col items-center justify-center p-6 text-center">
+                  {(avatarLoadError || !personalInfo.avatar) && (
+                    <div className="absolute inset-0 bg-neutral-100 flex flex-col items-center justify-center p-6 text-center z-0">
                       <span className="font-sans text-xs font-bold text-neutral-800">No Portrait</span>
                     </div>
-                  ) : (
+                  )}
+                  {personalInfo.avatar && (
                     <img
                       id="hero-portrait-img"
                       src={personalInfo.avatar.startsWith('data:') ? personalInfo.avatar : `${personalInfo.avatar}?v=${avatarVersion}`}
                       alt={personalInfo.name}
                       referrerPolicy="no-referrer"
+                      onLoad={() => setAvatarLoadError(false)}
                       onError={() => setAvatarLoadError(true)}
-                      className="w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03]"
+                      className={`w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03] relative z-10 ${
+                        avatarLoadError ? 'opacity-0 invisible' : 'opacity-100 visible'
+                      }`}
                     />
                   )}
 
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white gap-2">
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white gap-2 z-20">
                     <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm border border-white flex items-center justify-center scale-95 group-hover:scale-100 group-active:scale-100 transition-transform duration-300">
                       <Play className="w-5 h-5 text-white fill-current translate-x-0.5" />
                     </div>
@@ -346,47 +333,29 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 </div>
               ) : (
                 <div 
-                  className={`absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] ${
-                    !personalInfo.isAvatarLocked ? 'cursor-pointer' : 'cursor-default'
-                  }`}
+                  className="absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] cursor-default"
                 >
-                  {avatarLoadError || !personalInfo.avatar ? (
-                    <div className="w-full h-full bg-neutral-100 flex flex-col items-center justify-center p-6 text-center">
+                  {(avatarLoadError || !personalInfo.avatar) && (
+                    <div className="absolute inset-0 bg-neutral-100 flex flex-col items-center justify-center p-6 text-center z-0">
                       <span className="font-sans text-xs font-bold text-neutral-800">No Portrait</span>
                     </div>
-                  ) : (
-                    <div className="relative w-full h-full">
+                  )}
+                  {personalInfo.avatar && (
+                    <div className="relative w-full h-full z-10">
                       <img
                         id="hero-portrait-img"
                         src={personalInfo.avatar.startsWith('data:') ? personalInfo.avatar : `${personalInfo.avatar}?v=${avatarVersion}`}
                         alt={personalInfo.name}
                         referrerPolicy="no-referrer"
+                        onLoad={() => setAvatarLoadError(false)}
                         onError={() => setAvatarLoadError(true)}
-                        className="w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03]"
+                        className={`w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03] ${
+                          avatarLoadError ? 'opacity-0 invisible' : 'opacity-100 visible'
+                        }`}
                       />
-                      {/* Interactive Tap-to-Upload helper text on mobile */}
-                      {!personalInfo.isAvatarLocked && (
-                        <div className="absolute inset-0 bg-black/0 active:bg-black/10 md:hover:bg-black/25 transition-all duration-300 flex items-center justify-center">
-                          <div className="bg-black/60 text-white font-mono text-[9px] px-2.5 py-1.5 uppercase tracking-wider rounded-none opacity-0 md:group-hover:opacity-100 transition-opacity duration-300">
-                            Change Photo
-                          </div>
-                        </div>
-                      )}
                     </div>
                   )}
                 </div>
-              )}
-
-              {/* Absolute hovering Action Badges */}
-              {!personalInfo.isAvatarLocked && (
-                <button
-                  type="button"
-                  className="absolute bottom-4 right-4 md:bottom-3 md:right-3 z-30 pointer-events-none bg-white/95 text-brand-900 border border-brand-200/50 px-4 py-3 md:px-2.5 md:py-1.5 flex items-center space-x-2 font-mono text-[10px] md:text-[8px] tracking-wider uppercase shadow-md transition-all duration-300 rounded-none min-h-[44px] md:min-h-0 min-w-[110px] md:min-w-0 justify-center flex"
-                  title="Upload custom portrait photo"
-                >
-                  <Upload className="w-3.5 h-3.5 md:w-2.5 md:h-2.5 text-brand-600 animate-bounce" />
-                  <span>Upload Photo</span>
-                </button>
               )}
 
               {/* Optional pulsing "Intro Video" badge at top right - Rendered on top of image wrapper */}
