@@ -48,23 +48,11 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
       }`}
     >
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8 flex items-center justify-between">
-        {/* Branding with Custom Circular Seal */}
+        {/* Branding with Custom Text Logo */}
         <button
           onClick={() => handleNavClick('about')}
-          className="mark flex items-center gap-3 font-mono font-medium text-sm tracking-wide text-ink cursor-pointer bg-transparent border-none p-0"
+          className="mark flex items-center font-mono font-medium text-sm tracking-wide text-ink cursor-pointer bg-transparent border-none p-0"
         >
-          <span className="seal w-8 h-8 rounded-full border border-brass flex items-center justify-center font-serif text-[13px] text-brass font-semibold overflow-hidden">
-            {personalInfo.avatar ? (
-              <img 
-                src={personalInfo.avatar} 
-                alt="" 
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-            ) : (
-              'RG'
-            )}
-          </span>
           <span className="hover:text-brass transition-colors font-semibold">{personalInfo.name}</span>
         </button>
 

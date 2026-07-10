@@ -13,9 +13,6 @@ export default function Contact() {
           {/* Column 1: Info and Links */}
           <div className="space-y-10">
             <div className="space-y-4">
-              <div className="eyebrow font-mono text-[12.5px] tracking-[0.14em] uppercase text-brass flex items-center gap-2.5 before:content-[''] before:w-[22px] before:h-[1px] before:bg-brass font-bold">
-                Connect — Engagement
-              </div>
               <h2 className="font-serif text-[38px] font-semibold text-ink leading-tight">
                 Get in Touch
               </h2>
@@ -27,7 +24,7 @@ export default function Contact() {
             <div className="contact-methods flex flex-col gap-6 pt-2">
               <div className="contact-method flex flex-col gap-1.5">
                 <strong className="font-mono text-[11px] uppercase tracking-widest text-brass font-bold">
-                  Direct Email
+                  Email
                 </strong>
                 <a 
                   href={`mailto:${personalInfo.email}`} 
@@ -40,7 +37,7 @@ export default function Contact() {
               {personalInfo.location && (
                 <div className="contact-method flex flex-col gap-1.5">
                   <strong className="font-mono text-[11px] uppercase tracking-widest text-brass font-bold">
-                    Office Location
+                    Based in
                   </strong>
                   <span className="text-base sm:text-[16.5px] text-ink font-medium font-sans">
                     {personalInfo.location}

@@ -186,7 +186,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
           >
             <motion.div variants={itemVariants} className="space-y-4">
               <div className="eyebrow font-mono text-[12.5px] tracking-[0.14em] uppercase text-brass flex items-center gap-2.5 before:content-[''] before:w-[22px] before:h-[1px] before:bg-brass font-bold">
-                {personalInfo.name} — {personalInfo.title}
+                {personalInfo.name} | {personalInfo.title}
               </div>
               
               <h1
@@ -203,7 +203,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               variants={itemVariants}
               className="text-ink-soft text-[17px] sm:text-lg leading-relaxed max-w-[540px] mt-[22px] font-sans"
             >
-              I'm Rahul Goyal — a lawyer who reads fine print so you don't have to. I work in <strong className="text-ink font-semibold">corporate law, IP, and tech policy</strong>, turning tangled regulation into clear, confident moves. Contracts that hold up. Advice that's straight, not stuffy. Legal ground that's safe to build on.
+              I'm Rahul Goyal, a lawyer who reads fine print so you don't have to. I work in <strong className="text-ink font-semibold">corporate law, IP, and tech policy</strong>, turning tangled regulation into clear, confident moves. Contracts that hold up. Advice that's straight, not stuffy. Legal ground that's safe to build on.
             </motion.p>
 
             {/* Call To Action Buttons */}
@@ -297,7 +297,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
 
               {/* Portrait Label Caption */}
               <div className="portrait-caption mt-[22px] font-mono text-[12px] tracking-[0.1em] uppercase text-ink-soft font-semibold">
-                {personalInfo.name} — {personalInfo.title}
+                {personalInfo.name} | {personalInfo.title}
               </div>
             </div>
           </motion.div>

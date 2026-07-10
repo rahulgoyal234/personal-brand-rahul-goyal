@@ -3,7 +3,7 @@ import { Project, Experience, Education, SkillGroup } from '../types';
 export const PERSONAL_INFO = {
   name: 'Rahul Goyal',
   title: 'Lawyer',
-  bio: `I'm Rahul Goyal - a lawyer who reads fine print so you don't have to.
+  bio: `I'm Rahul Goyal, a lawyer who reads fine print so you don't have to.
 
 I work in corporate law, IP, and tech policy, turning tangled regulation into clear, confident moves. Contracts that hold up. Advice that's straight, not stuffy. Legal ground that's safe to build on.`,
   shortBio: 'Making the complex, comprehensible.',

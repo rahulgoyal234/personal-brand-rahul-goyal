@@ -33,11 +33,8 @@ export default function Portfolio() {
         {/* Writings Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 gap-8">
           <div className="space-y-3">
-            <div className="eyebrow font-mono text-[12.5px] tracking-[0.14em] uppercase text-brass flex items-center gap-2.5 before:content-[''] before:w-[22px] before:h-[1px] before:bg-brass font-bold">
-              Publications — Research
-            </div>
             <h2 className="font-serif text-[38px] font-semibold text-ink leading-tight">
-              Selected Writings
+              Writings
             </h2>
             <p className="text-ink-soft text-sm sm:text-[15px] leading-relaxed max-w-[480px]">
               A carefully curated selection of peer-reviewed research papers, active policy articles, and academic columns.
