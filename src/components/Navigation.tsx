@@ -43,19 +43,11 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
       id="main-navigation"
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled || isOpen 
-          ? 'bg-[#F7F4EC]/95 backdrop-blur-md border-b border-rule py-4' 
-          : 'bg-[#F7F4EC]/86 backdrop-blur-md border-b border-rule/50 py-5'
+          ? 'bg-[#F7F4EC]/95 backdrop-blur-md py-4' 
+          : 'bg-[#F7F4EC]/86 backdrop-blur-md py-5'
       }`}
     >
-      <div className="max-w-[1120px] mx-auto px-6 sm:px-8 flex items-center justify-between">
-        {/* Branding with Custom Text Logo */}
-        <button
-          onClick={() => handleNavClick('about')}
-          className="mark flex items-center font-mono font-medium text-sm tracking-wide text-ink cursor-pointer bg-transparent border-none p-0"
-        >
-          <span className="hover:text-brass transition-colors font-semibold">{personalInfo.name}</span>
-        </button>
-
+      <div className="max-w-[1120px] mx-auto px-6 sm:px-8 flex items-center justify-end gap-[34px]">
         {/* Desktop Nav Links */}
         <nav className="hidden md:flex items-center gap-[34px]">
           {navItems.map((item) => (
