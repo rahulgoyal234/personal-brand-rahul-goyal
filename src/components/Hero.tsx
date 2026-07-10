@@ -166,197 +166,139 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
   return (
     <section
       id="about"
-      className="relative min-h-[90vh] flex items-center justify-center pt-24 pb-16 md:py-32 overflow-hidden scroll-mt-20"
+      className="relative min-h-[90vh] flex items-center justify-center pt-36 pb-20 md:py-48 overflow-hidden bg-paper scroll-mt-20"
     >
-      {/* Background soft geometric pattern */}
-      <div className="absolute inset-0 z-0 opacity-[0.02] pointer-events-none select-none">
-        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
-          <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#000" strokeWidth="1" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-        </svg>
-      </div>
+      {/* Bespoke circular background wireframes from your design */}
+      <div className="absolute top-[-120px] right-[-160px] w-[520px] h-[520px] rounded-full border border-rule pointer-events-none select-none z-0 hidden lg:block" />
+      <div className="absolute top-[-60px] right-[-100px] w-[520px] h-[520px] rounded-full border border-rule pointer-events-none select-none z-0 hidden lg:block" />
 
-      <div className="max-w-6xl mx-auto px-6 w-full relative z-10">
+      <div className="max-w-[1120px] mx-auto px-6 sm:px-8 w-full relative z-10">
         <motion.div 
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 items-center"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center"
         >
-          {/* Main Info Columns */}
+          {/* Main Copy Content */}
           <div
             id="hero-content"
-            className="md:col-span-7 flex flex-col items-start text-left space-y-6"
+            className="lg:col-span-7 flex flex-col items-start text-left"
           >
-            {/* Heading Name & Role */}
             <motion.div variants={itemVariants} className="space-y-4">
+              <div className="eyebrow font-mono text-[12.5px] tracking-[0.14em] uppercase text-brass flex items-center gap-2.5 before:content-[''] before:w-[22px] before:h-[1px] before:bg-brass font-bold">
+                {personalInfo.name} — {personalInfo.title}
+              </div>
+              
               <h1
                 id="hero-heading"
-                className="font-sans text-4xl sm:text-5xl lg:text-6xl font-extralight tracking-tighter text-brand-900 leading-[1.1]"
+                className="font-serif text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.08] text-ink mt-4"
               >
-                {renderFormattedHeading(personalInfo.shortBio)}
+                {personalInfo.shortBio || "Making the complex, comprehensible."}
               </h1>
-              <p
-                id="hero-subheading"
-                className="font-display text-[11px] uppercase tracking-[0.3em] text-neutral-400 mt-2 font-bold"
-              >
-                {`${personalInfo.name} | ${personalInfo.title}`}
-              </p>
             </motion.div>
 
             {/* Detailed Bio paragraph */}
             <motion.p
               id="hero-bio"
               variants={itemVariants}
-              className="text-neutral-500 text-sm leading-relaxed max-w-md font-light whitespace-pre-line"
+              className="text-ink-soft text-[17px] sm:text-lg leading-relaxed max-w-[540px] mt-[22px] font-sans"
             >
-              {personalInfo.bio}
+              I'm Rahul Goyal — a lawyer who reads fine print so you don't have to. I work in <strong className="text-ink font-semibold">corporate law, IP, and tech policy</strong>, turning tangled regulation into clear, confident moves. Contracts that hold up. Advice that's straight, not stuffy. Legal ground that's safe to build on.
             </motion.p>
 
-
-
-            {/* Social Links */}
-            <motion.div id="hero-social-links" variants={itemVariants} className="flex items-center space-x-3 pt-2">
-              <a
-                id="hero-social-linkedin"
-                href={personalInfo.linkedin}
-                target="_blank"
-                rel="noreferrer"
-                className="p-2 border border-brand-200 text-brand-600 hover:text-brand-900 hover:border-brand-900 hover:bg-white transition-all cursor-pointer rounded-none"
-                title="LinkedIn Profile"
-              >
-                <Linkedin className="w-4 h-4" />
-              </a>
-              <a
-                id="hero-social-email"
-                href={`mailto:${personalInfo.email}`}
-                className="p-2 border border-brand-200 text-brand-600 hover:text-brand-900 hover:border-brand-900 hover:bg-white transition-all cursor-pointer rounded-none"
-                title="Send Email"
-              >
-                <Mail className="w-4 h-4" />
-              </a>
-            </motion.div>
-
             {/* Call To Action Buttons */}
-            <motion.div id="hero-actions" variants={itemVariants} className="flex flex-wrap items-center gap-6 pt-4">
+            <motion.div id="hero-actions" variants={itemVariants} className="flex flex-wrap items-center gap-4 mt-10">
               <button
                 id="hero-cta-portfolio"
                 onClick={onPortfolioClick}
-                className="bg-black text-white px-7 py-3.5 text-[11px] uppercase tracking-widest font-bold hover:bg-neutral-800 transition-all rounded-none cursor-pointer"
+                className="font-mono text-[13.5px] tracking-wider px-[22px] py-3.5 border border-ink bg-ink text-paper hover:bg-brass hover:border-brass hover:text-white rounded-[2px] transition-all duration-200 hover:-translate-y-[1px] flex items-center gap-2 cursor-pointer font-semibold"
               >
                 View Writings
               </button>
+
               {personalInfo.introVideo && (
                 <button
                   id="hero-cta-video"
                   onClick={() => setIsVideoModalOpen(true)}
-                  className="bg-neutral-100 border border-neutral-200 text-black px-7 py-3.5 text-[11px] uppercase tracking-widest font-bold hover:bg-neutral-200 transition-all rounded-none cursor-pointer flex items-center gap-2"
+                  className="font-mono text-[13.5px] tracking-wider px-[22px] py-3.5 border border-brass-soft bg-brass-soft text-ink hover:bg-brass hover:border-brass hover:text-white rounded-[2px] transition-all duration-200 hover:-translate-y-[1px] flex items-center gap-2 cursor-pointer font-semibold"
                 >
-                  <Play className="w-3 h-3 fill-current translate-x-0.5" />
+                  <Play className="w-3.5 h-3.5 fill-current translate-x-0.5" />
                   Play Intro Video
                 </button>
               )}
+
               <button
                 id="hero-cta-contact"
                 onClick={onContactClick}
-                className="text-[11px] uppercase tracking-widest font-bold border-b border-neutral-200 hover:border-black transition-all pb-1 cursor-pointer"
+                className="font-mono text-[13.5px] tracking-wider px-[22px] py-3.5 border border-ink bg-transparent text-ink hover:text-brass hover:border-brass rounded-[2px] transition-all duration-200 hover:-translate-y-[1px] flex items-center gap-2 cursor-pointer font-semibold"
               >
                 Get in Touch
               </button>
             </motion.div>
           </div>
 
-          {/* Portrait Column */}
+          {/* Portrait Column styled with elegant circular ring and outer outline wrapper */}
           <motion.div
             id="hero-portrait-container"
             variants={itemVariants}
-            className="md:col-span-5 flex justify-center md:justify-end"
+            className="lg:col-span-5 flex justify-center lg:justify-end"
           >
-            <div 
-              className={`relative group w-full max-w-[240px] xs:max-w-[270px] sm:max-w-[310px] md:max-w-[290px] lg:max-w-[330px] xl:max-w-[360px] aspect-[4/5] select-none ${
-                personalInfo.introVideo ? 'cursor-pointer' : 'cursor-default'
-              }`}
-            >
-              {/* Back framing accent */}
-              <div className="absolute inset-0 border border-brand-200 rotate-1 group-hover:rotate-4 group-hover:scale-[1.02] group-active:rotate-4 group-active:scale-[1.02] transition-all duration-500 rounded-none bg-neutral-50"></div>
+            <div className="portrait-wrap relative flex flex-col items-center">
+              {/* Invisible file input for trigger */}
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleDirectFileChange} 
+                accept="image/*" 
+                className="hidden" 
+              />
               
-
-              {/* Main image card wrapper */}
-              {personalInfo.introVideo ? (
-                <div 
-                  onClick={() => setIsVideoModalOpen(true)}
-                  className="absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] cursor-pointer"
-                >
-                  {(avatarLoadError || !personalInfo.avatar) && (
-                    <div className="absolute inset-0 bg-neutral-100 flex flex-col items-center justify-center p-6 text-center z-0">
-                      <span className="font-sans text-xs font-bold text-neutral-800">No Portrait</span>
-                    </div>
-                  )}
-                  {personalInfo.avatar && (
+              <div 
+                onDragEnter={handleDrag}
+                onDragOver={handleDrag}
+                onDragLeave={handleDrag}
+                onDrop={handleDrop}
+                onClick={() => !personalInfo.isAvatarLocked && fileInputRef.current?.click()}
+                className={`portrait-ring w-[280px] sm:w-[320px] aspect-square rounded-full p-2.5 border border-brass relative transition-all duration-300 ${
+                  isDragging ? 'scale-105 border-dashed border-2 bg-paper-deep' : ''
+                } ${!personalInfo.isAvatarLocked ? 'cursor-pointer hover:scale-[1.02]' : 'cursor-default'}`}
+              >
+                {/* Outer concentric decorative border outline */}
+                <div className="absolute inset-[-16px] rounded-full border border-rule pointer-events-none" />
+                
+                {/* Image core */}
+                <div className="w-full h-full rounded-full overflow-hidden bg-paper-deep">
+                  {personalInfo.avatar ? (
                     <img
-                       id="hero-portrait-img"
-                       src={personalInfo.avatar.startsWith('data:') ? personalInfo.avatar : `${personalInfo.avatar}?v=${avatarVersion}`}
-                       alt={personalInfo.name}
-                       referrerPolicy="no-referrer"
-                       onLoad={() => setAvatarLoadError(false)}
-                       onError={() => setAvatarLoadError(true)}
-                       className={`w-full h-full object-cover object-[center_25%] transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03] relative z-10 ${
-                         avatarLoadError ? 'opacity-0 invisible' : 'opacity-100 visible'
-                       }`}
+                      id="hero-portrait-img"
+                      src={personalInfo.avatar.startsWith('data:') ? personalInfo.avatar : `${personalInfo.avatar}?v=${avatarVersion}`}
+                      alt={personalInfo.name}
+                      referrerPolicy="no-referrer"
+                      onLoad={() => setAvatarLoadError(false)}
+                      onError={() => setAvatarLoadError(true)}
+                      className="w-full h-full object-cover filter grayscale-[6%] contrast-[103%] block transition-all duration-500 hover:scale-[1.04]"
                     />
-                  )}
-
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white gap-2 z-20">
-                    <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm border border-white flex items-center justify-center scale-95 group-hover:scale-100 group-active:scale-100 transition-transform duration-300">
-                      <Play className="w-5 h-5 text-white fill-current translate-x-0.5" />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-ink-soft">
+                      <span className="font-mono text-xs">No Portrait</span>
                     </div>
-                    <span className="font-mono text-[8px] uppercase tracking-[0.2em] font-bold">Play Intro Video</span>
+                  )}
+                </div>
+
+                {/* Drag / Hover action overlay */}
+                {!personalInfo.isAvatarLocked && (
+                  <div className="absolute inset-0 bg-ink/75 rounded-full opacity-0 hover:opacity-100 flex flex-col items-center justify-center text-paper text-center p-4 transition-opacity duration-300 select-none z-10">
+                    <Upload className="w-6 h-6 mb-1.5 text-brass" />
+                    <span className="font-mono text-[10px] uppercase tracking-widest font-bold text-paper">Change Portrait</span>
+                    <span className="text-[9px] font-sans text-paper-deep/80 mt-1">Drag & Drop or Click</span>
                   </div>
-                </div>
-              ) : (
-                <div 
-                  className="absolute inset-0 bg-[#EBECE9] overflow-hidden border border-neutral-200 transition-all duration-500 shadow-none rounded-none -rotate-1 group-hover:rotate-0 group-hover:scale-[1.02] group-active:rotate-0 group-active:scale-[1.02] cursor-default"
-                >
-                  {(avatarLoadError || !personalInfo.avatar) && (
-                    <div className="absolute inset-0 bg-neutral-100 flex flex-col items-center justify-center p-6 text-center z-0">
-                      <span className="font-sans text-xs font-bold text-neutral-800">No Portrait</span>
-                    </div>
-                  )}
-                  {personalInfo.avatar && (
-                    <div className="relative w-full h-full z-10">
-                      <img
-                        id="hero-portrait-img"
-                        src={personalInfo.avatar.startsWith('data:') ? personalInfo.avatar : `${personalInfo.avatar}?v=${avatarVersion}`}
-                        alt={personalInfo.name}
-                        referrerPolicy="no-referrer"
-                        onLoad={() => setAvatarLoadError(false)}
-                        onError={() => setAvatarLoadError(true)}
-                        className={`w-full h-full object-cover object-[center_25%] transition-all duration-700 ease-out scale-100 group-hover:scale-108 group-active:scale-108 filter group-hover:brightness-[1.03] group-active:brightness-[1.03] ${
-                          avatarLoadError ? 'opacity-0 invisible' : 'opacity-100 visible'
-                        }`}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
+                )}
+              </div>
 
-              {/* Optional pulsing "Intro Video" badge at top right - Rendered on top of image wrapper */}
-              {personalInfo.introVideo && (
-                <div 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsVideoModalOpen(true);
-                  }}
-                  className="absolute -top-3.5 -right-3.5 z-30 bg-black text-white border border-neutral-800 px-3.5 py-2.5 sm:px-2 sm:py-1 flex items-center space-x-2 sm:space-x-1 font-mono text-[10px] sm:text-[8px] tracking-widest uppercase cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 shadow-md min-h-[40px] sm:min-h-0"
-                >
-                  <span className="w-2 h-2 sm:w-1.5 sm:h-1.5 rounded-full bg-red-500 animate-ping"></span>
-                  <span>Intro Video</span>
-                </div>
-              )}
+              {/* Portrait Label Caption */}
+              <div className="portrait-caption mt-[22px] font-mono text-[12px] tracking-[0.1em] uppercase text-ink-soft font-semibold">
+                {personalInfo.name} — {personalInfo.title}
+              </div>
             </div>
           </motion.div>
         </motion.div>
@@ -365,29 +307,25 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
       {/* Immersive Video Theater Modal */}
       {isVideoModalOpen && personalInfo.introVideo && (
         <div id="video-modal-container" className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* Backdrop with elegant blur */}
           <div
             onClick={() => setIsVideoModalOpen(false)}
-            className="absolute inset-0 bg-black/85 backdrop-blur-sm"
+            className="absolute inset-0 bg-ink/90 backdrop-blur-sm"
           />
           
-          {/* Playback Box */}
           <div
-            className="relative w-full max-w-4xl bg-black border border-neutral-800 shadow-2xl overflow-hidden z-10"
+            className="relative w-full max-w-4xl bg-[#12213A] border border-brass/20 shadow-2xl overflow-hidden z-10 rounded-[2px]"
           >
-            {/* Close Button overlay */}
             <div className="absolute top-4 right-4 z-20">
               <button
                 id="close-video-modal-btn"
                 onClick={() => setIsVideoModalOpen(false)}
-                className="p-1.5 bg-black/60 hover:bg-black/90 text-neutral-400 hover:text-white border border-neutral-800 transition-colors cursor-pointer"
+                className="p-1.5 bg-ink/80 hover:bg-ink text-paper hover:text-white border border-rule transition-colors cursor-pointer rounded-[2px]"
                 title="Close Video"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Responsive aspect video player */}
             <div className="relative aspect-video w-full flex items-center justify-center bg-black">
               {personalInfo.introVideoType === 'file' || personalInfo.introVideoType === 'url' ? (
                 <video 
@@ -407,13 +345,12 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               )}
             </div>
 
-            {/* Informative footer */}
-            <div className="p-4 bg-neutral-950 border-t border-neutral-900 flex justify-between items-center">
+            <div className="p-4 bg-ink border-t border-rule/20 flex justify-between items-center">
               <div>
-                <span className="block text-[8px] font-mono text-neutral-500 uppercase tracking-widest">Introduction video</span>
-                <h4 className="text-xs font-sans font-bold text-neutral-200 uppercase tracking-wide">{personalInfo.name} | Profile Pitch</h4>
+                <span className="block text-[8px] font-mono text-brass uppercase tracking-widest">Introduction video</span>
+                <h4 className="text-xs font-sans font-bold text-paper uppercase tracking-wide">{personalInfo.name} | Profile Pitch</h4>
               </div>
-              <div className="text-[9px] font-mono text-neutral-400 uppercase border border-neutral-900 px-2.5 py-0.5">
+              <div className="text-[9px] font-mono text-brass-soft uppercase border border-rule/20 px-2.5 py-0.5">
                 {personalInfo.introVideoType === 'file' ? 'Local Upload' : 'External Stream'}
               </div>
             </div>

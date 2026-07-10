@@ -47,7 +47,7 @@ export default function App() {
   };
 
   return (
-    <div id="root-layout" className="min-h-screen flex flex-col selection:bg-brand-900 selection:text-white">
+    <div id="root-layout" className="min-h-screen flex flex-col bg-paper selection:bg-brass selection:text-paper text-ink">
       {/* Custom Cursor Ring follower */}
       <CursorRing />
 
@@ -78,80 +78,37 @@ export default function App() {
         <Contact />
       </main>
 
-      {/* Footer Design */}
-      <footer id="main-footer" className="bg-[#fcfcfc] text-neutral-500 py-16 px-6 md:px-12 border-t border-neutral-200/60 print:hidden">
-        <div className="max-w-6xl mx-auto">
+      {/* Footer Design Matching Your HTML Template */}
+      <footer id="main-footer" className="bg-paper-deep text-ink-soft py-16 px-6 sm:px-8 border-t border-rule print:hidden">
+        <div className="max-w-[1120px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-8">
           
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pb-12">
-            
-            {/* Brand column */}
-            <div className="md:col-span-6 space-y-4">
-              <div>
-                <span className="font-display text-base font-bold tracking-tight text-neutral-900 block">
-                  {personalInfo.name}
-                </span>
-                <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-widest mt-1 block">
-                  {personalInfo.title}
-                </span>
-              </div>
-              <div className="flex items-center space-x-3 pt-2">
-                <a
-                  href={personalInfo.linkedin}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="p-2 border border-neutral-200 text-neutral-400 hover:text-black hover:border-black transition-all duration-300 rounded-none bg-white hover:scale-105"
-                  title="LinkedIn"
-                >
-                  <Linkedin className="w-3.5 h-3.5" />
-                </a>
-                <a
-                  href={`mailto:${personalInfo.email}`}
-                  className="p-2 border border-neutral-200 text-neutral-400 hover:text-black hover:border-black transition-all duration-300 rounded-none bg-white hover:scale-105"
-                  title="Email"
-                >
-                  <Mail className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-
-            {/* Spacer */}
-            <div className="hidden md:block md:col-span-2"></div>
-
-            {/* Quick Links Column */}
-            <div className="md:col-span-4 space-y-4 md:text-right">
-              <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-widest font-bold block">
-                Navigation
+          {/* Brand section */}
+          <div>
+            <div className="mark flex items-center gap-3 font-mono font-medium text-sm tracking-wide text-ink">
+              <span className="seal w-8 h-8 rounded-full border border-brass flex items-center justify-center font-serif text-[13px] text-brass font-semibold overflow-hidden bg-paper">
+                {personalInfo.avatar ? (
+                  <img 
+                    src={personalInfo.avatar} 
+                    alt="" 
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  'RG'
+                )}
               </span>
-              <div className="flex flex-col md:items-end gap-2.5 text-[10px] font-mono text-neutral-500 uppercase tracking-widest">
-                <button
-                  onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="hover:text-black transition-colors cursor-pointer text-left md:text-right w-fit"
-                >
-                  About
-                </button>
-                <button
-                  onClick={() => document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="hover:text-black transition-colors cursor-pointer text-left md:text-right w-fit"
-                >
-                  Writings
-                </button>
-                <button
-                  onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="hover:text-black transition-colors cursor-pointer text-left md:text-right w-fit"
-                >
-                  Get In Touch
-                </button>
-              </div>
+              <span className="font-semibold">{personalInfo.name}</span>
             </div>
-
-          </div>
-
-          {/* Bottom Row: Copyright */}
-          <div className="border-t border-neutral-200/60 pt-8 text-[9px] font-mono text-neutral-400 uppercase tracking-widest text-center sm:text-left">
-            <p>
-              © {new Date().getFullYear()} {personalInfo.name}. All rights reserved.
+            <p className="mt-3 text-ink-soft text-[13.5px] max-w-[280px] font-sans leading-relaxed">
+              Corporate, IP & Tech Policy Lawyer. Turning complex regulation into clear moves.
             </p>
           </div>
+
+          {/* Copyright section */}
+          <div className="font-mono text-xs text-ink-soft tracking-wider md:text-right">
+            © {new Date().getFullYear()} {personalInfo.name}. All rights reserved.
+          </div>
+          
         </div>
       </footer>
 
@@ -160,12 +117,13 @@ export default function App() {
         <button
           id="scroll-to-top-btn"
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 p-3 bg-white text-black rounded-none border border-neutral-200 hover:border-black shadow-none transition-all duration-300 cursor-pointer z-40"
+          className="fixed bottom-6 right-6 p-3 bg-paper text-ink rounded-[2px] border border-rule hover:border-brass hover:text-brass shadow-none transition-all duration-300 cursor-pointer z-40"
           title="Scroll to Top"
         >
           <ChevronUp className="w-4 h-4" />
         </button>
       )}
+
 
       {/* Slide-over Profile Settings Panel */}
       <Customizer />
