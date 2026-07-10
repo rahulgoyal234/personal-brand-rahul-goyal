@@ -107,7 +107,7 @@ export const PROJECTS: Project[] = [
     description: 'A deep academic inquiry into the structural, financial, and functional independence of the Indian judiciary, exploring constitutional safeguards and contemporary challenges.',
     longDescription: 'Judicial independence is a cornerstone of the basic structure of the Indian Constitution. This paper investigates appointment mechanisms (Collegium system vs. NJAC), security of tenure, financial autonomy, and functional separation of powers, evaluating modern pressures and reforms.',
     tags: ['Constitutional Law', 'Judiciary', 'Basic Structure', 'Appointment Reform'],
-    image: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=800&q=80',
     demoUrl: 'https://www.ijllr.com/post/extensive-study-on-independence-of-judiciary', // Indian Journal of Law and Legal Research
     highlights: [
       'Published in the Indian Journal of Law and Legal Research (IJLLR) with ISSN: 2582-8878.',
