@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { ArrowRight, Linkedin, Mail, MapPin, Briefcase, Settings, Play, X, Edit, Lock, Globe, MoreVertical, RefreshCw, Upload } from 'lucide-react';
+import React, { useState } from 'react';
+import { Play, X } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { motion } from 'motion/react';
 
@@ -9,115 +9,15 @@ interface HeroProps {
 }
 
 export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
-  const { personalInfo, updatePersonalInfo, setIsEditorOpen } = usePortfolio();
+  const { personalInfo } = usePortfolio();
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-  const [indexingStatus, setIndexingStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const [avatarLoadError, setAvatarLoadError] = useState(false);
   const [avatarVersion, setAvatarVersion] = useState(() => Date.now());
-  const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     setAvatarLoadError(false);
     setAvatarVersion(Date.now());
   }, [personalInfo.avatar]);
-
-  const processAndUploadFile = (file: File) => {
-    // Create highly memory-efficient Object URL instead of FileReader base64 strings to prevent crashes
-    const blobUrl = URL.createObjectURL(file);
-    const img = new Image();
-    
-    img.onload = () => {
-      const maxDimension = 1600; // Ultra high resolution limit for razor-sharp display on 4K/Retina screens
-      let w = img.width;
-      let h = img.height;
-      
-      if (w > maxDimension || h > maxDimension) {
-        if (w > h) {
-          h = Math.round((h * maxDimension) / w);
-          w = maxDimension;
-        } else {
-          w = Math.round((w * maxDimension) / h);
-          h = maxDimension;
-        }
-      }
-      
-      const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
-      const ctx = canvas.getContext('2d');
-      
-      if (ctx) {
-        ctx.drawImage(img, 0, 0, w, h);
-        try {
-          // Highly pristine 0.95 quality for crisp original detail with zero compression artifacts
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.95);
-          updatePersonalInfo({ avatar: compressedBase64 });
-        } catch (err) {
-          console.error("Compression failed, trying fallback to generic canvas URL", err);
-          try {
-            const fallbackBase64 = canvas.toDataURL('image/png');
-            updatePersonalInfo({ avatar: fallbackBase64 });
-          } catch (fallbackErr) {
-            console.error("Fallback image rendering failed", fallbackErr);
-          }
-        }
-      }
-      URL.revokeObjectURL(blobUrl);
-    };
-    
-    img.onerror = () => {
-      console.error("Failed to load image via ObjectURL");
-      URL.revokeObjectURL(blobUrl);
-      // Robust fallback to reader if ObjectURL is not fully supported
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        updatePersonalInfo({ avatar: reader.result as string });
-      };
-      reader.readAsDataURL(file);
-    };
-    
-    img.src = blobUrl;
-  };
-
-  const handleDirectFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      processAndUploadFile(file);
-    }
-    // Clear input value so selecting the same file triggers onChange again
-    e.target.value = '';
-  };
-
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setIsDragging(true);
-    } else if (e.type === "dragleave") {
-      setIsDragging(false);
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-    
-    if (personalInfo.isAvatarLocked) return;
-    
-    const file = e.dataTransfer.files?.[0];
-    if (file && file.type.startsWith('image/')) {
-      processAndUploadFile(file);
-    }
-  };
-
-  const handleReindex = () => {
-    setIndexingStatus('loading');
-    setTimeout(() => {
-      setIndexingStatus('success');
-    }, 1500);
-  };
 
   // Animation container variants for staggered effect
   const containerVariants = {
