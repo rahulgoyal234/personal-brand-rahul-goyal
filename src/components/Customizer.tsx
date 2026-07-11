@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { X, Upload, Link as LinkIcon, RotateCcw, Check, Sparkles, User, Image as ImageIcon, Video, Trash2, Play, AlertCircle, Film, Plus, Edit, FolderOpen, Lock, Unlock, Download, UploadCloud, Camera, VideoOff, RefreshCw, Sliders, ZoomIn, RotateCw, Move, Mail, FlipHorizontal, FlipVertical, ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Globe } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { Project } from '../types';
@@ -914,26 +913,19 @@ export default function Customizer() {
   };
 
   return (
-    <AnimatePresence>
+    <>
       {isEditorOpen && (
         <>
           {/* Backdrop Overlay */}
-          <motion.div
+          <div
             id="customizer-backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
             onClick={() => setIsEditorOpen(false)}
             className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-50 print:hidden"
           />
 
           {/* Slide-over Drawer Panel */}
-          <motion.div
+          <div
             id="customizer-drawer"
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed top-0 right-0 bottom-0 w-full max-w-md bg-[#fafafa] border-l border-neutral-200 z-50 shadow-2xl flex flex-col print:hidden"
           >
             {/* Header */}
@@ -1626,23 +1618,18 @@ export default function Customizer() {
             </div>
 
             {/* Success Toast */}
-            <AnimatePresence>
-              {saveSuccess && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  className="absolute bottom-20 left-6 right-6 p-3 bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center gap-2 font-mono text-[10px] tracking-widest uppercase shadow-xl"
-                >
-                  <Check className="w-4 h-4 text-emerald-400" />
-                  <span>Profile updated successfully!</span>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {saveSuccess && (
+              <div
+                className="absolute bottom-20 left-6 right-6 p-3 bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center gap-2 font-mono text-[10px] tracking-widest uppercase shadow-xl"
+              >
+                <Check className="w-4 h-4 text-emerald-400" />
+                <span>Profile updated successfully!</span>
+              </div>
+            )}
 
-          </motion.div>
+          </div>
         </>
       )}
-    </AnimatePresence>
+    </>
   );
 }

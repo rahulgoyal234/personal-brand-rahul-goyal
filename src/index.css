@@ -6,28 +6,28 @@
   --font-serif: "Fraunces", Georgia, serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
   
-  --color-paper: #FFFFFF;
-  --color-paper-deep: #F4F4F5;
-  --color-ink: #000000;
-  --color-ink-soft: #52525B;
-  --color-brass: #000000;
-  --color-brass-soft: #E4E4E7;
-  --color-line: #E4E4E7;
-  --color-rule: rgba(0, 0, 0, 0.08);
+  --color-paper: #F7F4EC;
+  --color-paper-deep: #EFEADC;
+  --color-ink: #12213A;
+  --color-ink-soft: #3B4B63;
+  --color-brass: #A9803F;
+  --color-brass-soft: #C9A669;
+  --color-line: #DCD5C2;
+  --color-rule: rgba(18, 33, 58, 0.12);
   
-  --color-brand-50: #FFFFFF;
-  --color-brand-100: #F4F4F5;
-  --color-brand-200: #E4E4E7;
-  --color-brand-300: #A1A1AA;
-  --color-brand-400: #52525B;
-  --color-brand-500: #27272A;
-  --color-brand-900: #000000;
+  --color-brand-50: #F7F4EC;
+  --color-brand-100: #EFEADC;
+  --color-brand-200: #DCD5C2;
+  --color-brand-300: #C9A669;
+  --color-brand-400: #A9803F;
+  --color-brand-500: #3B4B63;
+  --color-brand-900: #12213A;
 }
 
 @layer base {
   body {
-    background-color: #FFFFFF;
-    color: #000000;
+    background-color: #F7F4EC;
+    color: #12213A;
     font-family: "Inter", sans-serif;
     -webkit-font-smoothing: antialiased;
   }
@@ -44,12 +44,23 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #E4E4E7;
+  background: #DCD5C2;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #000000;
+  background: #A9803F;
 }
+
+/* Hide custom cursor on touch/mobile devices or those without hover/pointer capability */
+@media (pointer: coarse) {
+  #custom-cursor-ring,
+  #custom-cursor-dot {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+}
+
 
 
 

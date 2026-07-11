@@ -1,6 +1,5 @@
 import React from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
-import { motion } from 'motion/react';
 
 export default function Contact() {
   const { personalInfo } = usePortfolio();
@@ -12,13 +11,7 @@ export default function Contact() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-20 items-start">
           
           {/* Column 1: Info and Links */}
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.7, ease: 'easeOut' }}
-            className="space-y-10"
-          >
+          <div className="space-y-10">
             <div className="space-y-4">
               <h2 className="font-serif text-[38px] font-semibold text-ink leading-tight">
                 Get in Touch
@@ -30,12 +23,12 @@ export default function Contact() {
 
             <div className="contact-methods flex flex-col gap-6 pt-2">
               <div className="contact-method flex flex-col gap-1.5">
-                <strong className="font-mono text-[11px] uppercase tracking-widest text-brass font-bold">
+                <strong className="font-mono text-[11px] uppercase tracking-widest text-ink-soft font-bold">
                   Email
                 </strong>
                 <a 
                   href={`mailto:${personalInfo.email}`} 
-                  className="text-base sm:text-[16.5px] text-ink hover:text-brass transition-colors font-medium font-sans no-underline"
+                  className="text-base sm:text-[16.5px] text-ink hover:text-ink hover:underline transition-colors font-medium font-sans no-underline"
                 >
                   {personalInfo.email}
                 </a>
@@ -43,7 +36,7 @@ export default function Contact() {
 
               {personalInfo.location && (
                 <div className="contact-method flex flex-col gap-1.5">
-                  <strong className="font-mono text-[11px] uppercase tracking-widest text-brass font-bold">
+                  <strong className="font-mono text-[11px] uppercase tracking-widest text-ink-soft font-bold">
                     Based in
                   </strong>
                   <span className="text-base sm:text-[16.5px] text-ink font-medium font-sans">
@@ -52,15 +45,10 @@ export default function Contact() {
                 </div>
               )}
             </div>
-          </motion.div>
+          </div>
 
           {/* Column 2: Formspree Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.7, ease: 'easeOut', delay: 0.1 }}
-          >
+          <div>
             <form 
               action="https://formspree.io/f/xvonzgky" 
               method="POST"
@@ -76,7 +64,7 @@ export default function Contact() {
                   name="name" 
                   required 
                   placeholder="Your name"
-                  className="px-4 py-3 border border-rule/60 bg-paper rounded-[2px] font-sans text-sm text-ink hover:border-brass-soft focus:border-brass focus:ring-0 focus:outline-none transition-colors duration-200"
+                  className="px-4 py-3 border border-rule/60 bg-paper rounded-[2px] font-sans text-sm text-ink hover:border-ink-soft focus:border-ink focus:ring-0 focus:outline-none transition-colors duration-200"
                 />
               </div>
 
@@ -90,7 +78,7 @@ export default function Contact() {
                   name="_replyto" 
                   required 
                   placeholder="your.email@domain.com"
-                  className="px-4 py-3 border border-rule/60 bg-paper rounded-[2px] font-sans text-sm text-ink hover:border-brass-soft focus:border-brass focus:ring-0 focus:outline-none transition-colors duration-200"
+                  className="px-4 py-3 border border-rule/60 bg-paper rounded-[2px] font-sans text-sm text-ink hover:border-ink-soft focus:border-ink focus:ring-0 focus:outline-none transition-colors duration-200"
                 />
               </div>
 
@@ -104,18 +92,18 @@ export default function Contact() {
                   rows={5} 
                   required 
                   placeholder="Briefly describe your legal or research inquiry..."
-                  className="px-4 py-3 border border-rule/60 bg-paper rounded-[2px] font-sans text-sm text-ink hover:border-brass-soft focus:border-brass focus:ring-0 focus:outline-none transition-colors duration-200 resize-none"
+                  className="px-4 py-3 border border-rule/60 bg-paper rounded-[2px] font-sans text-sm text-ink hover:border-ink-soft focus:border-ink focus:ring-0 focus:outline-none transition-colors duration-200 resize-none"
                 />
               </div>
 
               <button 
                 type="submit" 
-                className="w-full justify-center font-mono text-[13.5px] tracking-wider px-[22px] py-4 border border-ink bg-ink text-paper hover:bg-brass hover:border-brass hover:text-white rounded-[2px] transition-all duration-200 hover:-translate-y-[1px] flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
+                className="w-full justify-center font-mono text-[13.5px] tracking-wider px-[22px] py-4 border border-ink bg-ink text-paper hover:bg-paper hover:text-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
               >
                 Send Message
               </button>
             </form>
-          </motion.div>
+          </div>
 
         </div>
 

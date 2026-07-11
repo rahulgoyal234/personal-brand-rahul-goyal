@@ -1,197 +1,143 @@
-import React, { useEffect, useState } from 'react';
-import { motion, useMotionValue, useSpring, AnimatePresence } from 'motion/react';
-
-interface Ripple {
-  id: number;
-  x: number;
-  y: number;
-}
+import React, { useEffect, useRef, useState } from 'react';
 
 export default function CursorRing() {
+  const ringRef = useRef<HTMLDivElement | null>(null);
+  const dotRef = useRef<HTMLDivElement | null>(null);
+  const [hasMoved, setHasMoved] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const [ripples, setRipples] = useState<Ripple[]>([]);
-  
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
-  
-  // Outer fluid trail spring (relaxed and organic)
-  const outerSpringConfig = { damping: 30, stiffness: 180, mass: 0.8 };
-  // Middle prompt spring (fast and crisp)
-  const middleSpringConfig = { damping: 20, stiffness: 300, mass: 0.4 };
-
-  const outerXSpring = useSpring(cursorX, outerSpringConfig);
-  const outerYSpring = useSpring(cursorY, outerSpringConfig);
-
-  const middleXSpring = useSpring(cursorX, middleSpringConfig);
-  const middleYSpring = useSpring(cursorY, middleSpringConfig);
+  const [isClicking, setIsClicking] = useState(false);
 
   useEffect(() => {
-    const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
-      if (!isVisible) setIsVisible(true);
-    };
+    const ring = ringRef.current;
+    const dot = dotRef.current;
 
-    const handleMouseLeave = () => {
-      setIsVisible(false);
-    };
+    // Mouse coordinates
+    let mouseX = 0;
+    let mouseY = 0;
 
-    const handleMouseEnter = () => {
-      setIsVisible(true);
-    };
+    // Current cursor coordinates (for lerped easing)
+    let ringX = 0;
+    let ringY = 0;
 
-    const handleMouseDown = (e: MouseEvent) => {
-      const newRipple: Ripple = {
-        id: Date.now() + Math.random(),
-        x: e.clientX,
-        y: e.clientY,
-      };
-      setRipples((prev) => [...prev, newRipple].slice(-4)); // keep last 4 ripples
-    };
-
-    const addHoverListeners = () => {
-      const interactiveElements = document.querySelectorAll(
-        'a, button, input, select, textarea, [role="button"], .cursor-pointer, [data-interactive="true"]'
-      );
+    const onMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
       
-      const onMouseEnter = () => setIsHovered(true);
-      const onMouseLeave = () => setIsHovered(false);
+      if (!hasMoved) {
+        setHasMoved(true);
+      }
 
-      interactiveElements.forEach((el) => {
-        el.addEventListener('mouseenter', onMouseEnter);
-        el.addEventListener('mouseleave', onMouseLeave);
-      });
-
-      return () => {
-        interactiveElements.forEach((el) => {
-          el.removeEventListener('mouseenter', onMouseEnter);
-          el.removeEventListener('mouseleave', onMouseLeave);
-        });
-      };
+      // Instantly position the center dot
+      if (dot) {
+        dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+        dot.style.opacity = '1';
+      }
+      if (ring) {
+        ring.style.opacity = '1';
+      }
     };
 
-    window.addEventListener('mousemove', moveCursor);
-    window.addEventListener('mousedown', handleMouseDown);
-    document.addEventListener('mouseleave', handleMouseLeave);
-    document.addEventListener('mouseenter', handleMouseEnter);
-    
-    let cleanupHover = addHoverListeners();
-    
-    const observer = new MutationObserver(() => {
-      cleanupHover();
-      cleanupHover = addHoverListeners();
-    });
+    // Smooth animation loop for the outer ring
+    let animationFrameId: number;
+    const updatePosition = () => {
+      // Linear interpolation (lerp) for smooth lag/trailing effect
+      const ease = 0.15;
+      ringX += (mouseX - ringX) * ease;
+      ringY += (mouseY - ringY) * ease;
 
-    observer.observe(document.body, { childList: true, subtree: true });
+      if (ring) {
+        ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+      }
+
+      animationFrameId = requestAnimationFrame(updatePosition);
+    };
+
+    const onMouseDown = () => setIsClicking(true);
+    const onMouseUp = () => setIsClicking(false);
+
+    // Dynamic hover listeners for interactive elements
+    const onMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target) return;
+
+      const isInteractive = 
+        target.tagName === 'BUTTON' ||
+        target.tagName === 'A' ||
+        target.closest('button') ||
+        target.closest('a') ||
+        target.classList.contains('cursor-pointer') ||
+        window.getComputedStyle(target).cursor === 'pointer';
+
+      if (isInteractive) {
+        setIsHovered(true);
+      } else {
+        setIsHovered(false);
+      }
+    };
+
+    const onMouseLeaveWindow = () => {
+      if (ring) ring.style.opacity = '0';
+      if (dot) dot.style.opacity = '0';
+    };
+
+    const onMouseEnterWindow = () => {
+      if (hasMoved) {
+        if (ring) ring.style.opacity = '1';
+        if (dot) dot.style.opacity = '1';
+      }
+    };
+
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
+    window.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mouseup', onMouseUp);
+    window.addEventListener('mouseover', onMouseOver, { passive: true });
+    document.addEventListener('mouseleave', onMouseLeaveWindow);
+    document.addEventListener('mouseenter', onMouseEnterWindow);
+
+    animationFrameId = requestAnimationFrame(updatePosition);
 
     return () => {
-      window.removeEventListener('mousemove', moveCursor);
-      window.removeEventListener('mousedown', handleMouseDown);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-      document.removeEventListener('mouseenter', handleMouseEnter);
-      cleanupHover();
-      observer.disconnect();
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mouseup', onMouseUp);
+      window.removeEventListener('mouseover', onMouseOver);
+      document.removeEventListener('mouseleave', onMouseLeaveWindow);
+      document.removeEventListener('mouseenter', onMouseEnterWindow);
+      cancelAnimationFrame(animationFrameId);
     };
-  }, [cursorX, cursorY, isVisible]);
-
-  // Clean up finished ripples after animation duration
-  useEffect(() => {
-    if (ripples.length === 0) return;
-    const timer = setTimeout(() => {
-      setRipples((prev) => prev.filter((r) => Date.now() - r.id < 800));
-    }, 850);
-    return () => clearTimeout(timer);
-  }, [ripples]);
-
-  if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) {
-    return null;
-  }
+  }, [hasMoved]);
 
   return (
     <>
-      {/* Click Ripple / Expansion Waves */}
-      <AnimatePresence>
-        {ripples.map((ripple) => (
-          <motion.div
-            key={ripple.id}
-            className="fixed top-0 left-0 w-12 h-12 rounded-full border border-brass pointer-events-none z-50 pointer-events-none"
-            style={{
-              x: ripple.x,
-              y: ripple.y,
-              translateX: '-50%',
-              translateY: '-50%',
-            }}
-            initial={{ scale: 0.1, opacity: 0.8 }}
-            animate={{ scale: 1.8, opacity: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
-          />
-        ))}
-      </AnimatePresence>
-
-      {/* Outer organic fluid ring */}
-      <motion.div
-        className="fixed top-0 left-0 w-9 h-9 rounded-full border border-brass/35 pointer-events-none z-50 hidden sm:block"
+      {/* Outer Easing Ring */}
+      <div
+        ref={ringRef}
+        id="custom-cursor-ring"
+        className={`fixed top-0 left-0 w-8 h-8 -ml-4 -mt-4 rounded-full border pointer-events-none z-[9999] transition-all duration-300 ease-out will-change-transform ${
+          isHovered
+            ? 'border-brass bg-brass/15 scale-150'
+            : isClicking
+            ? 'border-brass bg-brass/35 scale-90'
+            : 'border-brass/80 bg-transparent'
+        }`}
         style={{
-          x: outerXSpring,
-          y: outerYSpring,
-          translateX: '-50%',
-          translateY: '-50%',
+          opacity: 0,
+          transitionProperty: 'width, height, background-color, border-color, transform, opacity',
         }}
-        animate={{
-          scale: isHovered ? 1.5 : 1,
-          borderColor: isHovered ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.25)',
-          borderWidth: isHovered ? '1.5px' : '1px',
-          opacity: isVisible ? 1 : 0,
-        }}
-        transition={{ type: 'tween', ease: 'backOut', duration: 0.25 }}
       />
 
-      {/* Middle targeted sharp reticle */}
-      <motion.div
-        className="fixed top-0 left-0 w-6 h-6 rounded-full border border-ink/40 pointer-events-none z-50 mix-blend-difference hidden sm:block"
+      {/* Precise Center Dot */}
+      <div
+        ref={dotRef}
+        id="custom-cursor-dot"
+        className={`fixed top-0 left-0 w-1.5 h-1.5 -ml-0.75 -mt-0.75 rounded-full pointer-events-none z-[9999] transition-all duration-75 will-change-transform ${
+          isHovered ? 'bg-brass scale-125' : 'bg-ink'
+        }`}
         style={{
-          x: middleXSpring,
-          y: middleYSpring,
-          translateX: '-50%',
-          translateY: '-50%',
+          opacity: 0,
+          transitionProperty: 'transform, opacity, background-color',
         }}
-        animate={{
-          scale: isHovered ? 1.9 : 1,
-          rotate: isHovered ? 90 : 0,
-          borderColor: isHovered ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.25)',
-          opacity: isVisible ? 1 : 0,
-        }}
-        transition={{ type: 'spring', damping: 15, stiffness: 120 }}
-      >
-        {/* Subtle crosshair ticks visible only on hover */}
-        {isHovered && (
-          <>
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1px] h-1.5 bg-white/70" />
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[1px] h-1.5 bg-white/70" />
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 h-[1px] w-1.5 bg-white/70" />
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 h-[1px] w-1.5 bg-white/70" />
-          </>
-        )}
-      </motion.div>
-
-      {/* Center core dot */}
-      <motion.div
-        className="fixed top-0 left-0 w-2 h-2 rounded-full bg-brass pointer-events-none z-50 hidden sm:block"
-        style={{
-          x: cursorX,
-          y: cursorY,
-          translateX: '-50%',
-          translateY: '-50%',
-        }}
-        animate={{
-          scale: isHovered ? 0.3 : 1,
-          opacity: isVisible ? 1 : 0,
-        }}
-        transition={{ type: 'tween', ease: 'linear', duration: 0.1 }}
       />
     </>
   );
 }
-

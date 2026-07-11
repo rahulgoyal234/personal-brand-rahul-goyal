@@ -4,8 +4,8 @@ import Hero from './components/Hero';
 import Portfolio from './components/Portfolio';
 import Contact from './components/Contact';
 import Customizer from './components/Customizer';
-import CursorRing from './components/CursorRing';
 import ThreeDBackground from './components/ThreeDBackground';
+import CursorRing from './components/CursorRing';
 import { usePortfolio } from './context/PortfolioContext';
 import { Linkedin, Mail, ChevronUp } from 'lucide-react';
 
@@ -52,7 +52,7 @@ export default function App() {
       {/* 3D Constellation Lattice Background */}
       <ThreeDBackground />
 
-      {/* Custom Cursor Ring follower */}
+      {/* Custom interactive cursor ring */}
       <CursorRing />
 
       {/* Premium Floating Navigation Menu */}
@@ -89,7 +89,7 @@ export default function App() {
           {/* Brand section */}
           <div>
             <div className="mark flex items-center gap-3 font-mono font-medium text-sm tracking-wide text-ink">
-              <span className="seal w-8 h-8 rounded-full border border-brass flex items-center justify-center font-serif text-[13px] text-brass font-semibold overflow-hidden bg-paper">
+              <span className="seal w-8 h-8 rounded-full border border-ink flex items-center justify-center font-serif text-[13px] text-ink font-semibold overflow-hidden bg-paper">
                 {personalInfo.avatar ? (
                   <img 
                     src={personalInfo.avatar} 
@@ -121,7 +121,7 @@ export default function App() {
         <button
           id="scroll-to-top-btn"
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 p-3 bg-paper text-ink rounded-[2px] border border-rule hover:border-brass hover:text-brass shadow-none transition-all duration-300 cursor-pointer z-40"
+          className="fixed bottom-6 right-6 p-3 bg-paper text-ink rounded-[2px] border border-rule hover:border-ink hover:text-ink shadow-none transition-all duration-300 cursor-pointer z-40"
           title="Scroll to Top"
         >
           <ChevronUp className="w-4 h-4" />

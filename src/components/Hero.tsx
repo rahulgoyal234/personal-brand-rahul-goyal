@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Play, X } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
-import { motion } from 'motion/react';
 
 interface HeroProps {
   onContactClick: () => void;
@@ -18,27 +17,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
     setAvatarLoadError(false);
     setAvatarVersion(Date.now());
   }, [personalInfo.avatar]);
-
-  // Animation container variants for staggered effect
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { type: 'spring', stiffness: 100, damping: 20 },
-    },
-  };
 
   const renderFormattedHeading = (text: string) => {
     const defaultText = "Making the complex, comprehensible.";
@@ -68,31 +46,22 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
       id="about"
       className="relative min-h-[90vh] flex items-center justify-center pt-36 pb-20 md:py-48 overflow-hidden bg-transparent scroll-mt-20"
     >
-      {/* Bespoke circular background wireframes from your design with slow infinite rotation */}
-      <motion.div 
-        animate={{ rotate: 360 }}
-        transition={{ duration: 160, ease: "linear", repeat: Infinity }}
+      {/* Bespoke circular background wireframes from your design */}
+      <div 
         className="absolute top-[-120px] right-[-160px] w-[520px] h-[520px] rounded-full border border-rule/60 pointer-events-none select-none z-0 hidden lg:block" 
       />
-      <motion.div 
-        animate={{ rotate: -360 }}
-        transition={{ duration: 120, ease: "linear", repeat: Infinity }}
+      <div 
         className="absolute top-[-60px] right-[-100px] w-[520px] h-[520px] rounded-full border border-rule/40 pointer-events-none select-none z-0 hidden lg:block" 
       />
 
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8 w-full relative z-10">
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center"
-        >
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Main Copy Content */}
           <div
             id="hero-content"
             className="lg:col-span-7 flex flex-col items-start text-left"
           >
-            <motion.div variants={itemVariants} className="space-y-4">
+            <div className="space-y-4">
               <div className="eyebrow font-mono text-[12.5px] tracking-[0.14em] uppercase text-brass flex items-center gap-2.5 before:content-[''] before:w-[22px] before:h-[1px] before:bg-brass font-bold">
                 {personalInfo.name} | {personalInfo.title}
               </div>
@@ -103,23 +72,22 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               >
                 {personalInfo.shortBio || "Making the complex, comprehensible."}
               </h1>
-            </motion.div>
+            </div>
 
             {/* Detailed Bio paragraph */}
-            <motion.p
+            <p
               id="hero-bio"
-              variants={itemVariants}
               className="text-ink-soft text-[17px] sm:text-lg leading-relaxed max-w-[540px] mt-[22px] font-sans"
             >
               I'm Rahul Goyal, a lawyer who reads fine print so you don't have to. I work in <strong className="text-ink font-semibold">corporate law, IP, and tech policy</strong>, turning tangled regulation into clear, confident moves. Contracts that hold up. Advice that's straight, not stuffy. Legal ground that's safe to build on.
-            </motion.p>
+            </p>
 
             {/* Call To Action Buttons */}
-            <motion.div id="hero-actions" variants={itemVariants} className="flex flex-wrap items-center gap-4 mt-10">
+            <div id="hero-actions" className="flex flex-wrap items-center gap-4 mt-10">
               <button
                 id="hero-cta-portfolio"
                 onClick={onPortfolioClick}
-                className="font-mono text-[13.5px] tracking-wider px-[22px] py-3.5 border border-ink bg-ink text-paper hover:bg-brass hover:border-brass hover:text-white rounded-[2px] transition-all duration-200 hover:-translate-y-[1px] flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
+                className="font-mono text-[13.5px] tracking-wider px-[22px] py-3.5 border border-ink bg-ink text-paper hover:bg-paper hover:text-ink hover:border-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
               >
                 View Writings
               </button>
@@ -128,7 +96,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 <button
                   id="hero-cta-video"
                   onClick={() => setIsVideoModalOpen(true)}
-                  className="font-mono text-[13.5px] tracking-wider px-[22px] py-3.5 border border-brass-soft bg-brass-soft text-ink hover:bg-brass hover:border-brass hover:text-white rounded-[2px] transition-all duration-200 hover:-translate-y-[1px] flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
+                  className="font-mono text-[13.5px] tracking-wider px-[22px] py-3.5 border border-line bg-paper-deep text-ink hover:bg-ink hover:border-ink hover:text-paper rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
                 >
                   <Play className="w-3.5 h-3.5 fill-current translate-x-0.5" />
                   Play Intro Video
@@ -138,26 +106,21 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               <button
                 id="hero-cta-contact"
                 onClick={onContactClick}
-                className="font-mono text-[13.5px] tracking-wider px-[22px] py-3.5 border border-ink bg-transparent text-ink hover:text-brass hover:border-brass rounded-[2px] transition-all duration-200 hover:-translate-y-[1px] flex items-center gap-2 cursor-pointer font-semibold hover:bg-paper/40"
+                className="font-mono text-[13.5px] tracking-wider px-[22px] py-3.5 border border-ink bg-transparent text-ink hover:text-paper hover:bg-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold"
               >
                 Get in Touch
               </button>
-            </motion.div>
+            </div>
           </div>
 
           {/* Portrait Column styled with elegant circular ring and outer outline wrapper */}
-          <motion.div
+          <div
             id="hero-portrait-container"
-            variants={itemVariants}
             className="lg:col-span-5 flex justify-center lg:justify-end"
           >
-            <motion.div 
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 6, ease: "easeInOut", repeat: Infinity }}
-              className="portrait-wrap relative flex flex-col items-center"
-            >
+            <div className="portrait-wrap relative flex flex-col items-center">
               <div 
-                className="portrait-ring w-[280px] sm:w-[320px] aspect-square rounded-full p-2.5 border border-brass relative transition-all duration-500 cursor-default shadow-lg"
+                className="portrait-ring w-[280px] sm:w-[320px] aspect-square rounded-full p-2.5 border border-ink/40 relative transition-all duration-500 cursor-default shadow-lg"
               >
                 {/* Outer concentric decorative border outline */}
                 <div className="absolute inset-[-16px] rounded-full border border-rule pointer-events-none" />
@@ -172,7 +135,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                       referrerPolicy="no-referrer"
                       onLoad={() => setAvatarLoadError(false)}
                       onError={() => setAvatarLoadError(true)}
-                      className="w-full h-full object-cover filter grayscale-[6%] contrast-[103%] block"
+                      className="w-full h-full object-cover block"
                     />
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-ink-soft">
@@ -186,9 +149,9 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               <div className="portrait-caption mt-[22px] font-mono text-[12px] tracking-[0.1em] uppercase text-ink-soft font-semibold">
                 {personalInfo.name} | {personalInfo.title}
               </div>
-            </motion.div>
-          </motion.div>
-        </motion.div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Immersive Video Theater Modal */}
@@ -196,17 +159,17 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
         <div id="video-modal-container" className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
             onClick={() => setIsVideoModalOpen(false)}
-            className="absolute inset-0 bg-ink/90 backdrop-blur-sm"
+            className="absolute inset-0 bg-ink/75 backdrop-blur-sm"
           />
           
           <div
-            className="relative w-full max-w-4xl bg-[#12213A] border border-brass/20 shadow-2xl overflow-hidden z-10 rounded-[2px]"
+            className="relative w-full max-w-4xl bg-paper border border-rule shadow-2xl overflow-hidden z-10 rounded-[2px]"
           >
             <div className="absolute top-4 right-4 z-20">
               <button
                 id="close-video-modal-btn"
                 onClick={() => setIsVideoModalOpen(false)}
-                className="p-1.5 bg-ink/80 hover:bg-ink text-paper hover:text-white border border-rule transition-colors cursor-pointer rounded-[2px]"
+                className="p-1.5 bg-paper/90 hover:bg-ink text-ink hover:text-paper border border-rule transition-colors cursor-pointer rounded-[2px] active:scale-95"
                 title="Close Video"
               >
                 <X className="w-4 h-4" />
@@ -232,12 +195,12 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               )}
             </div>
 
-            <div className="p-4 bg-ink border-t border-rule/20 flex justify-between items-center">
+            <div className="p-4 bg-paper border-t border-rule flex justify-between items-center">
               <div>
-                <span className="block text-[8px] font-mono text-brass uppercase tracking-widest">Introduction video</span>
-                <h4 className="text-xs font-sans font-bold text-paper uppercase tracking-wide">{personalInfo.name} | Profile Pitch</h4>
+                <span className="block text-[8px] font-mono text-ink-soft uppercase tracking-widest">Introduction video</span>
+                <h4 className="text-xs font-sans font-bold text-ink uppercase tracking-wide">{personalInfo.name} | Profile Pitch</h4>
               </div>
-              <div className="text-[9px] font-mono text-brass-soft uppercase border border-rule/20 px-2.5 py-0.5">
+              <div className="text-[9px] font-mono text-ink-soft uppercase border border-rule px-2.5 py-0.5">
                 {personalInfo.introVideoType === 'file' ? 'Local Upload' : 'External Stream'}
               </div>
             </div>
