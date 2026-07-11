@@ -2,6 +2,8 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
+import { GoogleGenAI, Type } from '@google/genai';
+import { execSync } from 'child_process';
 
 async function startServer() {
   const app = express();
@@ -84,39 +86,176 @@ async function startServer() {
     return res.json(null);
   });
 
-  // Helper to save avatar from base64
-  function saveAvatarFromBase64(base64Str: string): string | null {
+  // Helper to save avatar from base64 and auto-center face
+  async function saveAvatarFromBase64(base64Str: string): Promise<string | null> {
+    const tempInputPath = path.join(process.cwd(), 'temp_uploaded_raw');
+    const tempOutputPath = path.join(process.cwd(), 'temp_uploaded_processed.jpg');
+    
     try {
       const matches = base64Str.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
       if (!matches || matches.length !== 3) {
         return null;
       }
-      const buffer = Buffer.from(matches[2], 'base64');
+      const mimeType = matches[1];
+      const base64Data = matches[2];
+      const buffer = Buffer.from(base64Data, 'base64');
+      
+      // Determine file extension from mimeType
+      let ext = '.png';
+      if (mimeType.includes('jpeg') || mimeType.includes('jpg')) {
+        ext = '.jpg';
+      } else if (mimeType.includes('webp')) {
+        ext = '.webp';
+      }
+      
+      const inputPath = tempInputPath + ext;
+      fs.writeFileSync(inputPath, buffer);
+      
+      // Get image size using ImageMagick
+      let width = 0;
+      let height = 0;
+      try {
+        const sizeStr = execSync(`identify -format "%w %h" "${inputPath}"`).toString().trim();
+        const parts = sizeStr.split(' ');
+        width = parseInt(parts[0], 10);
+        height = parseInt(parts[1], 10);
+      } catch (err) {
+        console.error('Error identifying image size:', err);
+      }
+      
+      let cropped = false;
+      
+      if (width > 0 && height > 0 && process.env.GEMINI_API_KEY) {
+        try {
+          const ai = new GoogleGenAI({
+            apiKey: process.env.GEMINI_API_KEY,
+            httpOptions: {
+              headers: {
+                'User-Agent': 'aistudio-build',
+              }
+            }
+          });
+          
+          console.log('[FaceDetection] Analyzing face bounding box with Gemini...');
+          const response = await ai.models.generateContent({
+            model: 'gemini-3.5-flash',
+            contents: [
+              {
+                inlineData: {
+                  mimeType: mimeType.includes('svg') ? 'image/png' : mimeType,
+                  data: base64Data
+                }
+              },
+              "Identify the main person's face/head in this image. Output the bounding box [ymin, xmin, ymax, xmax] normalized on a 0-1000 scale."
+            ],
+            config: {
+              responseMimeType: 'application/json',
+              responseSchema: {
+                type: Type.OBJECT,
+                properties: {
+                  ymin: { type: Type.INTEGER, description: 'Top boundary on 0-1000 scale' },
+                  xmin: { type: Type.INTEGER, description: 'Left boundary on 0-1000 scale' },
+                  ymax: { type: Type.INTEGER, description: 'Bottom boundary on 0-1000 scale' },
+                  xmax: { type: Type.INTEGER, description: 'Right boundary on 0-1000 scale' },
+                },
+                required: ['ymin', 'xmin', 'ymax', 'xmax'],
+              }
+            }
+          });
+          
+          const resultText = response.text || '';
+          console.log('[FaceDetection] Gemini response:', resultText);
+          const result = JSON.parse(resultText);
+          const { ymin, xmin, ymax, xmax } = result;
+          
+          if (typeof ymin === 'number' && typeof xmin === 'number' && typeof ymax === 'number' && typeof xmax === 'number') {
+            const top = Math.round((ymin / 1000) * height);
+            const bottom = Math.round((ymax / 1000) * height);
+            const left = Math.round((xmin / 1000) * width);
+            const right = Math.round((xmax / 1000) * width);
+            
+            const faceWidth = right - left;
+            const faceHeight = bottom - top;
+            const faceCenterX = left + faceWidth / 2;
+            const faceCenterY = top + faceHeight / 2;
+            
+            const boundingDimension = Math.max(faceWidth, faceHeight);
+            let cropSize = Math.round(boundingDimension * 1.85); // 1.85x is ideal
+            cropSize = Math.min(cropSize, width, height);
+            
+            let xStart = Math.round(faceCenterX - cropSize / 2);
+            let yStart = Math.round(faceCenterY - cropSize / 2);
+            
+            if (xStart < 0) xStart = 0;
+            if (yStart < 0) yStart = 0;
+            if (xStart + cropSize > width) xStart = width - cropSize;
+            if (yStart + cropSize > height) yStart = height - cropSize;
+            
+            console.log(`[FaceDetection] Cropping at: ${cropSize}x${cropSize}+${xStart}+${yStart}`);
+            execSync(`convert "${inputPath}" -crop ${cropSize}x${cropSize}+${xStart}+${yStart} +repage "${tempOutputPath}"`);
+            cropped = true;
+          }
+        } catch (geminiErr) {
+          console.error('[FaceDetection] Gemini or crop error, falling back to center-crop:', geminiErr);
+        }
+      }
+      
+      if (!cropped && width > 0 && height > 0) {
+        // Fallback to simple center crop
+        const cropSize = Math.min(width, height);
+        const xStart = Math.round((width - cropSize) / 2);
+        const yStart = Math.round((height - cropSize) / 2);
+        console.log(`[FaceDetection] Fallback center crop: ${cropSize}x${cropSize}+${xStart}+${yStart}`);
+        execSync(`convert "${inputPath}" -crop ${cropSize}x${cropSize}+${xStart}+${yStart} +repage "${tempOutputPath}"`);
+        cropped = true;
+      }
+      
+      const finalOutputPath = cropped ? tempOutputPath : inputPath;
+      const finalBuffer = fs.readFileSync(finalOutputPath);
       
       // Save root backup
       const persistedPath = path.join(process.cwd(), 'avatar_persisted.jpg');
-      fs.writeFileSync(persistedPath, buffer);
-
-      // Also try to write back to the workspace src folder so it commits/rebuilds natively next time
+      fs.writeFileSync(persistedPath, finalBuffer);
+      
+      // Also write back to workspace / static assets
       try {
         const imageDir = path.join(process.cwd(), 'src', 'assets', 'images');
         if (!fs.existsSync(imageDir)) {
           fs.mkdirSync(imageDir, { recursive: true });
         }
-        fs.writeFileSync(path.join(imageDir, 'avatar.jpg'), buffer);
+        fs.writeFileSync(path.join(imageDir, 'avatar.jpg'), finalBuffer);
+        // Also save in root as avatar.jpg so serving route catches it instantly
+        fs.writeFileSync(path.join(process.cwd(), 'avatar.jpg'), finalBuffer);
       } catch (wsErr) {
         console.error('Non-blocking: Could not write to src workspace path:', wsErr);
       }
-
+      
+      // Cleanup temporary files
+      try {
+        if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
+        if (fs.existsSync(tempOutputPath)) fs.unlinkSync(tempOutputPath);
+      } catch (cleanupErr) {
+        console.error('Non-blocking cleanup error:', cleanupErr);
+      }
+      
       return '/api/avatar.jpg';
     } catch (error) {
       console.error('Error saving avatar from base64:', error);
+      // Ensure cleanup in case of error
+      try {
+        const possibleExtensions = ['.png', '.jpg', '.jpeg', '.webp'];
+        possibleExtensions.forEach(ext => {
+          const pathToCheck = tempInputPath + ext;
+          if (fs.existsSync(pathToCheck)) fs.unlinkSync(pathToCheck);
+        });
+        if (fs.existsSync(tempOutputPath)) fs.unlinkSync(tempOutputPath);
+      } catch (e) {}
       return null;
     }
   }
 
   // Save synchronized portfolio data (includes avatar if it's uploaded as Base64)
-  app.post('/api/portfolio-data', express.json({ limit: '50mb' }), (req, res) => {
+  app.post('/api/portfolio-data', express.json({ limit: '50mb' }), async (req, res) => {
     try {
       const { personalInfo, projects } = req.body;
       if (!personalInfo) {
@@ -125,7 +264,7 @@ async function startServer() {
 
       // If avatar is uploaded as Base64, convert and persist it as a real static file
       if (personalInfo.avatar && personalInfo.avatar.startsWith('data:')) {
-        const savedPath = saveAvatarFromBase64(personalInfo.avatar);
+        const savedPath = await saveAvatarFromBase64(personalInfo.avatar);
         if (savedPath) {
           personalInfo.avatar = savedPath;
         }

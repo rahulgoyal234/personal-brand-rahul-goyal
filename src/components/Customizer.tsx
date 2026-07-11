@@ -197,6 +197,7 @@ export default function Customizer() {
     github: personalInfo.github,
     linkedin: personalInfo.linkedin,
     shortBio: personalInfo.shortBio,
+    isAvatarLocked: personalInfo.isAvatarLocked || false,
   });
 
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -211,6 +212,7 @@ export default function Customizer() {
       github: personalInfo.github,
       linkedin: personalInfo.linkedin,
       shortBio: personalInfo.shortBio,
+      isAvatarLocked: personalInfo.isAvatarLocked || false,
     });
     setTempUrl(personalInfo.avatar.startsWith('data:') ? '' : personalInfo.avatar);
     setVideoUrlInput(personalInfo.introVideo && !personalInfo.introVideo.startsWith('data:') ? personalInfo.introVideo : '');
@@ -398,7 +400,7 @@ export default function Customizer() {
 
         if (importedPersonalInfo) {
           if (importedPersonalInfo.isAvatarLocked === undefined) {
-            importedPersonalInfo.isAvatarLocked = false;
+            importedPersonalInfo.isAvatarLocked = personalInfo.isAvatarLocked;
           }
           importPortfolio(importedPersonalInfo, importedProjects || projects);
         } else if (importedProjects) {
@@ -746,8 +748,13 @@ export default function Customizer() {
 
   // Form field changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setFormData((prev) => ({ ...prev, [name]: checked }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   // Form submit
@@ -1253,6 +1260,24 @@ export default function Customizer() {
                         className="w-full px-3 py-2 bg-white border border-neutral-200 font-sans text-xs focus:outline-none focus:border-black rounded-none transition-colors"
                       />
                     </div>
+                  </div>
+
+                  {/* Lock Profile Photo Toggle */}
+                  <div className="p-3 bg-neutral-50 border border-neutral-200/60 flex items-center justify-between">
+                    <div className="flex items-start gap-2.5 max-w-[80%]">
+                      <Lock className="w-4 h-4 text-neutral-800 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <h4 className="text-[10px] font-mono font-bold text-neutral-800 uppercase tracking-widest">
+                          Profile Photo Status
+                        </h4>
+                        <p className="text-[9px] font-sans text-neutral-400 leading-normal mt-0.5">
+                          Your centered profile photo is permanently locked and uploads are disabled.
+                        </p>
+                      </div>
+                    </div>
+                    <span className="px-2 py-0.5 bg-neutral-200 text-neutral-700 font-mono text-[8px] uppercase font-bold tracking-wider rounded select-none">
+                      Locked
+                    </span>
                   </div>
 
                   <div className="pt-2">

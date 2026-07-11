@@ -15,7 +15,7 @@ I work in corporate law, IP, and tech policy, turning tangled regulation into cl
   linkedin: 'https://www.linkedin.com/in/rahulgoyal48/',
   twitter: 'https://twitter.com/rahulgoyal',
   resumeUrl: '#resume',
-  isAvatarLocked: false,
+  isAvatarLocked: true,
 };
 
 export const PROJECTS: Project[] = [

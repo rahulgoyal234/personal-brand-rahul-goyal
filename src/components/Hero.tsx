@@ -244,24 +244,8 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             className="lg:col-span-5 flex justify-center lg:justify-end"
           >
             <div className="portrait-wrap relative flex flex-col items-center">
-              {/* Invisible file input for trigger */}
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                onChange={handleDirectFileChange} 
-                accept="image/*" 
-                className="hidden" 
-              />
-              
               <div 
-                onDragEnter={handleDrag}
-                onDragOver={handleDrag}
-                onDragLeave={handleDrag}
-                onDrop={handleDrop}
-                onClick={() => !personalInfo.isAvatarLocked && fileInputRef.current?.click()}
-                className={`portrait-ring w-[280px] sm:w-[320px] aspect-square rounded-full p-2.5 border border-brass relative transition-all duration-300 ${
-                  isDragging ? 'scale-105 border-dashed border-2 bg-paper-deep' : ''
-                } ${!personalInfo.isAvatarLocked ? 'cursor-pointer hover:scale-[1.02]' : 'cursor-default'}`}
+                className="portrait-ring w-[280px] sm:w-[320px] aspect-square rounded-full p-2.5 border border-brass relative transition-all duration-300 cursor-default"
               >
                 {/* Outer concentric decorative border outline */}
                 <div className="absolute inset-[-16px] rounded-full border border-rule pointer-events-none" />
@@ -276,7 +260,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                       referrerPolicy="no-referrer"
                       onLoad={() => setAvatarLoadError(false)}
                       onError={() => setAvatarLoadError(true)}
-                      className="w-full h-full object-cover filter grayscale-[6%] contrast-[103%] block transition-all duration-500 hover:scale-[1.04]"
+                      className="w-full h-full object-cover filter grayscale-[6%] contrast-[103%] block"
                     />
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-ink-soft">
@@ -284,15 +268,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                     </div>
                   )}
                 </div>
-
-                {/* Drag / Hover action overlay */}
-                {!personalInfo.isAvatarLocked && (
-                  <div className="absolute inset-0 bg-ink/75 rounded-full opacity-0 hover:opacity-100 flex flex-col items-center justify-center text-paper text-center p-4 transition-opacity duration-300 select-none z-10">
-                    <Upload className="w-6 h-6 mb-1.5 text-brass" />
-                    <span className="font-mono text-[10px] uppercase tracking-widest font-bold text-paper">Change Portrait</span>
-                    <span className="text-[9px] font-sans text-paper-deep/80 mt-1">Drag & Drop or Click</span>
-                  </div>
-                )}
               </div>
 
               {/* Portrait Label Caption */}
