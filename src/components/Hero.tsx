@@ -135,7 +135,8 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                       referrerPolicy="no-referrer"
                       onLoad={() => setAvatarLoadError(false)}
                       onError={() => setAvatarLoadError(true)}
-                      className="w-full h-full object-cover block"
+                      className="w-full h-full object-cover block object-[54%_center]"
+                      style={{ objectPosition: '54% center' }}
                     />
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-ink-soft">

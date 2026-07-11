@@ -94,7 +94,8 @@ export default function App() {
                   <img 
                     src={personalInfo.avatar} 
                     alt="" 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover object-[54%_center]"
+                    style={{ objectPosition: '54% center' }}
                     referrerPolicy="no-referrer"
                   />
                 ) : (

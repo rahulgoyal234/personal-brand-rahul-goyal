@@ -3,60 +3,108 @@ import React, { useEffect, useRef, useState } from 'react';
 export default function CursorRing() {
   const ringRef = useRef<HTMLDivElement | null>(null);
   const dotRef = useRef<HTMLDivElement | null>(null);
-  const [hasMoved, setHasMoved] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
+
+  // Use refs to store mutable values without triggering re-renders
+  const mouseCoords = useRef({ x: 0, y: 0 });
+  const ringCoords = useRef({ x: 0, y: 0 });
+  const hasMovedRef = useRef(false);
+  const isTouchActiveRef = useRef(false);
 
   useEffect(() => {
     const ring = ringRef.current;
     const dot = dotRef.current;
 
-    // Mouse coordinates
-    let mouseX = 0;
-    let mouseY = 0;
+    const onPointerMove = (e: PointerEvent) => {
+      mouseCoords.current.x = e.clientX;
+      mouseCoords.current.y = e.clientY;
 
-    // Current cursor coordinates (for lerped easing)
-    let ringX = 0;
-    let ringY = 0;
-
-    const onMouseMove = (e: MouseEvent) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      
-      if (!hasMoved) {
-        setHasMoved(true);
+      if (!hasMovedRef.current) {
+        hasMovedRef.current = true;
+        // Seed the initial position immediately to prevent jumping from (0,0)
+        ringCoords.current.x = e.clientX;
+        ringCoords.current.y = e.clientY;
       }
 
-      // Instantly position the center dot
+      // Position the precise center dot instantly
       if (dot) {
-        dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
-        dot.style.opacity = '1';
+        dot.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+        // If it's touch, only show if currently active/pressing
+        if (e.pointerType !== 'touch' || isTouchActiveRef.current) {
+          dot.style.opacity = '1';
+        }
       }
       if (ring) {
-        ring.style.opacity = '1';
+        if (e.pointerType !== 'touch' || isTouchActiveRef.current) {
+          ring.style.opacity = '1';
+        }
       }
     };
 
-    // Smooth animation loop for the outer ring
+    // Smooth lerping animation loop for the trailing outer ring
     let animationFrameId: number;
     const updatePosition = () => {
-      // Linear interpolation (lerp) for smooth lag/trailing effect
+      // Linear interpolation (lerp) for trailing effect: 0.15 is highly responsive but organic
       const ease = 0.15;
-      ringX += (mouseX - ringX) * ease;
-      ringY += (mouseY - ringY) * ease;
+      const targetX = mouseCoords.current.x;
+      const targetY = mouseCoords.current.y;
 
-      if (ring) {
-        ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+      ringCoords.current.x += (targetX - ringCoords.current.x) * ease;
+      ringCoords.current.y += (targetY - ringCoords.current.y) * ease;
+
+      if (ring && hasMovedRef.current) {
+        ring.style.transform = `translate3d(${ringCoords.current.x}px, ${ringCoords.current.y}px, 0)`;
       }
 
       animationFrameId = requestAnimationFrame(updatePosition);
     };
 
-    const onMouseDown = () => setIsClicking(true);
-    const onMouseUp = () => setIsClicking(false);
+    const onPointerDown = (e: PointerEvent) => {
+      setIsClicking(true);
+      if (e.pointerType === 'touch') {
+        isTouchActiveRef.current = true;
+        // Update coordinates to touch position immediately
+        mouseCoords.current.x = e.clientX;
+        mouseCoords.current.y = e.clientY;
+        ringCoords.current.x = e.clientX;
+        ringCoords.current.y = e.clientY;
+        hasMovedRef.current = true;
 
-    // Dynamic hover listeners for interactive elements
-    const onMouseOver = (e: MouseEvent) => {
+        if (dot) {
+          dot.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+          dot.style.opacity = '1';
+        }
+        if (ring) {
+          ring.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+          ring.style.opacity = '1';
+        }
+      }
+    };
+
+    const onPointerUp = (e: PointerEvent) => {
+      setIsClicking(false);
+      if (e.pointerType === 'touch') {
+        isTouchActiveRef.current = false;
+        // Fade out on touch release
+        if (ring) ring.style.opacity = '0';
+        if (dot) dot.style.opacity = '0';
+      }
+    };
+
+    const onPointerCancel = (e: PointerEvent) => {
+      setIsClicking(false);
+      if (e.pointerType === 'touch') {
+        isTouchActiveRef.current = false;
+        if (ring) ring.style.opacity = '0';
+        if (dot) dot.style.opacity = '0';
+      }
+    };
+
+    // Optimized hover listeners for interactive elements
+    const onPointerOver = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') return;
+
       const target = e.target as HTMLElement;
       if (!target) return;
 
@@ -68,48 +116,47 @@ export default function CursorRing() {
         target.classList.contains('cursor-pointer') ||
         window.getComputedStyle(target).cursor === 'pointer';
 
-      if (isInteractive) {
-        setIsHovered(true);
-      } else {
-        setIsHovered(false);
-      }
+      setIsHovered(!!isInteractive);
     };
 
-    const onMouseLeaveWindow = () => {
+    const onPointerLeaveWindow = () => {
       if (ring) ring.style.opacity = '0';
       if (dot) dot.style.opacity = '0';
     };
 
-    const onMouseEnterWindow = () => {
-      if (hasMoved) {
+    const onPointerEnterWindow = (e: PointerEvent) => {
+      if (hasMovedRef.current && e.pointerType !== 'touch') {
         if (ring) ring.style.opacity = '1';
         if (dot) dot.style.opacity = '1';
       }
     };
 
-    window.addEventListener('mousemove', onMouseMove, { passive: true });
-    window.addEventListener('mousedown', onMouseDown);
-    window.addEventListener('mouseup', onMouseUp);
-    window.addEventListener('mouseover', onMouseOver, { passive: true });
-    document.addEventListener('mouseleave', onMouseLeaveWindow);
-    document.addEventListener('mouseenter', onMouseEnterWindow);
+    // Add pointer listeners
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('pointerdown', onPointerDown, { passive: true });
+    window.addEventListener('pointerup', onPointerUp, { passive: true });
+    window.addEventListener('pointercancel', onPointerCancel, { passive: true });
+    window.addEventListener('pointerover', onPointerOver, { passive: true });
+    document.addEventListener('pointerleave', onPointerLeaveWindow, { passive: true });
+    document.addEventListener('pointerenter', onPointerEnterWindow, { passive: true });
 
     animationFrameId = requestAnimationFrame(updatePosition);
 
     return () => {
-      window.removeEventListener('mousemove', onMouseMove);
-      window.removeEventListener('mousedown', onMouseDown);
-      window.removeEventListener('mouseup', onMouseUp);
-      window.removeEventListener('mouseover', onMouseOver);
-      document.removeEventListener('mouseleave', onMouseLeaveWindow);
-      document.removeEventListener('mouseenter', onMouseEnterWindow);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerdown', onPointerDown);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerCancel);
+      window.removeEventListener('pointerover', onPointerOver);
+      document.removeEventListener('pointerleave', onPointerLeaveWindow);
+      document.removeEventListener('pointerenter', onPointerEnterWindow);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [hasMoved]);
+  }, []);
 
   return (
     <>
-      {/* Outer Easing Ring */}
+      {/* Outer Easing Trailing Ring */}
       <div
         ref={ringRef}
         id="custom-cursor-ring"
@@ -126,7 +173,7 @@ export default function CursorRing() {
         }}
       />
 
-      {/* Precise Center Dot */}
+      {/* Precise Core Center Dot */}
       <div
         ref={dotRef}
         id="custom-cursor-dot"

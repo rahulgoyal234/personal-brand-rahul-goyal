@@ -51,16 +51,6 @@
   background: #A9803F;
 }
 
-/* Hide custom cursor on touch/mobile devices or those without hover/pointer capability */
-@media (pointer: coarse) {
-  #custom-cursor-ring,
-  #custom-cursor-dot {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-  }
-}
-
 
 
 
