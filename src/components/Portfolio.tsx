@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ExternalLink, ChevronRight, X } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { Project } from '../types';
+import { motion, AnimatePresence } from 'motion/react';
 
 export default function Portfolio() {
   const { projects } = usePortfolio();
@@ -27,7 +28,7 @@ export default function Portfolio() {
   };
 
   return (
-    <section id="portfolio" className="py-28 bg-paper-deep border-t border-rule border-b border-rule scroll-mt-20">
+    <section id="portfolio" className="py-28 bg-paper-deep/50 backdrop-blur-[6px] border-t border-rule border-b border-rule scroll-mt-20 relative">
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8">
         
         {/* Writings Section Header */}
@@ -61,150 +62,166 @@ export default function Portfolio() {
         </div>
 
         {/* Writings List (Academic & Typography-focused format) */}
-        <div
+        <motion.div
           id="projects-list"
+          layout
           className="flex flex-col divide-y divide-rule/60 border-t border-b border-rule/60"
         >
-          {filteredProjects.map((project) => {
-            const year = project.stats?.find(s => s.label.toLowerCase().includes('year'))?.value || '2023';
-            const isExpanded = !!expandedAbstracts[project.id];
-            
-            return (
-              <div
-                id={`project-list-row-${project.id}`}
-                key={project.id}
-                className="group py-8 transition-colors duration-200 hover:bg-paper/20"
-              >
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 md:gap-10">
-                  
-                  {/* Left Metadata Column (Category & Year) */}
-                  <div className="flex items-center md:flex-col md:items-start gap-2 md:gap-1 min-w-[150px]">
-                    <span className="font-mono text-[11px] text-brass uppercase tracking-wider font-bold">
-                      {project.category}
-                    </span>
-                    <span className="hidden md:inline-block font-mono text-[10.5px] text-ink-soft font-medium">
-                      — Year: {year}
-                    </span>
-                    <span className="md:hidden font-mono text-[11px] text-ink-soft font-medium">
-                      • {year}
-                    </span>
-                  </div>
-
-                  {/* Center Content Column (Title, Description, Collapsible Abstract, Tags) */}
-                  <div className="flex-1 space-y-4">
-                    {project.demoUrl ? (
-                      <a
-                        id={`project-title-link-${project.id}`}
-                        href={project.demoUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="group/title inline-block text-left"
-                      >
-                        <h3 className="font-serif text-lg sm:text-[21px] font-semibold leading-snug text-ink group-hover/title:text-brass transition-colors flex items-start gap-1.5">
-                          <span>{project.title}</span>
-                          <ExternalLink className="w-4 h-4 text-ink-soft group-hover/title:text-brass transition-colors shrink-0 mt-1" />
-                        </h3>
-                      </a>
-                    ) : (
-                      <h3 className="font-serif text-lg sm:text-[21px] font-semibold leading-snug text-ink">
-                        {project.title}
-                      </h3>
-                    )}
-
-                    <p className="text-ink-soft text-sm sm:text-[14.5px] leading-relaxed font-sans max-w-[720px]">
-                      {project.description}
-                    </p>
-
-                    {/* Subject Matter Tags */}
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {project.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="bg-paper text-ink-soft border border-rule/70 text-[9px] font-mono px-2.5 py-0.5 uppercase rounded-[2px]"
-                        >
-                          {tag}
-                        </span>
-                      ))}
+          <AnimatePresence mode="popLayout">
+            {filteredProjects.map((project) => {
+              const year = project.stats?.find(s => s.label.toLowerCase().includes('year'))?.value || '2023';
+              const isExpanded = !!expandedAbstracts[project.id];
+              
+              return (
+                <motion.div
+                  layout
+                  id={`project-list-row-${project.id}`}
+                  key={project.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  className="group py-8 transition-colors duration-200 hover:bg-paper/20"
+                >
+                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 md:gap-10">
+                    
+                    {/* Left Metadata Column (Category & Year) */}
+                    <div className="flex items-center md:flex-col md:items-start gap-2 md:gap-1 min-w-[150px]">
+                      <span className="font-mono text-[11px] text-brass uppercase tracking-wider font-bold">
+                        {project.category}
+                      </span>
+                      <span className="hidden md:inline-block font-mono text-[10.5px] text-ink-soft font-medium">
+                        — Year: {year}
+                      </span>
+                      <span className="md:hidden font-mono text-[11px] text-ink-soft font-medium">
+                        • {year}
+                      </span>
                     </div>
 
-                    {/* Collapsible Full Abstract Section */}
-                    {isExpanded && (
-                      <div className="mt-6 p-5 sm:p-6 bg-paper border border-rule/70 rounded-[2px] text-sm text-ink-soft leading-relaxed font-sans space-y-4 animate-fade-in">
-                        <div className="space-y-1.5">
-                          <strong className="block text-[11px] font-mono uppercase tracking-wider text-ink font-bold border-b border-rule/30 pb-1.5">
-                            Abstract & Overview
-                          </strong>
-                          <p className="text-[14px] leading-relaxed whitespace-pre-line text-ink-soft pt-1">
-                            {project.longDescription || project.description}
-                          </p>
-                        </div>
+                    {/* Center Content Column (Title, Description, Collapsible Abstract, Tags) */}
+                    <div className="flex-1 space-y-4">
+                      {project.demoUrl ? (
+                        <a
+                          id={`project-title-link-${project.id}`}
+                          href={project.demoUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="group/title inline-block text-left"
+                        >
+                          <h3 className="font-serif text-lg sm:text-[21px] font-semibold leading-snug text-ink group-hover/title:text-brass transition-colors flex items-start gap-1.5">
+                            <span>{project.title}</span>
+                            <ExternalLink className="w-4 h-4 text-ink-soft group-hover/title:text-brass transition-colors shrink-0 mt-1" />
+                          </h3>
+                        </a>
+                      ) : (
+                        <h3 className="font-serif text-lg sm:text-[21px] font-semibold leading-snug text-ink">
+                          {project.title}
+                        </h3>
+                      )}
 
-                        {project.highlights && project.highlights.length > 0 && (
-                          <div className="space-y-2 pt-2">
-                            <strong className="block text-[11px] font-mono uppercase tracking-wider text-ink font-bold border-b border-rule/30 pb-1.5">
-                              Key Research Highlights
-                            </strong>
-                            <ul className="space-y-2 pt-1">
-                              {project.highlights.map((highlight, index) => (
-                                <li key={index} className="flex items-start gap-3 text-xs sm:text-[13px] text-ink-soft">
-                                  <span className="flex-shrink-0 w-5 h-5 rounded-full border border-brass/40 flex items-center justify-center text-[9px] font-mono text-brass font-bold mt-0.5">
-                                    {index + 1}
-                                  </span>
-                                  <span className="leading-relaxed font-sans">{highlight}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                      <p className="text-ink-soft text-sm sm:text-[14.5px] leading-relaxed font-sans max-w-[720px]">
+                        {project.description}
+                      </p>
 
-                        {project.stats && project.stats.length > 0 && (
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3">
-                            {project.stats.map((stat) => (
-                              <div key={stat.label} className="bg-paper-deep border border-rule/60 p-3 rounded-[2px]">
-                                <span className="block text-ink font-sans text-xs sm:text-sm font-semibold">
-                                  {stat.value}
-                                </span>
-                                <span className="block text-brass text-[9px] font-mono uppercase tracking-wider mt-0.5">
-                                  {stat.label}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                      {/* Subject Matter Tags */}
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {project.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="bg-paper text-ink-soft border border-rule/70 text-[9px] font-mono px-2.5 py-0.5 uppercase rounded-[2px]"
+                          >
+                            {tag}
+                          </span>
+                        ))}
                       </div>
-                    )}
-                  </div>
 
-                  {/* Right Actions Column (Direct Link CTA + Inline Toggle) */}
-                  <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-4 min-w-[150px]">
-                    {project.demoUrl && (
-                      <a
-                        id={`project-direct-link-${project.id}`}
-                        href={project.demoUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="font-mono text-[11px] text-paper bg-ink hover:bg-brass border border-ink hover:border-brass px-4 py-2.5 rounded-[2px] transition-all uppercase tracking-wider flex items-center justify-center gap-1.5 font-bold cursor-pointer w-fit md:w-full"
+                      {/* Collapsible Full Abstract Section */}
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div 
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3, ease: 'easeInOut' }}
+                            className="mt-6 p-5 sm:p-6 bg-paper border border-rule/70 rounded-[2px] text-sm text-ink-soft leading-relaxed font-sans space-y-4 overflow-hidden"
+                          >
+                            <div className="space-y-1.5">
+                              <strong className="block text-[11px] font-mono uppercase tracking-wider text-ink font-bold border-b border-rule/30 pb-1.5">
+                                Abstract & Overview
+                              </strong>
+                              <p className="text-[14px] leading-relaxed whitespace-pre-line text-ink-soft pt-1">
+                                {project.longDescription || project.description}
+                              </p>
+                            </div>
+
+                            {project.highlights && project.highlights.length > 0 && (
+                              <div className="space-y-2 pt-2">
+                                <strong className="block text-[11px] font-mono uppercase tracking-wider text-ink font-bold border-b border-rule/30 pb-1.5">
+                                  Key Research Highlights
+                                </strong>
+                                <ul className="space-y-2 pt-1">
+                                  {project.highlights.map((highlight, index) => (
+                                    <li key={index} className="flex items-start gap-3 text-xs sm:text-[13px] text-ink-soft">
+                                      <span className="flex-shrink-0 w-5 h-5 rounded-full border border-brass/40 flex items-center justify-center text-[9px] font-mono text-brass font-bold mt-0.5">
+                                        {index + 1}
+                                      </span>
+                                      <span className="leading-relaxed font-sans">{highlight}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            {project.stats && project.stats.length > 0 && (
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3">
+                                {project.stats.map((stat) => (
+                                  <div key={stat.label} className="bg-paper-deep border border-rule/60 p-3 rounded-[2px]">
+                                    <span className="block text-ink font-sans text-xs sm:text-sm font-semibold">
+                                      {stat.value}
+                                    </span>
+                                    <span className="block text-brass text-[9px] font-mono uppercase tracking-wider mt-0.5">
+                                      {stat.label}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+
+                    {/* Right Actions Column (Direct Link CTA + Inline Toggle) */}
+                    <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-4 min-w-[150px]">
+                      {project.demoUrl && (
+                        <a
+                          id={`project-direct-link-${project.id}`}
+                          href={project.demoUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="font-mono text-[11px] text-paper bg-ink hover:bg-brass border border-ink hover:border-brass px-4 py-2.5 rounded-[2px] transition-all duration-200 uppercase tracking-wider flex items-center justify-center gap-1.5 font-bold cursor-pointer w-fit md:w-full hover:-translate-y-[1px]"
+                        >
+                          <span>Full Text</span>
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      )}
+
+                      <button
+                        id={`project-toggle-abstract-${project.id}`}
+                        onClick={(e) => toggleAbstract(project.id, e)}
+                        className="font-mono text-[11px] text-ink-soft hover:text-brass flex items-center gap-1 cursor-pointer bg-transparent border-none p-1 font-semibold transition-colors uppercase tracking-wider"
                       >
-                        <span>Full Text</span>
-                        <ExternalLink className="w-3.5 h-3.5" />
-                      </a>
-                    )}
+                        <span>{isExpanded ? 'Hide' : 'Abstract'}</span>
+                        <ChevronRight className={`w-3.5 h-3.5 transition-transform duration-200 ${isExpanded ? 'rotate-90 text-brass' : ''}`} />
+                      </button>
+                    </div>
 
-                    <button
-                      id={`project-toggle-abstract-${project.id}`}
-                      onClick={(e) => toggleAbstract(project.id, e)}
-                      className="font-mono text-[11px] text-ink-soft hover:text-brass flex items-center gap-1 cursor-pointer bg-transparent border-none p-1 font-semibold transition-colors uppercase tracking-wider"
-                    >
-                      <span>{isExpanded ? 'Hide' : 'Abstract'}</span>
-                      <ChevronRight className={`w-3.5 h-3.5 transition-transform duration-200 ${isExpanded ? 'rotate-90 text-brass' : ''}`} />
-                    </button>
                   </div>
-
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </section>
   );

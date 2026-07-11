@@ -1,17 +1,24 @@
 import React from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
+import { motion } from 'motion/react';
 
 export default function Contact() {
   const { personalInfo } = usePortfolio();
 
   return (
-    <section id="contact" className="py-28 bg-paper relative scroll-mt-20">
-      <div className="max-w-[1120px] mx-auto px-6 sm:px-8">
+    <section id="contact" className="py-28 bg-transparent relative scroll-mt-20">
+      <div className="max-w-[1120px] mx-auto px-6 sm:px-8 relative z-10">
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-20 items-start">
           
           {/* Column 1: Info and Links */}
-          <div className="space-y-10">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+            className="space-y-10"
+          >
             <div className="space-y-4">
               <h2 className="font-serif text-[38px] font-semibold text-ink leading-tight">
                 Get in Touch
@@ -45,14 +52,19 @@ export default function Contact() {
                 </div>
               )}
             </div>
-          </div>
+          </motion.div>
 
           {/* Column 2: Formspree Contact Form */}
-          <div>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.7, ease: 'easeOut', delay: 0.1 }}
+          >
             <form 
               action="https://formspree.io/f/xvonzgky" 
               method="POST"
-              className="contact-form bg-paper-deep border border-rule/70 p-8 sm:p-10 rounded-[2px] flex flex-col gap-6 shadow-xs"
+              className="contact-form bg-paper-deep/80 backdrop-blur-[6px] border border-rule/70 p-8 sm:p-10 rounded-[2px] flex flex-col gap-6 shadow-md"
             >
               <div className="form-group flex flex-col gap-2">
                 <label htmlFor="name" className="font-mono text-[11px] uppercase tracking-wider text-ink-soft font-semibold">
@@ -98,12 +110,12 @@ export default function Contact() {
 
               <button 
                 type="submit" 
-                className="w-full justify-center font-mono text-[13.5px] tracking-wider px-[22px] py-4 border border-ink bg-ink text-paper hover:bg-brass hover:border-brass hover:text-white rounded-[2px] transition-all duration-200 hover:-translate-y-[1px] flex items-center gap-2 cursor-pointer font-semibold"
+                className="w-full justify-center font-mono text-[13.5px] tracking-wider px-[22px] py-4 border border-ink bg-ink text-paper hover:bg-brass hover:border-brass hover:text-white rounded-[2px] transition-all duration-200 hover:-translate-y-[1px] flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
               >
                 Send Message
               </button>
             </form>
-          </div>
+          </motion.div>
 
         </div>
 
