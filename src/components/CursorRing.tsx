@@ -141,7 +141,7 @@ export default function CursorRing() {
         }}
         animate={{
           scale: isHovered ? 1.5 : 1,
-          borderColor: isHovered ? 'rgba(169, 128, 63, 0.8)' : 'rgba(169, 128, 63, 0.35)',
+          borderColor: isHovered ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.25)',
           borderWidth: isHovered ? '1.5px' : '1px',
           opacity: isVisible ? 1 : 0,
         }}

@@ -37,9 +37,9 @@ export default function ThreeDBackground() {
       const y = (Math.random() - 0.5) * range * 1.8;
       const z = (Math.random() - 0.5) * range * 2;
       
-      // Some nodes are warm brass/gold, others are deep ink
-      const isBrass = Math.random() > 0.4;
-      const color = isBrass ? '169, 128, 63' : '18, 33, 58';
+      // Some nodes are stark black, others are cool zinc grey
+      const isBlackNode = Math.random() > 0.4;
+      const color = isBlackNode ? '0, 0, 0' : '113, 113, 122';
       const size = Math.random() * 2 + 1.2;
 
       points.push({
@@ -166,8 +166,8 @@ export default function ThreeDBackground() {
             ctx.moveTo(p1.sx, p1.sy);
             ctx.lineTo(p2.sx, p2.sy);
             
-            // Link color uses a blend of ink and brass based on depth
-            const lineColor = p1.color === '169, 128, 63' ? '169, 128, 63' : '18, 33, 58';
+            // Link color uses black or zinc grey based on depth
+            const lineColor = p1.color === '0, 0, 0' ? '0, 0, 0' : '113, 113, 122';
             ctx.strokeStyle = `rgba(${lineColor}, ${alpha})`;
             ctx.stroke();
           }
@@ -187,8 +187,8 @@ export default function ThreeDBackground() {
         ctx.fillStyle = `rgba(${p.color}, ${alpha})`;
         ctx.fill();
 
-        // Draw dynamic accent glow on select brass nodes
-        if (p.color === '169, 128, 63' && i % 4 === 0) {
+        // Draw dynamic accent glow on select stark black nodes
+        if (p.color === '0, 0, 0' && i % 4 === 0) {
           ctx.beginPath();
           ctx.arc(p.sx, p.sy, p.size * 2.5, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(${p.color}, ${alpha * 0.18})`;
