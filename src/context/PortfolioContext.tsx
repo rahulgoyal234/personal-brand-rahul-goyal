@@ -87,7 +87,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           parsed.shortBio = PERSONAL_INFO.shortBio;
         }
         const merged = { ...PERSONAL_INFO, ...parsed };
-        merged.avatar = '/api/avatar.jpg';
+        merged.avatar = '/avatar.jpg';
         merged.isAvatarLocked = true;
         return merged;
       }
@@ -198,7 +198,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           const remoteData = await response.json();
           if (remoteData) {
             if (remoteData.personalInfo) {
-              remoteData.personalInfo.avatar = '/api/avatar.jpg';
+              remoteData.personalInfo.avatar = '/avatar.jpg';
               remoteData.personalInfo.isAvatarLocked = true;
               setPersonalInfo(remoteData.personalInfo);
               try {

@@ -226,6 +226,13 @@ async function startServer() {
         fs.writeFileSync(path.join(imageDir, 'avatar.jpg'), finalBuffer);
         // Also save in root as avatar.jpg so serving route catches it instantly
         fs.writeFileSync(path.join(process.cwd(), 'avatar.jpg'), finalBuffer);
+        
+        // Save to public directory for static building (e.g. Wrangler/Cloudflare Pages)
+        const publicDir = path.join(process.cwd(), 'public');
+        if (fs.existsSync(publicDir)) {
+          fs.writeFileSync(path.join(publicDir, 'avatar.jpg'), finalBuffer);
+          fs.writeFileSync(path.join(publicDir, 'avatar_persisted.jpg'), finalBuffer);
+        }
       } catch (wsErr) {
         console.error('Non-blocking: Could not write to src workspace path:', wsErr);
       }
@@ -238,7 +245,7 @@ async function startServer() {
         console.error('Non-blocking cleanup error:', cleanupErr);
       }
       
-      return '/api/avatar.jpg';
+      return '/avatar.jpg';
     } catch (error) {
       console.error('Error saving avatar from base64:', error);
       // Ensure cleanup in case of error

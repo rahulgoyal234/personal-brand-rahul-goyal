@@ -1,0 +1,228 @@
+{
+  "personalInfo": {
+    "name": "Rahul Goyal",
+    "title": "Lawyer",
+    "bio": "I'm Rahul Goyal - a lawyer who reads fine print so you don't have to.\n\nI work in corporate law, IP, and tech policy, turning tangled regulation into clear, confident moves. Contracts that hold up. Advice that's straight, not stuffy. Legal ground that's safe to build on.",
+    "shortBio": "Making the complex, comprehensible.",
+    "location": "New Delhi, India",
+    "email": "rahulgyl48@gmail.com",
+    "phone": "+91 8690247028",
+    "avatar": "/avatar.jpg",
+    "github": "https://github.com/rahulgoyal",
+    "linkedin": "https://www.linkedin.com/in/rahulgoyal48/",
+    "twitter": "https://twitter.com/rahulgoyal",
+    "resumeUrl": "#resume",
+    "isAvatarLocked": true,
+    "avatars": [
+      "/src/assets/images/avatar.jpg",
+      "/src/assets/images/rahul_avatar_1782920001963.jpg"
+    ]
+  },
+  "projects": [
+    {
+      "id": "ai-governance",
+      "title": "Contribution of AI to Environmental Sustainability Governance: A Comparative Study",
+      "category": "Research Papers",
+      "description": "A comparative cross-border legal study analyzing the regulatory frameworks, governance systems, and AI applications in mitigating environmental challenges in India and Peru.",
+      "longDescription": "This peer-reviewed comparative research paper explores how artificial intelligence can be integrated into environmental sustainability governance. It contrasts India’s legislative mechanisms and digital initiatives with Peru’s environmental policy frameworks, evaluating the role of judicial bodies, constitutional guidelines, and regulatory authorities in enforcing AI-driven environmental mandates.",
+      "tags": [
+        "Artificial Intelligence",
+        "Environmental Law",
+        "Comparative Governance",
+        "Policy Reform"
+      ],
+      "image": "https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=800&q=80",
+      "demoUrl": "https://revistas.pj.gob.pe/revista/index.php/ropj/article/view/1138",
+      "highlights": [
+        "Published in the REVISTA OFICIAL DEL PODER JUDICIAL (Official Journal of the Judicial Branch of Peru).",
+        "Conducted extensive comparative analysis between Indian and Peruvian eco-governance structures and regulatory hurdles.",
+        "Proposed legislative frameworks for utilizing machine learning audits in environmental impact assessments.",
+        "Evaluated constitutional rights to a healthy environment in the context of automated resource-management systems."
+      ],
+      "stats": [
+        {
+          "label": "Journal",
+          "value": "REVISTA"
+        },
+        {
+          "label": "Scope",
+          "value": "Bilateral"
+        },
+        {
+          "label": "Focus",
+          "value": "AI & Eco"
+        }
+      ]
+    },
+    {
+      "id": "unconventional-trademarks",
+      "title": "How Do Unconventional Trademarks Impact Branding and Marketing Strategies?",
+      "category": "IP Press Blogs",
+      "description": "An in-depth analysis of color, sound, smell, and motion trademarks, discussing how progressive IP law impacts modern corporate branding and consumer perception.",
+      "longDescription": "Unconventional trademarks represent the active frontier of intellectual property. This research analysis explores registration hurdles, distinctiveness requirements, and commercial implications of non-visual and sensory marks under Indian and international trademark regimes, charting how they integrate with corporate branding.",
+      "tags": [
+        "Trademark Law",
+        "Intellectual Property",
+        "Branding Strategy",
+        "Anti-Dissection Rule"
+      ],
+      "image": "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=800&q=80",
+      "demoUrl": "https://www.theippress.com/2024/12/01/how-do-unconventional-trademarks-impact-branding-and-marketing-strategies/",
+      "highlights": [
+        "Deconstructed the \"Anti-Dissection\" and \"Dominant Feature\" principles in the context of complex multi-sensory brand assets.",
+        "Analyzed standards for establishing secondary meaning for unconventional sound, color, and motion marks.",
+        "Formulated strategic legal guidelines for brand protection managers navigating registrations in the Indian Trade Marks Registry."
+      ],
+      "stats": [
+        {
+          "label": "Publisher",
+          "value": "IP Press"
+        },
+        {
+          "label": "Domain",
+          "value": "Trademarks"
+        },
+        {
+          "label": "Analysis",
+          "value": "Sensory Marks"
+        }
+      ]
+    },
+    {
+      "id": "patent-claim-modification",
+      "title": "Trailblazing Decisions Transform Indian Patent Law: Claim Modification Adaptability",
+      "category": "IP Press Blogs",
+      "description": "A critical review of recent judicial trends in Indian patent law, examining modern standards for amending and modifying patent claims during prosecution.",
+      "longDescription": "Patent claims define the legal boundaries of technological protection. This study examines recent landmark orders from the Delhi High Court and the Indian Patent Office regarding patent amendments under Section 59 of the Indian Patents Act, clarifying the permissible scope of claim modifications to withstand prior art challenges.",
+      "tags": [
+        "Patent Law",
+        "Claim Modification",
+        "Delhi High Court",
+        "Patent Prosecution"
+      ],
+      "image": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
+      "demoUrl": "https://www.theippress.com/2024/10/01/trailblazing-decisions-transform-indian-patent-law-a-new-chapter-of-adaptability-in-claim-modification/",
+      "highlights": [
+        "Investigated the legal boundaries of Section 59 of the Indian Patents Act, 1970.",
+        "Reviewed Delhi High Court precedents governing claim narrowing and disclaimer practices.",
+        "Provided draft-structuring recommendations for independent and dependent patent claims to prevent invalidation."
+      ],
+      "stats": [
+        {
+          "label": "Publisher",
+          "value": "IP Press"
+        },
+        {
+          "label": "Focus Area",
+          "value": "Patent Law"
+        },
+        {
+          "label": "Case Studies",
+          "value": "Section 59"
+        }
+      ]
+    },
+    {
+      "id": "writ-jurisdiction",
+      "title": "Existence of Alternative Remedy as an Obstacle for Availing Writ Jurisdiction",
+      "category": "Articles",
+      "description": "A comprehensive constitutional study on the maintainability of writ petitions under Article 226 when alternative statutory remedies exist.",
+      "longDescription": "Writ jurisdiction is a powerful constitutional remedy of High Courts. This article examines self-imposed judicial restrictions, exploring the circumstances under which alternative statutory remedies block writ jurisdiction, and cataloging exceptions established by the Supreme Court of India.",
+      "tags": [
+        "Constitutional Law",
+        "Writ Jurisdiction",
+        "Article 226",
+        "Judicial Precedents"
+      ],
+      "image": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80",
+      "demoUrl": "https://articles.manupatra.com/article-details/EXISTENCE-OF-ALTERNATIVE-REMEDY-AS-AN-OBSTACLE-FOR-AVAILING-WRIT-JURISDICTION",
+      "highlights": [
+        "Published on the Manupatra research database, widely referenced by litigation practitioners.",
+        "Systematized Supreme Court jurisprudence on the doctrine of exhaustion of alternative remedies.",
+        "Identified critical exceptions where writ petitions remain maintainable (e.g., violations of natural justice or fundamental rights)."
+      ],
+      "stats": [
+        {
+          "label": "Publisher",
+          "value": "Manupatra"
+        },
+        {
+          "label": "Subject",
+          "value": "Consti Law"
+        },
+        {
+          "label": "Type",
+          "value": "Writ Study"
+        }
+      ]
+    },
+    {
+      "id": "judicial-independence",
+      "title": "Extensive Study on Independence of Judiciary",
+      "category": "Research Papers",
+      "description": "A deep academic inquiry into the structural, financial, and functional independence of the Indian judiciary, exploring constitutional safeguards and contemporary challenges.",
+      "longDescription": "Judicial independence is a cornerstone of the basic structure of the Indian Constitution. This paper investigates appointment mechanisms (Collegium system vs. NJAC), security of tenure, financial autonomy, and functional separation of powers, evaluating modern pressures and reforms.",
+      "tags": [
+        "Constitutional Law",
+        "Judiciary",
+        "Basic Structure",
+        "Appointment Reform"
+      ],
+      "image": "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=800&q=80",
+      "demoUrl": "https://www.ijllr.com/post/extensive-study-on-independence-of-judiciary",
+      "highlights": [
+        "Published in the Indian Journal of Law and Legal Research (IJLLR) with ISSN: 2582-8878.",
+        "Conducted a comparative analysis with global judicial models, including the US Supreme Court and UK Judicial Appointments Commission.",
+        "Proposed structural transparency measures to enhance public trust and systemic checks and balances."
+      ],
+      "stats": [
+        {
+          "label": "Journal",
+          "value": "IJLLR"
+        },
+        {
+          "label": "ISSN",
+          "value": "2582-8878"
+        },
+        {
+          "label": "Volume",
+          "value": "IV, Issue V"
+        }
+      ]
+    },
+    {
+      "id": "private-law-colleges",
+      "title": "Private Law Colleges: Five-Star Promises, One-Star Delivery",
+      "category": "Articles",
+      "description": "An investigative policy piece examining regulatory gaps, curriculum deficiencies, and quality discrepancies in private legal education in India.",
+      "longDescription": "This widely read investigative commentary provides a critical analysis of the legal education sector in India. It examines the commercialization of private law schools, highlighting the mismatch between infrastructure marketing and the quality of clinical pedagogy and placement outcomes.",
+      "tags": [
+        "Legal Education",
+        "Regulatory Oversight",
+        "Bar Council of India",
+        "Policy Reform"
+      ],
+      "image": "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80",
+      "demoUrl": "https://www.barandbench.com/columns/private-law-colleges-five-star-promises-one-star-delivery",
+      "highlights": [
+        "Published on Bar & Bench, sparking widespread discourse among legal educators and students.",
+        "Argued for stricter Bar Council of India (BCI) inspections and modern clinical law mandates.",
+        "Suggested benchmark metrics for grading law school internship placements and moot court support."
+      ],
+      "stats": [
+        {
+          "label": "Publisher",
+          "value": "Bar & Bench"
+        },
+        {
+          "label": "Genre",
+          "value": "Op-Ed"
+        },
+        {
+          "label": "Impact",
+          "value": "Community Lead"
+        }
+      ]
+    }
+  ]
+}
