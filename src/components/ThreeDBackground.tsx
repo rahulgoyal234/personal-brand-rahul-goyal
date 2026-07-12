@@ -10,8 +10,6 @@ interface RibbonPoint {
   speedX: number;
   speedY: number;
   waveAmplitude: number;
-  currentDisplacementX: number;
-  currentDisplacementY: number;
 }
 
 interface Ribbon {
@@ -45,9 +43,85 @@ interface Ripple {
   strength: number;
 }
 
+// Preset color palettes that harmonize with the brand
+const PALETTES = {
+  brass: [
+    { color: '169, 128, 63', glow: 'rgba(169, 128, 63, 0.45)' }, // Elegant Brass
+    { color: '184, 134, 11', glow: 'rgba(184, 134, 11, 0.4)' },  // Dark Goldenrod
+    { color: '205, 127, 50', glow: 'rgba(205, 127, 50, 0.35)' }, // Bronze
+    { color: '139, 101, 8', glow: 'rgba(139, 101, 8, 0.45)' },   // Antique Gold
+  ],
+  cyber: [
+    { color: '13, 148, 136', glow: 'rgba(13, 148, 136, 0.45)' }, // Deep Teal
+    { color: '6, 182, 212', glow: 'rgba(6, 182, 212, 0.5)' },    // Cyan Blue
+    { color: '20, 184, 166', glow: 'rgba(20, 184, 166, 0.4)' },   // Mint
+    { color: '56, 189, 248', glow: 'rgba(56, 189, 248, 0.45)' },  // Sky
+  ],
+  sunset: [
+    { color: '219, 39, 119', glow: 'rgba(219, 39, 119, 0.4)' },  // Sunset Rose
+    { color: '124, 58, 237', glow: 'rgba(124, 58, 237, 0.35)' }, // Electric Violet
+    { color: '249, 115, 22', glow: 'rgba(249, 115, 22, 0.4)' },   // Warm Amber
+    { color: '236, 72, 153', glow: 'rgba(236, 72, 153, 0.4)' },  // Pink
+  ],
+  aurora: [
+    { color: '34, 197, 94', glow: 'rgba(34, 197, 94, 0.4)' },    // Emerald Green
+    { color: '20, 184, 166', glow: 'rgba(20, 184, 166, 0.45)' },  // Turquoise
+    { color: '168, 85, 247', glow: 'rgba(168, 85, 247, 0.35)' },  // Purple
+    { color: '234, 179, 8', glow: 'rgba(234, 179, 8, 0.35)' },    // Warm Yellow
+  ],
+  rainbow: [
+    { color: '169, 128, 63', glow: 'rgba(169, 128, 63, 0.4)' },  // Brass
+    { color: '13, 148, 136', glow: 'rgba(13, 148, 136, 0.35)' }, // Deep Teal
+    { color: '124, 58, 237', glow: 'rgba(124, 58, 237, 0.3)' },  // Electric Violet
+    { color: '219, 39, 119', glow: 'rgba(219, 39, 119, 0.35)' }, // Sunset Rose
+    { color: '6, 182, 212', glow: 'rgba(6, 182, 212, 0.4)' },    // Cyan Blue
+    { color: '249, 115, 22', glow: 'rgba(249, 115, 22, 0.3)' },   // Warm Amber
+  ]
+};
+
 export default function ThreeDBackground() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  
+  // Real-time custom settings State
+  const [isOpen, setIsOpen] = useState(false);
+  const [numRibbons, setNumRibbons] = useState(16);
+  const [waveAmplitude, setWaveAmplitude] = useState(45);
+  const [driftSpeed, setDriftSpeed] = useState(1.1);
+  const [particleCount, setParticleCount] = useState(40);
+  const [paletteKey, setPaletteKey] = useState<keyof typeof PALETTES>('brass');
+  const [isGlowOn, setIsGlowOn] = useState(true);
+
+  // Use configuration refs to sync instantly with high-performance draw loop without recreating event listeners
+  const configRef = useRef({
+    numRibbons,
+    waveAmplitude,
+    driftSpeed,
+    particleCount,
+    palette: PALETTES[paletteKey],
+    isGlowOn
+  });
+
+  // Track if we need to regenerate arrays
+  const reinitTrigger = useRef(false);
+  // Manual scatter wave trigger
+  const triggerScatter = useRef(false);
+
+  // Keep configRef in absolute synchronization with state changes
+  useEffect(() => {
+    configRef.current = {
+      numRibbons,
+      waveAmplitude,
+      driftSpeed,
+      particleCount,
+      palette: PALETTES[paletteKey],
+      isGlowOn
+    };
+  }, [numRibbons, waveAmplitude, driftSpeed, particleCount, paletteKey, isGlowOn]);
+
+  // Re-trigger ribbon/particle generation when count or colors change
+  useEffect(() => {
+    reinitTrigger.current = true;
+  }, [numRibbons, particleCount, paletteKey]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -60,40 +134,31 @@ export default function ThreeDBackground() {
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
 
-    // Mouse state tracking
+    // Mouse Tracking state
     const mouse = {
       x: -9999,
       y: -9999,
       active: false,
-      radius: 240,
+      radius: 250,
     };
 
-    // Active ripples generated on page clicks
+    // Click Ripple shocks
     let ripples: Ripple[] = [];
 
-    // Colors that mesh beautifully with both the brass (#A9803F) and soft paper backgrounds
-    const colors = [
-      { color: '169, 128, 63', glow: 'rgba(169, 128, 63, 0.4)' }, // Elegant Brass
-      { color: '13, 148, 136', glow: 'rgba(13, 148, 136, 0.35)' }, // Deep Teal
-      { color: '124, 58, 237', glow: 'rgba(124, 58, 237, 0.3)' },  // Electric Violet
-      { color: '219, 39, 119', glow: 'rgba(219, 39, 119, 0.3)' },  // Sunset Rose
-      { color: '6, 182, 212', glow: 'rgba(6, 182, 212, 0.4)' },    // Cyan Blue
-      { color: '249, 115, 22', glow: 'rgba(249, 115, 22, 0.3)' },   // Warm Amber
-    ];
-
-    // Initialize Ribbons spanning horizontally across different heights
+    // Local data stores
     let ribbons: Ribbon[] = [];
-    const numRibbons = 5;
+    let particles: Particle[] = [];
     const pointsPerRibbon = 18;
 
     const initRibbons = () => {
       ribbons = [];
+      const currentConfig = configRef.current;
       const segmentWidth = width / (pointsPerRibbon - 1);
 
-      for (let r = 0; r < numRibbons; r++) {
+      for (let r = 0; r < currentConfig.numRibbons; r++) {
         const points: RibbonPoint[] = [];
-        const targetY = height * (0.15 + (r * 0.17)); // Space them nicely vertically
-        const theme = colors[r % colors.length];
+        const targetY = height * (0.12 + (r * (0.76 / Math.max(1, currentConfig.numRibbons - 1))));
+        const theme = currentConfig.palette[r % currentConfig.palette.length];
 
         for (let p = 0; p < pointsPerRibbon; p++) {
           const x = p * segmentWidth;
@@ -102,13 +167,11 @@ export default function ThreeDBackground() {
             y: targetY,
             baseX: x,
             baseY: targetY,
-            angleX: p * 0.4 + r * 1.5,
-            angleY: p * 0.5 + r * 2.1,
-            speedX: 0.015 + Math.sin(r + p) * 0.005,
-            speedY: 0.01 + Math.cos(r * p) * 0.005,
-            waveAmplitude: 25 + Math.sin(r) * 15,
-            currentDisplacementX: 0,
-            currentDisplacementY: 0,
+            angleX: p * 0.42 + r * 1.6,
+            angleY: p * 0.48 + r * 2.2,
+            speedX: 0.012 + Math.sin(r + p) * 0.006,
+            speedY: 0.008 + Math.cos(r * p) * 0.006,
+            waveAmplitude: currentConfig.waveAmplitude * (0.6 + Math.sin(r) * 0.4),
           });
         }
 
@@ -116,41 +179,38 @@ export default function ThreeDBackground() {
           points,
           color: theme.color,
           glowColor: theme.glow,
-          width: 0.55 + (r % 3) * 0.12, // Fine linings: ultra-thin precise paths
-          phaseOffset: r * Math.PI * 0.3,
-          speed: 0.8 + r * 0.1,
+          width: 0.25 + (r % 3) * 0.06, // Thread-like super fine linings
+          phaseOffset: r * Math.PI * 0.25,
+          speed: 0.85 + r * 0.08,
         });
       }
     };
 
-    // Initialize decorative floating particles
-    let particles: Particle[] = [];
-    const numParticles = 35;
-
     const initParticles = () => {
       particles = [];
-      for (let i = 0; i < numParticles; i++) {
-        const theme = colors[i % colors.length];
+      const currentConfig = configRef.current;
+      for (let i = 0; i < currentConfig.particleCount; i++) {
+        const theme = currentConfig.palette[i % currentConfig.palette.length];
         particles.push({
           x: Math.random() * width,
           y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.45,
-          vy: (Math.random() - 0.5) * 0.45,
-          radius: 1.5 + Math.random() * 2,
+          vx: (Math.random() - 0.5) * 0.42,
+          vy: (Math.random() - 0.5) * 0.42,
+          radius: 1.2 + Math.random() * 1.8,
           color: theme.color,
           glowColor: theme.glow,
           alpha: 0.15 + Math.random() * 0.35,
-          pulseSpeed: 0.01 + Math.random() * 0.02,
+          pulseSpeed: 0.008 + Math.random() * 0.016,
           pulsePhase: Math.random() * Math.PI * 2,
         });
       }
     };
 
-    // Seed data
+    // Initial setup
     initRibbons();
     initParticles();
 
-    // Event Listeners for Interaction
+    // Event handlers
     const handlePointerMove = (e: PointerEvent) => {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
@@ -163,18 +223,22 @@ export default function ThreeDBackground() {
       mouse.y = -9999;
     };
 
-    // Clicking spawns dynamic ripples
     const handlePointerDown = (e: PointerEvent) => {
+      // Prevent spawning shockwave if clicking settings panel
+      const target = e.target as HTMLElement;
+      if (target?.closest('.linings-engine-panel') || target?.closest('.linings-engine-toggle')) {
+        return;
+      }
+
       ripples.push({
         x: e.clientX,
         y: e.clientY,
         radius: 0,
         maxRadius: Math.max(width, height) * 0.65,
-        speed: 7.5,
-        strength: 55,
+        speed: 8.5,
+        strength: 65,
       });
 
-      // Keep array size optimized
       if (ripples.length > 5) {
         ripples.shift();
       }
@@ -192,20 +256,41 @@ export default function ThreeDBackground() {
     window.addEventListener('pointerdown', handlePointerDown, { passive: true });
     window.addEventListener('resize', handleResize);
 
-    // Animation Tick
+    // Main Draw Tick
     const tick = () => {
+      const currentConfig = configRef.current;
+
+      // Handle structural re-initialization requests
+      if (reinitTrigger.current) {
+        initRibbons();
+        initParticles();
+        reinitTrigger.current = false;
+      }
+
+      // Handle manual scatter shock wave request
+      if (triggerScatter.current) {
+        ripples.push({
+          x: width / 2,
+          y: height / 2,
+          radius: 0,
+          maxRadius: Math.max(width, height) * 0.75,
+          speed: 12,
+          strength: 120,
+        });
+        triggerScatter.current = false;
+      }
+
       ctx.clearRect(0, 0, width, height);
 
-      // Update and Draw active Click Ripples
+      // Render expanding ripples
       ripples.forEach((ripple, rIdx) => {
         ripple.radius += ripple.speed;
         
-        // Draw very subtle expanding color rings for click feedback
         ctx.beginPath();
         ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
-        const alpha = Math.max(0, 0.045 * (1 - ripple.radius / ripple.maxRadius));
-        ctx.strokeStyle = `rgba(169, 128, 63, ${alpha})`;
-        ctx.lineWidth = 1.5;
+        const alpha = Math.max(0, 0.055 * (1 - ripple.radius / ripple.maxRadius));
+        ctx.strokeStyle = `rgba(${currentConfig.palette[0].color}, ${alpha})`;
+        ctx.lineWidth = 1.2;
         ctx.stroke();
 
         if (ripple.radius >= ripple.maxRadius) {
@@ -213,18 +298,18 @@ export default function ThreeDBackground() {
         }
       });
 
-      // Update Ribbon Points and physical simulation (Waving + Mouse Gravity + Ripple shockwaves)
+      // Update and Draw ribbons
       ribbons.forEach((ribbon) => {
         ribbon.points.forEach((point) => {
-          // Update waving angles
-          point.angleX += point.speedX;
-          point.angleY += point.speedY;
+          // Progress wave motion incorporating speed controller
+          point.angleX += point.speedX * currentConfig.driftSpeed;
+          point.angleY += point.speedY * currentConfig.driftSpeed;
 
-          // Natural dynamic waving offsets
-          const waveX = Math.sin(point.angleX) * (point.waveAmplitude * 0.25);
-          const waveY = Math.cos(point.angleY) * point.waveAmplitude;
+          // Natural wavy fluid math
+          const waveX = Math.sin(point.angleX) * (currentConfig.waveAmplitude * 0.22);
+          const waveY = Math.cos(point.angleY) * (currentConfig.waveAmplitude * (0.5 + Math.sin(point.angleX) * 0.5));
 
-          // Calculate displacement from mouse attraction/gravity
+          // Pointer magnetic gravity attraction
           let mouseDispX = 0;
           let mouseDispY = 0;
 
@@ -234,15 +319,14 @@ export default function ThreeDBackground() {
             const dist = Math.sqrt(dx * dx + dy * dy);
 
             if (dist < mouse.radius) {
-              const force = (mouse.radius - dist) / mouse.radius; // 0 to 1
-              // Smoothly attract lines, but bend them elegantly
-              const strength = 60 * Math.sin(force * Math.PI * 0.5);
+              const force = (mouse.radius - dist) / mouse.radius; // scale 0 to 1
+              const strength = 75 * Math.sin(force * Math.PI * 0.5);
               mouseDispX = (dx / (dist || 1)) * strength;
               mouseDispY = (dy / (dist || 1)) * strength;
             }
           }
 
-          // Calculate displacement from Click Ripples
+          // Apply expanding Click Ripple displacement force
           let rippleDispX = 0;
           let rippleDispY = 0;
 
@@ -251,8 +335,7 @@ export default function ThreeDBackground() {
             const dy = point.baseY - ripple.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
-            // If close to the ripple ring edge
-            const rippleWidth = 140;
+            const rippleWidth = 150;
             const distFromRing = Math.abs(dist - ripple.radius);
 
             if (distFromRing < rippleWidth) {
@@ -263,44 +346,45 @@ export default function ThreeDBackground() {
             }
           });
 
-          // Target coordinate with all displacements added
+          // Compute raw target coordinates
           const targetX = point.baseX + waveX + mouseDispX + rippleDispX;
           const targetY = point.baseY + waveY + mouseDispY + rippleDispY;
 
-          // Smooth elastic transition to target coordinates (tight spring interpolation)
-          point.x += (targetX - point.x) * 0.085;
-          point.y += (targetY - point.y) * 0.085;
+          // Smooth interpolation
+          point.x += (targetX - point.x) * 0.082;
+          point.y += (targetY - point.y) * 0.082;
         });
 
-        // Draw Ribbon strands with smooth continuous Bezier curves
+        // Bezier strand drawing
         ctx.beginPath();
         
-        // Use double-pass lines to simulate complex glowing neon threads elegantly
-        // 1. Draw glowing background shadow overlay
-        ctx.lineWidth = ribbon.width * 2.8;
-        ctx.strokeStyle = ribbon.glowColor;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
+        // Pass 1: Fine neon shadow glow
+        if (currentConfig.isGlowOn) {
+          ctx.lineWidth = ribbon.width * 1.8;
+          ctx.strokeStyle = ribbon.glowColor;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
 
-        ctx.moveTo(ribbon.points[0].x, ribbon.points[0].y);
-        for (let i = 0; i < ribbon.points.length - 1; i++) {
-          const xc = (ribbon.points[i].x + ribbon.points[i + 1].x) / 2;
-          const yc = (ribbon.points[i].y + ribbon.points[i + 1].y) / 2;
-          ctx.quadraticCurveTo(ribbon.points[i].x, ribbon.points[i].y, xc, yc);
+          ctx.moveTo(ribbon.points[0].x, ribbon.points[0].y);
+          for (let i = 0; i < ribbon.points.length - 1; i++) {
+            const xc = (ribbon.points[i].x + ribbon.points[i + 1].x) / 2;
+            const yc = (ribbon.points[i].y + ribbon.points[i + 1].y) / 2;
+            ctx.quadraticCurveTo(ribbon.points[i].x, ribbon.points[i].y, xc, yc);
+          }
+          ctx.stroke();
         }
-        ctx.stroke();
 
-        // 2. Draw core sharp foreground line
+        // Pass 2: Sharp fine lining
         ctx.beginPath();
         ctx.lineWidth = ribbon.width;
         
-        // Draw subtle brass-themed gradient transitions across the screen width
+        // Horizontal fading gradient path
         const gradient = ctx.createLinearGradient(0, 0, width, 0);
-        gradient.addColorStop(0, `rgba(${ribbon.color}, 0.05)`);
-        gradient.addColorStop(0.3, `rgba(${ribbon.color}, 0.22)`);
-        gradient.addColorStop(0.5, `rgba(${ribbon.color}, 0.28)`);
-        gradient.addColorStop(0.7, `rgba(${ribbon.color}, 0.22)`);
-        gradient.addColorStop(1, `rgba(${ribbon.color}, 0.05)`);
+        gradient.addColorStop(0, `rgba(${ribbon.color}, 0.03)`);
+        gradient.addColorStop(0.35, `rgba(${ribbon.color}, 0.28)`);
+        gradient.addColorStop(0.5, `rgba(${ribbon.color}, 0.36)`);
+        gradient.addColorStop(0.65, `rgba(${ribbon.color}, 0.28)`);
+        gradient.addColorStop(1, `rgba(${ribbon.color}, 0.03)`);
 
         ctx.strokeStyle = gradient;
         ctx.moveTo(ribbon.points[0].x, ribbon.points[0].y);
@@ -313,79 +397,76 @@ export default function ThreeDBackground() {
         ctx.stroke();
       });
 
-      // Update and Draw floating energy particles with linking constellation lines
+      // Update and Draw floating star energy dust
       particles.forEach((p, pIdx) => {
-        // Apply wind drift / gentle float physics
-        p.x += p.vx;
-        p.y += p.vy;
+        p.x += p.vx * currentConfig.driftSpeed;
+        p.y += p.vy * currentConfig.driftSpeed;
 
-        // Pulse the brightness organically over time
-        p.pulsePhase += p.pulseSpeed;
-        const pulseAlpha = p.alpha * (0.65 + Math.sin(p.pulsePhase) * 0.35);
+        p.pulsePhase += p.pulseSpeed * currentConfig.driftSpeed;
+        const pulseAlpha = p.alpha * (0.6 + Math.sin(p.pulsePhase) * 0.4);
 
-        // Simple mouse repulsion for floating particles
+        // Repel from cursor
         if (mouse.active) {
           const dx = p.x - mouse.x;
           const dy = p.y - mouse.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < 180) {
             const force = (180 - dist) / 180;
-            p.x += (dx / (dist || 1)) * force * 1.5;
-            p.y += (dy / (dist || 1)) * force * 1.5;
+            p.x += (dx / (dist || 1)) * force * 1.6;
+            p.y += (dy / (dist || 1)) * force * 1.6;
           }
         }
 
-        // Boundary safety check with smooth warp wraps
+        // Screen boundary loops
         if (p.x < 0) p.x = width;
         if (p.x > width) p.x = 0;
         if (p.y < 0) p.y = height;
         if (p.y > height) p.y = 0;
 
-        // Render delicate light dust
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(${p.color}, ${pulseAlpha})`;
         ctx.fill();
 
-        // Constellation: Draw glowing web lines between nearby particles
+        // Constellation webs between particles
         for (let j = pIdx + 1; j < particles.length; j++) {
           const p2 = particles[j];
           const dx = p.x - p2.x;
           const dy = p.y - p2.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 100) {
-            const webAlpha = (1 - dist / 100) * 0.08 * Math.min(pulseAlpha, p2.alpha);
+          if (dist < 110) {
+            const webAlpha = (1 - dist / 110) * 0.08 * Math.min(pulseAlpha, p2.alpha);
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.strokeStyle = `rgba(${p.color}, ${webAlpha})`;
-            ctx.lineWidth = 0.65;
+            ctx.lineWidth = 0.5;
             ctx.stroke();
           }
         }
 
-        // Connect particles to nearest ribbon strand point to merge elements beautifully
+        // Constellation ties linking dust to active fine linings
         ribbons.forEach((ribbon) => {
           ribbon.points.forEach((pt) => {
             const dx = p.x - pt.x;
             const dy = p.y - pt.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
-            if (dist < 85) {
-              const linkAlpha = (1 - dist / 85) * 0.045 * pulseAlpha;
+            if (dist < 90) {
+              const linkAlpha = (1 - dist / 90) * 0.045 * pulseAlpha;
               ctx.beginPath();
               ctx.moveTo(p.x, p.y);
               ctx.lineTo(pt.x, pt.y);
               ctx.strokeStyle = `rgba(${ribbon.color}, ${linkAlpha})`;
-              ctx.lineWidth = 0.5;
+              ctx.lineWidth = 0.45;
               ctx.stroke();
             }
           });
         });
       });
 
-      // Pointer Constellation: Connect pointer to nearest points for high tactility
+      // Pointer magnetism constellation web
       if (mouse.active) {
         ribbons.forEach((ribbon) => {
           ribbon.points.forEach((pt) => {
@@ -393,13 +474,13 @@ export default function ThreeDBackground() {
             const dy = mouse.y - pt.y;
             const dist = Math.sqrt(dx * dx + dy * dy);
 
-            if (dist < 135) {
-              const activeWebAlpha = (1 - dist / 135) * 0.09;
+            if (dist < 140) {
+              const activeWebAlpha = (1 - dist / 140) * 0.085;
               ctx.beginPath();
               ctx.moveTo(mouse.x, mouse.y);
               ctx.lineTo(pt.x, pt.y);
               ctx.strokeStyle = `rgba(${ribbon.color}, ${activeWebAlpha})`;
-              ctx.lineWidth = 0.65;
+              ctx.lineWidth = 0.6;
               ctx.stroke();
             }
           });
@@ -411,7 +492,6 @@ export default function ThreeDBackground() {
 
     tick();
 
-    // Clean up
     return () => {
       window.removeEventListener('pointermove', handlePointerMove);
       document.removeEventListener('pointerleave', handlePointerLeave);
@@ -422,15 +502,17 @@ export default function ThreeDBackground() {
   }, []);
 
   return (
-    <div ref={containerRef} className="absolute inset-0 w-full h-full pointer-events-none select-none z-0 overflow-hidden">
-      <canvas
-        ref={canvasRef}
-        id="interactive-colorful-lines-bg"
-        className="fixed inset-0 w-full h-full pointer-events-none z-0 select-none print:hidden opacity-[0.7] dark:opacity-[0.55]"
-        style={{
-          mixBlendMode: 'multiply',
-        }}
-      />
-    </div>
+    <>
+      <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0 overflow-hidden">
+        <canvas
+          ref={canvasRef}
+          id="interactive-colorful-lines-bg"
+          className="fixed inset-0 w-full h-full pointer-events-none z-0 select-none print:hidden opacity-[0.75] dark:opacity-[0.6]"
+          style={{
+            mixBlendMode: 'multiply',
+          }}
+        />
+      </div>
+    </>
   );
 }

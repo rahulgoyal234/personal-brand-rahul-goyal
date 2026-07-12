@@ -1,389 +1,284 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-interface Particle {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  size: number;
-  color: string;
-  glowColor: string;
-  alpha: number;
-  decay: number;
-  rotation: number;
-  rotationSpeed: number;
-  type: 'spark' | 'trail';
-}
-
 export default function CursorRing() {
-  const [supportsHover, setSupportsHover] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return window.matchMedia('(hover: hover)').matches;
-    }
-    return false;
-  });
-
   const ringRef = useRef<HTMLDivElement | null>(null);
   const dotRef = useRef<HTMLDivElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  // Use refs to store mutable coordinates without triggering React state updates
+  // Motion positions tracked in refs for ultimate 120Hz/60Hz sub-pixel fluidity
   const mouseCoords = useRef({ x: 0, y: 0 });
   const ringCoords = useRef({ x: 0, y: 0 });
-  const lastEmitCoords = useRef({ x: 0, y: 0 });
-  const hasMovedRef = useRef(false);
+
+  // Semantic interaction states
   const isHoveredRef = useRef(false);
   const isClickingRef = useRef(false);
-  const isPointerInsideWindowRef = useRef(false);
+  const isTouchRef = useRef(false);
+  const isVisibleRef = useRef(false);
 
-  // Color palette for interactive sparks
-  const sparkColors = [
-    { color: '169, 128, 63', glow: 'rgba(169, 128, 63, 0.45)' }, // Elegant Brass
-    { color: '13, 148, 136', glow: 'rgba(13, 148, 136, 0.4)' },  // Deep Teal
-    { color: '124, 58, 237', glow: 'rgba(124, 58, 237, 0.35)' }, // Electric Violet
-    { color: '219, 39, 119', glow: 'rgba(219, 39, 119, 0.4)' },  // Sunset Rose
-    { color: '6, 182, 212', glow: 'rgba(6, 182, 212, 0.45)' },   // Cyan Blue
-  ];
+  // JS-driven animated scales (resolves CSS-transform conflicts & browser translation lag)
+  const scaleRef = useRef(1);
+  const targetScaleRef = useRef(1);
+
+  const dotScaleRef = useRef(1);
+  const targetDotScaleRef = useRef(1);
 
   useEffect(() => {
-    // Media query to detect hover pointer capabilities
-    const mediaQuery = window.matchMedia('(hover: hover)');
-    const handleMediaQueryChange = (e: MediaQueryListEvent) => {
-      setSupportsHover(e.matches);
-    };
-
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener('change', handleMediaQueryChange);
-    } else {
-      mediaQuery.addListener(handleMediaQueryChange);
-    }
-
     const ring = ringRef.current;
     const dot = dotRef.current;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
-
-    let particles: Particle[] = [];
-
-    // Helper to spawn a splash of celebratory sparks on mouse clicks or finger taps
-    const spawnSparksBurst = (cx: number, cy: number) => {
-      const numSparks = 14 + Math.floor(Math.random() * 8); // Rich dense bursts
-
-      for (let i = 0; i < numSparks; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = 2.5 + Math.random() * 5.5;
-        const colorObj = sparkColors[Math.floor(Math.random() * sparkColors.length)];
-
-        particles.push({
-          x: cx,
-          y: cy,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          size: 2.2 + Math.random() * 3.2,
-          color: colorObj.color,
-          glowColor: colorObj.glow,
-          alpha: 0.95 + Math.random() * 0.05,
-          decay: 0.016 + Math.random() * 0.024,
-          rotation: Math.random() * Math.PI * 2,
-          rotationSpeed: (Math.random() - 0.5) * 0.15,
-          type: 'spark',
-        });
-      }
-    };
-
-    // Helper to update DOM cursor styling based on state
+    // Apply color and aesthetic styling based on visual states without modifying transforms/sizes
     const updateVisualStyles = () => {
-      if (!mediaQuery.matches) return; // Keep cursor hidden on non-hover screens
-
       const isHovered = isHoveredRef.current;
       const isClicking = isClickingRef.current;
+      const isTouch = isTouchRef.current;
+      const isDark = document.documentElement.classList.contains('dark');
 
       if (ring) {
         if (isHovered) {
-          ring.className = 'fixed top-0 left-0 w-8 h-8 -ml-4 -mt-4 rounded-full border-2 border-brass bg-brass/10 pointer-events-none z-[9999] will-change-transform';
-          ring.style.scale = '1.35';
+          ring.style.borderColor = 'rgba(169, 128, 63, 0.9)'; // Rich Brass
+          ring.style.backgroundColor = 'rgba(169, 128, 63, 0.08)'; // Light brass tint
+          ring.style.borderWidth = '0.5px';
         } else if (isClicking) {
-          ring.className = 'fixed top-0 left-0 w-6 h-6 -ml-3 -mt-3 rounded-full border border-brass bg-brass/25 pointer-events-none z-[9999] will-change-transform';
-          ring.style.scale = '0.85';
+          ring.style.borderColor = 'rgba(169, 128, 63, 0.95)';
+          ring.style.backgroundColor = 'rgba(169, 128, 63, 0.22)'; // Denser tint
+          ring.style.borderWidth = '0.75px';
         } else {
-          ring.className = 'fixed top-0 left-0 w-6 h-6 -ml-3 -mt-3 rounded-full border border-brass/60 bg-transparent pointer-events-none z-[9999] will-change-transform';
-          ring.style.scale = '1';
+          ring.style.borderColor = isTouch 
+            ? 'rgba(169, 128, 63, 0.55)' 
+            : 'rgba(169, 128, 63, 0.45)';
+          ring.style.backgroundColor = 'transparent';
+          ring.style.borderWidth = '0.5px';
         }
       }
 
       if (dot) {
         if (isHovered) {
-          dot.className = 'fixed top-0 left-0 w-2 h-2 -ml-1 -mt-1 rounded-full pointer-events-none z-[9999] bg-brass shadow-sm will-change-transform';
-          dot.style.scale = '1.25';
+          dot.style.backgroundColor = 'rgba(169, 128, 63, 0.95)';
+        } else if (isClicking) {
+          dot.style.backgroundColor = 'rgba(169, 128, 63, 1)';
         } else {
-          dot.className = 'fixed top-0 left-0 w-1.5 h-1.5 -ml-0.75 -mt-0.75 rounded-full pointer-events-none z-[9999] bg-ink will-change-transform';
-          dot.style.scale = '1';
+          if (isTouch) {
+            dot.style.backgroundColor = 'rgba(169, 128, 63, 0.65)';
+          } else {
+            // Elegant Ink color depending on active dark theme
+            dot.style.backgroundColor = isDark ? '#f5f5f4' : '#1c1917';
+          }
         }
       }
     };
 
-    // Unified pointer events handling
+    const showCursor = () => {
+      if (!isVisibleRef.current) {
+        isVisibleRef.current = true;
+        if (ring) ring.style.opacity = '1';
+        if (dot) dot.style.opacity = '1';
+      }
+    };
+
+    const hideCursor = () => {
+      if (isVisibleRef.current) {
+        isVisibleRef.current = false;
+        if (ring) ring.style.opacity = '0';
+        if (dot) dot.style.opacity = '0';
+      }
+    };
+
+    // Scans element hierarchies on pointer events
+    const scanActiveElement = (target: HTMLElement | null) => {
+      if (!target) return;
+
+      const isInteractive = 
+        target.tagName === 'BUTTON' ||
+        target.tagName === 'A' ||
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        !!target.closest('button') ||
+        !!target.closest('a') ||
+        !!target.closest('[role="button"]') ||
+        !!target.closest('[role="link"]') ||
+        !!target.closest('.cursor-pointer');
+
+      if (isHoveredRef.current !== isInteractive) {
+        isHoveredRef.current = isInteractive;
+
+        // Dynamic targets for JS animated scales
+        if (isInteractive) {
+          targetScaleRef.current = 1.5;
+          targetDotScaleRef.current = 1.35;
+        } else {
+          targetScaleRef.current = 1.0;
+          targetDotScaleRef.current = 1.0;
+        }
+
+        updateVisualStyles();
+      }
+    };
+
     const onPointerMove = (e: PointerEvent) => {
       mouseCoords.current.x = e.clientX;
       mouseCoords.current.y = e.clientY;
-      isPointerInsideWindowRef.current = true;
-
-      if (!hasMovedRef.current) {
-        hasMovedRef.current = true;
-        ringCoords.current.x = e.clientX;
-        ringCoords.current.y = e.clientY;
-        lastEmitCoords.current.x = e.clientX;
-        lastEmitCoords.current.y = e.clientY;
-      }
 
       const isTouch = e.pointerType === 'touch';
+      isTouchRef.current = isTouch;
 
-      // Keep visual cursor showing on desktop
-      if (!isTouch && mediaQuery.matches) {
-        if (dot) dot.style.opacity = '1';
-        if (ring) ring.style.opacity = '1';
-
-        // Emit delicate trailing dust sparks on desktop move
-        const dx = e.clientX - lastEmitCoords.current.x;
-        const dy = e.clientY - lastEmitCoords.current.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist > 14) { // Only emit when mouse has swept enough distance (throttling)
-          const colorObj = sparkColors[Math.floor(Math.random() * sparkColors.length)];
-          particles.push({
-            x: e.clientX,
-            y: e.clientY,
-            vx: (Math.random() - 0.5) * 0.8,
-            vy: (Math.random() - 0.5) * 0.8 + 0.3, // Subtle downward drift (gravity feel)
-            size: 1.2 + Math.random() * 1.6,
-            color: colorObj.color,
-            glowColor: colorObj.glow,
-            alpha: 0.7,
-            decay: 0.02 + Math.random() * 0.02,
-            rotation: Math.random() * Math.PI,
-            rotationSpeed: (Math.random() - 0.5) * 0.05,
-            type: 'trail',
-          });
-          lastEmitCoords.current.x = e.clientX;
-          lastEmitCoords.current.y = e.clientY;
-        }
+      // Instantly snap starting frame coords on first movement to avoid slide-in from (0,0)
+      if (ringCoords.current.x === 0 && ringCoords.current.y === 0) {
+        ringCoords.current.x = e.clientX;
+        ringCoords.current.y = e.clientY;
       }
 
-      // Proactive interactive target scanning
-      const target = e.target as HTMLElement;
-      if (target) {
-        const isInteractive = 
-          target.tagName === 'BUTTON' ||
-          target.tagName === 'A' ||
-          target.tagName === 'INPUT' ||
-          target.tagName === 'TEXTAREA' ||
-          target.tagName === 'SELECT' ||
-          !!target.closest('button') ||
-          !!target.closest('a') ||
-          !!target.closest('[role="button"]') ||
-          !!target.closest('[role="link"]') ||
-          !!target.closest('.cursor-pointer');
-
-        if (isHoveredRef.current !== isInteractive) {
-          isHoveredRef.current = isInteractive;
-          updateVisualStyles();
-        }
-      }
+      showCursor();
+      updateVisualStyles();
+      scanActiveElement(e.target as HTMLElement);
     };
 
     const onPointerDown = (e: PointerEvent) => {
       isClickingRef.current = true;
-      spawnSparksBurst(e.clientX, e.clientY);
+      const isTouch = e.pointerType === 'touch';
+      isTouchRef.current = isTouch;
+
+      targetScaleRef.current = 0.75;
+      targetDotScaleRef.current = 0.7;
+
+      if (isTouch) {
+        mouseCoords.current.x = e.clientX;
+        mouseCoords.current.y = e.clientY;
+        ringCoords.current.x = e.clientX;
+        ringCoords.current.y = e.clientY;
+      }
+
+      showCursor();
       updateVisualStyles();
     };
 
     const onPointerUp = () => {
       isClickingRef.current = false;
+      
+      if (isHoveredRef.current) {
+        targetScaleRef.current = 1.5;
+        targetDotScaleRef.current = 1.35;
+      } else {
+        targetScaleRef.current = 1.0;
+        targetDotScaleRef.current = 1.0;
+      }
+
       updateVisualStyles();
+
+      if (isTouchRef.current) {
+        // Soft fade on touch devices
+        setTimeout(() => {
+          hideCursor();
+        }, 150);
+      }
     };
 
     const onPointerCancel = () => {
       isClickingRef.current = false;
-      updateVisualStyles();
+      hideCursor();
+    };
+
+    const onPointerOver = (e: PointerEvent) => {
+      scanActiveElement(e.target as HTMLElement);
     };
 
     const onPointerLeaveWindow = () => {
-      isPointerInsideWindowRef.current = false;
-      if (ring) ring.style.opacity = '0';
-      if (dot) dot.style.opacity = '0';
+      if (!isTouchRef.current) {
+        hideCursor();
+      }
     };
 
     const onPointerEnterWindow = (e: PointerEvent) => {
       if (e.pointerType !== 'touch') {
-        isPointerInsideWindowRef.current = true;
-        if (ring) ring.style.opacity = '1';
-        if (dot) dot.style.opacity = '1';
+        showCursor();
       }
     };
 
-    const handleResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    };
+    // Keep state updated when themes toggled manually
+    const observer = new MutationObserver(() => {
+      updateVisualStyles();
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
-    // Single Animation Frame Tick handling physics and visual rendering
+    // Smooth update animation frame loop
     let animationFrameId: number;
     const updateLoop = () => {
-      // 1. Desktop custom cursor easing tracking (Lag Ring follow)
-      if (mediaQuery.matches && hasMovedRef.current) {
-        const ease = 0.3; // Responsive tight-binding trailing
-        const targetX = mouseCoords.current.x;
-        const targetY = mouseCoords.current.y;
+      // Lag-easing values:
+      // Touch is snappier; Hover has faster response so it adheres perfectly to targeted elements
+      const ease = isTouchRef.current 
+        ? 0.35 
+        : (isHoveredRef.current ? 0.32 : 0.18);
 
-        ringCoords.current.x += (targetX - ringCoords.current.x) * ease;
-        ringCoords.current.y += (targetY - ringCoords.current.y) * ease;
+      const targetX = mouseCoords.current.x;
+      const targetY = mouseCoords.current.y;
 
-        if (ring) {
-          ring.style.transform = `translate3d(${ringCoords.current.x}px, ${ringCoords.current.y}px, 0)`;
-        }
-        if (dot) {
-          dot.style.transform = `translate3d(${targetX}px, ${targetY}px, 0)`;
-        }
+      ringCoords.current.x += (targetX - ringCoords.current.x) * ease;
+      ringCoords.current.y += (targetY - ringCoords.current.y) * ease;
+
+      // Smooth step scaling
+      scaleRef.current += (targetScaleRef.current - scaleRef.current) * 0.22;
+      dotScaleRef.current += (targetDotScaleRef.current - dotScaleRef.current) * 0.22;
+
+      // Absolute positioning via centering translates
+      if (ring) {
+        ring.style.transform = `translate3d(${ringCoords.current.x}px, ${ringCoords.current.y}px, 0) translate(-50%, -50%) scale(${scaleRef.current})`;
       }
-
-      // 2. High-performance canvas clearing & particle rendering
-      ctx.clearRect(0, 0, width, height);
-
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        
-        // Physics update
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Apply friction and atmospheric resistance
-        if (p.type === 'spark') {
-          p.vx *= 0.94; // Deceleration
-          p.vy *= 0.94;
-          p.vy += 0.08; // Gentle spark gravity
-        } else {
-          p.vx *= 0.97;
-          p.vy *= 0.97;
-        }
-
-        p.rotation += p.rotationSpeed;
-        p.alpha -= p.decay;
-
-        // Erase dead particles
-        if (p.alpha <= 0) {
-          particles.splice(i, 1);
-          continue;
-        }
-
-        // Render Particle on canvas
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rotation);
-
-        // Soft outer glow shadows
-        ctx.shadowBlur = p.type === 'spark' ? 10 : 4;
-        ctx.shadowColor = p.glowColor;
-
-        ctx.fillStyle = `rgba(${p.color}, ${p.alpha})`;
-
-        if (p.type === 'spark') {
-          // Draw geometric diamond spark star
-          ctx.beginPath();
-          ctx.moveTo(0, -p.size * 1.5);
-          ctx.lineTo(p.size * 0.4, -p.size * 0.4);
-          ctx.lineTo(p.size * 1.5, 0);
-          ctx.lineTo(p.size * 0.4, p.size * 0.4);
-          ctx.lineTo(0, p.size * 1.5);
-          ctx.lineTo(-p.size * 0.4, p.size * 0.4);
-          ctx.lineTo(-p.size * 1.5, 0);
-          ctx.lineTo(-p.size * 0.4, -p.size * 0.4);
-          ctx.closePath();
-          ctx.fill();
-        } else {
-          // Soft rounded trail dust particle
-          ctx.beginPath();
-          ctx.arc(0, 0, p.size, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        ctx.restore();
+      if (dot) {
+        dot.style.transform = `translate3d(${targetX}px, ${targetY}px, 0) translate(-50%, -50%) scale(${dotScaleRef.current})`;
       }
 
       animationFrameId = requestAnimationFrame(updateLoop);
     };
 
-    // Attach listeners
+    // Attach passive events for maximum performance
     window.addEventListener('pointermove', onPointerMove, { passive: true });
     window.addEventListener('pointerdown', onPointerDown, { passive: true });
     window.addEventListener('pointerup', onPointerUp, { passive: true });
     window.addEventListener('pointercancel', onPointerCancel, { passive: true });
+    window.addEventListener('pointerover', onPointerOver, { passive: true });
     document.addEventListener('pointerleave', onPointerLeaveWindow, { passive: true });
     document.addEventListener('pointerenter', onPointerEnterWindow, { passive: true });
-    window.addEventListener('resize', handleResize, { passive: true });
 
-    // Initiate loop
+    // Spawn draw loop
     animationFrameId = requestAnimationFrame(updateLoop);
+    updateVisualStyles();
 
     return () => {
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerdown', onPointerDown);
       window.removeEventListener('pointerup', onPointerUp);
       window.removeEventListener('pointercancel', onPointerCancel);
+      window.removeEventListener('pointerover', onPointerOver);
       document.removeEventListener('pointerleave', onPointerLeaveWindow);
       document.removeEventListener('pointerenter', onPointerEnterWindow);
-      window.removeEventListener('resize', handleResize);
+      observer.disconnect();
       cancelAnimationFrame(animationFrameId);
-
-      if (mediaQuery.removeEventListener) {
-        mediaQuery.removeEventListener('change', handleMediaQueryChange);
-      } else {
-        mediaQuery.removeListener(handleMediaQueryChange);
-      }
     };
-  }, [supportsHover]);
+  }, []);
 
   return (
     <>
-      {/* High-Performance Particle Canvas Overlay across ALL devices */}
-      <canvas
-        ref={canvasRef}
-        id="cursor-particle-canvas"
-        className="fixed inset-0 w-full h-full pointer-events-none z-[9999] select-none print:hidden"
+      {/* Outer Easing Trailing Ring - Rendered across all devices */}
+      <div
+        ref={ringRef}
+        id="custom-cursor-ring"
+        className="fixed top-0 left-0 w-8 h-8 rounded-full border-[0.5px] border-brass/45 bg-transparent pointer-events-none z-[9999] will-change-transform"
+        style={{
+          opacity: 0,
+          borderWidth: '0.5px',
+          transition: 'opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease-out, background-color 0.2s ease-out, border-width 0.2s ease-out',
+        }}
       />
 
-      {/* Outer Easing Trailing Ring - Desktop Only */}
-      {supportsHover && (
-        <div
-          ref={ringRef}
-          id="custom-cursor-ring"
-          className="fixed top-0 left-0 w-6 h-6 -ml-3 -mt-3 rounded-full border border-brass/60 bg-transparent pointer-events-none z-[9999] will-change-transform hidden md:block"
-          style={{
-            opacity: 0,
-            scale: 1,
-            transition: 'opacity 0.2s ease-out, scale 0.2s ease-out, background-color 0.2s ease-out, border-color 0.2s ease-out',
-          }}
-        />
-      )}
-
-      {/* Precise Core Center Dot - Desktop Only */}
-      {supportsHover && (
-        <div
-          ref={dotRef}
-          id="custom-cursor-dot"
-          className="fixed top-0 left-0 w-1.5 h-1.5 -ml-0.75 -mt-0.75 rounded-full pointer-events-none z-[9999] bg-ink will-change-transform hidden md:block"
-          style={{
-            opacity: 0,
-            scale: 1,
-            transition: 'opacity 0.1s ease-out, scale 0.1s ease-out, background-color 0.1s ease-out',
-          }}
-        />
-      )}
+      {/* Precise Core Center Dot - Rendered across all devices */}
+      <div
+        ref={dotRef}
+        id="custom-cursor-dot"
+        className="fixed top-0 left-0 w-2 h-2 rounded-full pointer-events-none z-[9999] bg-stone-900 dark:bg-stone-100 will-change-transform"
+        style={{
+          opacity: 0,
+          transition: 'opacity 0.15s ease-out, background-color 0.15s ease-out',
+        }}
+      />
     </>
   );
 }
