@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ExternalLink, ChevronRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 
 export default function Portfolio() {
@@ -101,7 +101,6 @@ export default function Portfolio() {
                       >
                         <h3 className="font-serif text-lg sm:text-[21px] font-semibold leading-snug text-ink group-hover/title:text-ink group-hover/title:underline transition-all flex items-start gap-1.5">
                           <span>{project.title}</span>
-                          <ExternalLink className="w-4 h-4 text-ink-soft group-hover/title:text-ink transition-colors shrink-0 mt-1" />
                         </h3>
                       </a>
                     ) : (
@@ -184,10 +183,9 @@ export default function Portfolio() {
                         href={project.demoUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="font-mono text-[11px] text-paper bg-ink hover:bg-paper hover:text-ink border border-ink px-4 py-2.5 rounded-[2px] transition-all duration-200 uppercase tracking-wider flex items-center justify-center gap-1.5 font-bold cursor-pointer w-fit md:w-full hover:-translate-y-[1px] hover:shadow-md"
+                        className="font-mono text-[11px] text-paper bg-ink hover:bg-paper hover:text-ink border border-ink px-4 py-2.5 rounded-[2px] transition-all duration-200 uppercase tracking-wider flex items-center justify-center font-bold cursor-pointer w-fit md:w-full hover:-translate-y-[1px] hover:shadow-md"
                       >
                         <span>Full Text</span>
-                        <ExternalLink className="w-3.5 h-3.5" />
                       </a>
                     )}
 

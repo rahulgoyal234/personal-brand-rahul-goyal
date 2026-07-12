@@ -48,13 +48,8 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
       }`}
     >
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8 flex items-center justify-between gap-[34px] w-full">
-        {/* Left Side: Brand Link */}
-        <button
-          onClick={() => handleNavClick('about')}
-          className="font-serif text-[16px] sm:text-lg font-bold tracking-tight text-ink cursor-pointer hover:opacity-80 transition-all font-sans"
-        >
-          {personalInfo.name}
-        </button>
+        {/* Left Side: Brand Link (Hidden per request) */}
+        <div />
 
         <div className="flex items-center gap-[34px]">
           {/* Desktop Nav Links */}
