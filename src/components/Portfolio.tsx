@@ -176,7 +176,7 @@ export default function Portfolio() {
                   </div>
 
                   {/* Right Actions Column (Direct Link CTA + Inline Toggle) */}
-                  <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-4 min-w-[150px]">
+                  <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-4 w-full md:w-auto md:min-w-[150px]">
                     {project.demoUrl && (
                       <a
                         id={`project-direct-link-${project.id}`}

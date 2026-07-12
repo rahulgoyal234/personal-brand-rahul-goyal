@@ -5,6 +5,7 @@ import Portfolio from './components/Portfolio';
 import Contact from './components/Contact';
 import Customizer from './components/Customizer';
 import CursorRing from './components/CursorRing';
+import ThreeDBackground from './components/ThreeDBackground';
 import { usePortfolio } from './context/PortfolioContext';
 import { Linkedin, Mail, ChevronUp } from 'lucide-react';
 
@@ -50,6 +51,9 @@ export default function App() {
     <div id="root-layout" className="min-h-screen flex flex-col bg-paper selection:bg-brass selection:text-paper text-ink relative overflow-x-hidden">
       {/* Custom interactive cursor ring */}
       <CursorRing />
+
+      {/* Interactive colorful animated lines background */}
+      <ThreeDBackground />
 
       {/* Premium Floating Navigation Menu */}
       <Navigation

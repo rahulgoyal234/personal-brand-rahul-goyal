@@ -62,8 +62,8 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             className="lg:col-span-7 flex flex-col items-start text-left"
           >
             <div className="space-y-4">
-              <div className="eyebrow font-mono text-[12.5px] tracking-[0.14em] uppercase text-brass flex items-center gap-2.5 before:content-[''] before:w-3 before:h-[2px] before:bg-brass before:inline-block font-bold">
-                {personalInfo.name} | {personalInfo.title}
+              <div className="eyebrow font-mono text-[11px] sm:text-[12.5px] tracking-[0.14em] uppercase text-brass flex flex-wrap items-center gap-2.5 before:content-[''] before:w-3 before:h-[2px] before:bg-brass before:inline-block font-bold leading-relaxed">
+                <span>{personalInfo.name} | {personalInfo.title}</span>
               </div>
               
               <h1
@@ -83,11 +83,11 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             </p>
 
             {/* Call To Action Buttons */}
-            <div id="hero-actions" className="flex flex-wrap items-center gap-4 mt-10">
+            <div id="hero-actions" className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-4 mt-10 w-full sm:w-auto">
               <button
                 id="hero-cta-portfolio"
                 onClick={onPortfolioClick}
-                className="font-mono text-[13.5px] tracking-wider px-[22px] py-3.5 border border-ink bg-ink text-paper hover:bg-paper hover:text-ink hover:border-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
+                className="w-full sm:w-auto justify-center font-mono text-[13px] sm:text-[13.5px] tracking-wider px-[22px] py-3.5 border border-ink bg-ink text-paper hover:bg-paper hover:text-ink hover:border-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
               >
                 View Writings
               </button>
@@ -96,7 +96,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 <button
                   id="hero-cta-video"
                   onClick={() => setIsVideoModalOpen(true)}
-                  className="font-mono text-[13.5px] tracking-wider px-[22px] py-3.5 border border-line bg-paper-deep text-ink hover:bg-ink hover:border-ink hover:text-paper rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
+                  className="w-full sm:w-auto justify-center font-mono text-[13px] sm:text-[13.5px] tracking-wider px-[22px] py-3.5 border border-line bg-paper-deep text-ink hover:bg-ink hover:border-ink hover:text-paper rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
                 >
                   <Play className="w-3.5 h-3.5 fill-current translate-x-0.5" />
                   Play Intro Video
@@ -106,7 +106,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               <button
                 id="hero-cta-contact"
                 onClick={onContactClick}
-                className="font-mono text-[13.5px] tracking-wider px-[22px] py-3.5 border border-ink bg-transparent text-ink hover:text-paper hover:bg-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold"
+                className="w-full sm:w-auto justify-center font-mono text-[13px] sm:text-[13.5px] tracking-wider px-[22px] py-3.5 border border-ink bg-transparent text-ink hover:text-paper hover:bg-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold"
               >
                 Get in Touch
               </button>
@@ -147,7 +147,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               </div>
 
               {/* Portrait Label Caption */}
-              <div className="portrait-caption mt-[22px] font-mono text-[12px] tracking-[0.1em] uppercase text-ink-soft font-semibold">
+              <div className="portrait-caption mt-[22px] font-mono text-[11px] sm:text-[12px] tracking-[0.1em] uppercase text-ink-soft font-semibold text-center px-4 max-w-full leading-normal">
                 {personalInfo.name} | {personalInfo.title}
               </div>
             </div>

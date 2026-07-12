@@ -1,6 +1,13 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export default function CursorRing() {
+  const [supportsHover, setSupportsHover] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(hover: hover)').matches;
+    }
+    return false;
+  });
+
   const ringRef = useRef<HTMLDivElement | null>(null);
   const dotRef = useRef<HTMLDivElement | null>(null);
 
@@ -13,6 +20,29 @@ export default function CursorRing() {
   const isTouchActiveRef = useRef(false);
 
   useEffect(() => {
+    // Dynamic media query listener to adapt if user plugs in or unplugs a mouse/pointer device
+    const mediaQuery = window.matchMedia('(hover: hover)');
+    const handleMediaQueryChange = (e: MediaQueryListEvent) => {
+      setSupportsHover(e.matches);
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleMediaQueryChange);
+    } else {
+      mediaQuery.addListener(handleMediaQueryChange);
+    }
+
+    // If hover is not supported, do not set up event listeners
+    if (!mediaQuery.matches) {
+      return () => {
+        if (mediaQuery.removeEventListener) {
+          mediaQuery.removeEventListener('change', handleMediaQueryChange);
+        } else {
+          mediaQuery.removeListener(handleMediaQueryChange);
+        }
+      };
+    }
+
     const ring = ringRef.current;
     const dot = dotRef.current;
 
@@ -217,8 +247,16 @@ export default function CursorRing() {
       document.removeEventListener('pointerleave', onPointerLeaveWindow);
       document.removeEventListener('pointerenter', onPointerEnterWindow);
       cancelAnimationFrame(animationFrameId);
+
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener('change', handleMediaQueryChange);
+      } else {
+        mediaQuery.removeListener(handleMediaQueryChange);
+      }
     };
-  }, []);
+  }, [supportsHover]);
+
+  if (!supportsHover) return null;
 
   return (
     <>
@@ -226,7 +264,7 @@ export default function CursorRing() {
       <div
         ref={ringRef}
         id="custom-cursor-ring"
-        className="fixed top-0 left-0 w-6 h-6 -ml-3 -mt-3 rounded-full border border-brass/60 bg-transparent pointer-events-none z-[9999] will-change-transform"
+        className="fixed top-0 left-0 w-6 h-6 -ml-3 -mt-3 rounded-full border border-brass/60 bg-transparent pointer-events-none z-[9999] will-change-transform hidden md:block"
         style={{
           opacity: 0,
           scale: 1,
@@ -238,7 +276,7 @@ export default function CursorRing() {
       <div
         ref={dotRef}
         id="custom-cursor-dot"
-        className="fixed top-0 left-0 w-1.5 h-1.5 -ml-0.75 -mt-0.75 rounded-full pointer-events-none z-[9999] bg-ink will-change-transform"
+        className="fixed top-0 left-0 w-1.5 h-1.5 -ml-0.75 -mt-0.75 rounded-full pointer-events-none z-[9999] bg-ink will-change-transform hidden md:block"
         style={{
           opacity: 0,
           scale: 1,

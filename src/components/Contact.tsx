@@ -19,12 +19,12 @@ export default function Contact() {
         </div>
 
         {/* Beautiful, refined contact deck */}
-        <div className="bg-paper-deep/80 backdrop-blur-[6px] border border-rule/70 p-8 sm:p-12 rounded-[2px] shadow-md flex flex-col gap-10">
+        <div className="bg-paper-deep/80 backdrop-blur-[6px] border border-rule/70 p-5 sm:p-8 md:p-12 rounded-[2px] shadow-md flex flex-col gap-10">
           
           {/* Main Direct Channels */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left border-b border-rule pb-10">
             {/* Email Channel */}
-            <div className="flex items-start gap-4 p-4 rounded-[2px] hover:bg-paper/50 transition-colors duration-200">
+            <div className="flex items-start gap-3 sm:gap-4 p-2.5 sm:p-4 rounded-[2px] hover:bg-paper/50 transition-colors duration-200">
               <div className="w-10 h-10 rounded-full border border-rule flex items-center justify-center text-brass flex-shrink-0 bg-paper">
                 <Mail className="w-4 h-4" />
               </div>
@@ -42,7 +42,7 @@ export default function Contact() {
             </div>
 
             {/* Phone Channel */}
-            <div className="flex items-start gap-4 p-4 rounded-[2px] hover:bg-paper/50 transition-colors duration-200">
+            <div className="flex items-start gap-3 sm:gap-4 p-2.5 sm:p-4 rounded-[2px] hover:bg-paper/50 transition-colors duration-200">
               <div className="w-10 h-10 rounded-full border border-rule flex items-center justify-center text-brass flex-shrink-0 bg-paper">
                 <Phone className="w-4 h-4" />
               </div>
