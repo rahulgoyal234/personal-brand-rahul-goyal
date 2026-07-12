@@ -49,7 +49,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem('rahul_goyal_personal_info');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (!parsed.avatar || parsed.avatar.includes('unsplash.com') || parsed.avatar.includes('cloudinary.com')) {
+        if (!parsed.avatar || parsed.avatar.includes('unsplash.com')) {
           parsed.avatar = PERSONAL_INFO.avatar;
         }
         if (parsed.linkedin === 'https://linkedin.com/in/rahulgoyal' || parsed.linkedin === 'https://linkedin.com/in/rahulgoyal/') {
@@ -87,7 +87,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           parsed.shortBio = PERSONAL_INFO.shortBio;
         }
         const merged = { ...PERSONAL_INFO, ...parsed };
-        if (!merged.avatar || merged.avatar === '/avatar.jpg' || merged.avatar === '/avatar.png' || merged.avatar.includes('cloudinary.com')) {
+        if (!merged.avatar || merged.avatar === '/avatar.jpg' || merged.avatar === '/avatar.png') {
           merged.avatar = PERSONAL_INFO.avatar;
         }
         merged.isAvatarLocked = true;
@@ -200,7 +200,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           const remoteData = await response.json();
           if (remoteData) {
             if (remoteData.personalInfo) {
-              if (!remoteData.personalInfo.avatar || remoteData.personalInfo.avatar === '/avatar.jpg' || remoteData.personalInfo.avatar === '/avatar.png' || remoteData.personalInfo.avatar.includes('cloudinary.com')) {
+              if (!remoteData.personalInfo.avatar || remoteData.personalInfo.avatar === '/avatar.jpg' || remoteData.personalInfo.avatar === '/avatar.png') {
                 remoteData.personalInfo.avatar = PERSONAL_INFO.avatar;
               }
               remoteData.personalInfo.isAvatarLocked = true;

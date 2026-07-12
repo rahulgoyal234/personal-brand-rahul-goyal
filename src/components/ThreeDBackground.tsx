@@ -179,7 +179,7 @@ export default function ThreeDBackground() {
           points,
           color: theme.color,
           glowColor: theme.glow,
-          width: 0.25 + (r % 3) * 0.06, // Thread-like super fine linings
+          width: 0.65 + (r % 3) * 0.18, // Crisper lines
           phaseOffset: r * Math.PI * 0.25,
           speed: 0.85 + r * 0.08,
         });
@@ -380,11 +380,11 @@ export default function ThreeDBackground() {
         
         // Horizontal fading gradient path
         const gradient = ctx.createLinearGradient(0, 0, width, 0);
-        gradient.addColorStop(0, `rgba(${ribbon.color}, 0.08)`);
-        gradient.addColorStop(0.35, `rgba(${ribbon.color}, 0.55)`);
-        gradient.addColorStop(0.5, `rgba(${ribbon.color}, 0.75)`);
-        gradient.addColorStop(0.65, `rgba(${ribbon.color}, 0.55)`);
-        gradient.addColorStop(1, `rgba(${ribbon.color}, 0.08)`);
+        gradient.addColorStop(0, `rgba(${ribbon.color}, 0.25)`);
+        gradient.addColorStop(0.35, `rgba(${ribbon.color}, 0.8)`);
+        gradient.addColorStop(0.5, `rgba(${ribbon.color}, 0.95)`);
+        gradient.addColorStop(0.65, `rgba(${ribbon.color}, 0.8)`);
+        gradient.addColorStop(1, `rgba(${ribbon.color}, 0.25)`);
 
         ctx.strokeStyle = gradient;
         ctx.moveTo(ribbon.points[0].x, ribbon.points[0].y);
@@ -507,7 +507,7 @@ export default function ThreeDBackground() {
         <canvas
           ref={canvasRef}
           id="interactive-colorful-lines-bg"
-          className="fixed inset-0 w-full h-full pointer-events-none z-0 select-none print:hidden opacity-[0.3] dark:opacity-[0.2]"
+          className="fixed inset-0 w-full h-full pointer-events-none z-0 select-none print:hidden opacity-[0.45] dark:opacity-[0.35]"
           style={{
             mixBlendMode: 'multiply',
           }}

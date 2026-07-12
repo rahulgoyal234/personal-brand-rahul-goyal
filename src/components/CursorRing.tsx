@@ -193,6 +193,58 @@ export default function CursorRing() {
       }
     };
 
+    const onTouchStart = (e: TouchEvent) => {
+      isTouchRef.current = true;
+      isClickingRef.current = true;
+      if (e.touches && e.touches[0]) {
+        const touch = e.touches[0];
+        mouseCoords.current.x = touch.clientX;
+        mouseCoords.current.y = touch.clientY;
+
+        if (ringCoords.current.x === 0 && ringCoords.current.y === 0) {
+          ringCoords.current.x = touch.clientX;
+          ringCoords.current.y = touch.clientY;
+        } else {
+          ringCoords.current.x += (touch.clientX - ringCoords.current.x) * 0.45;
+          ringCoords.current.y += (touch.clientY - ringCoords.current.y) * 0.45;
+        }
+      }
+      targetScaleRef.current = 0.85;
+      targetDotScaleRef.current = 0.75;
+      showCursor();
+      updateVisualStyles();
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      isTouchRef.current = true;
+      if (e.touches && e.touches[0]) {
+        const touch = e.touches[0];
+        mouseCoords.current.x = touch.clientX;
+        mouseCoords.current.y = touch.clientY;
+        showCursor();
+        updateVisualStyles();
+
+        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+        scanActiveElement(element as HTMLElement);
+      }
+    };
+
+    const onTouchEnd = () => {
+      isClickingRef.current = false;
+      targetScaleRef.current = 1.0;
+      targetDotScaleRef.current = 1.0;
+      updateVisualStyles();
+
+      setTimeout(() => {
+        hideCursor();
+      }, 250);
+    };
+
+    const onTouchCancel = () => {
+      isClickingRef.current = false;
+      hideCursor();
+    };
+
     // Keep state updated when themes toggled manually
     const observer = new MutationObserver(() => {
       updateVisualStyles();
@@ -235,6 +287,10 @@ export default function CursorRing() {
     window.addEventListener('pointerup', onPointerUp, { passive: true });
     window.addEventListener('pointercancel', onPointerCancel, { passive: true });
     window.addEventListener('pointerover', onPointerOver, { passive: true });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', onTouchCancel, { passive: true });
     document.addEventListener('pointerleave', onPointerLeaveWindow, { passive: true });
     document.addEventListener('pointerenter', onPointerEnterWindow, { passive: true });
 
@@ -248,6 +304,10 @@ export default function CursorRing() {
       window.removeEventListener('pointerup', onPointerUp);
       window.removeEventListener('pointercancel', onPointerCancel);
       window.removeEventListener('pointerover', onPointerOver);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+      window.removeEventListener('touchcancel', onTouchCancel);
       document.removeEventListener('pointerleave', onPointerLeaveWindow);
       document.removeEventListener('pointerenter', onPointerEnterWindow);
       observer.disconnect();

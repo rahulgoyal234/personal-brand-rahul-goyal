@@ -97,6 +97,9 @@ export default function App() {
                     className="w-full h-full object-cover object-[54%_center]"
                     style={{ objectPosition: '54% center' }}
                     referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = '/api/avatar.jpg';
+                    }}
                   />
                 ) : (
                   'RG'

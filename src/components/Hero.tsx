@@ -12,10 +12,12 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [avatarLoadError, setAvatarLoadError] = useState(false);
   const [avatarVersion, setAvatarVersion] = useState(() => Date.now());
+  const [imgSrc, setImgSrc] = useState(personalInfo.avatar);
 
   React.useEffect(() => {
     setAvatarLoadError(false);
     setAvatarVersion(Date.now());
+    setImgSrc(personalInfo.avatar);
   }, [personalInfo.avatar]);
 
   const renderFormattedHeading = (text: string) => {
@@ -130,11 +132,16 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   {personalInfo.avatar ? (
                     <img
                       id="hero-portrait-img"
-                      src={personalInfo.avatar.startsWith('data:') ? personalInfo.avatar : `${personalInfo.avatar}?v=${avatarVersion}`}
+                      src={imgSrc.startsWith('data:') ? imgSrc : (imgSrc.startsWith('http') ? imgSrc : `${imgSrc}?v=${avatarVersion}`)}
                       alt={personalInfo.name}
                       referrerPolicy="no-referrer"
                       onLoad={() => setAvatarLoadError(false)}
-                      onError={() => setAvatarLoadError(true)}
+                      onError={() => {
+                        setAvatarLoadError(true);
+                        if (imgSrc !== '/api/avatar.jpg') {
+                          setImgSrc('/api/avatar.jpg');
+                        }
+                      }}
                       className="w-full h-full object-cover block object-[54%_center]"
                       style={{ objectPosition: '54% center' }}
                     />
