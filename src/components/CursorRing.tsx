@@ -59,17 +59,9 @@ export default function CursorRing() {
       const isTouch = e.pointerType === 'touch';
       const shouldBeVisible = !isTouch || isTouchActiveRef.current;
 
-      // Position the precise center dot instantly
-      if (dot) {
-        dot.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-        if (shouldBeVisible) {
-          dot.style.opacity = '1';
-        }
-      }
-      if (ring) {
-        if (shouldBeVisible) {
-          ring.style.opacity = '1';
-        }
+      if (shouldBeVisible) {
+        if (dot) dot.style.opacity = '1';
+        if (ring) ring.style.opacity = '1';
       }
 
       // Proactively detect interactive targets on move to keep hover synced flawlessly
@@ -81,12 +73,11 @@ export default function CursorRing() {
           target.tagName === 'INPUT' ||
           target.tagName === 'TEXTAREA' ||
           target.tagName === 'SELECT' ||
-          target.closest('button') ||
-          target.closest('a') ||
-          target.closest('[role="button"]') ||
-          target.closest('[role="link"]') ||
-          target.classList.contains('cursor-pointer') ||
-          window.getComputedStyle(target).cursor === 'pointer';
+          !!target.closest('button') ||
+          !!target.closest('a') ||
+          !!target.closest('[role="button"]') ||
+          !!target.closest('[role="link"]') ||
+          !!target.closest('.cursor-pointer');
 
         if (isHoveredRef.current !== isInteractive) {
           isHoveredRef.current = isInteractive;
@@ -98,16 +89,23 @@ export default function CursorRing() {
     // Smooth lerping animation loop for the trailing outer ring
     let animationFrameId: number;
     const updatePosition = () => {
-      // 0.22 normally for beautiful organic trail; 0.75 on hover/click to snap tightly to the target
-      const ease = isHoveredRef.current || isClickingRef.current ? 0.75 : 0.22;
+      // Use a stable, ultra-smooth constant easing factor so the movement never jitters or scatters.
+      // 0.32 provides a highly responsive, tight follow while maintaining a premium, organic fluid feel.
+      const ease = 0.32;
+      
       const targetX = mouseCoords.current.x;
       const targetY = mouseCoords.current.y;
 
       ringCoords.current.x += (targetX - ringCoords.current.x) * ease;
       ringCoords.current.y += (targetY - ringCoords.current.y) * ease;
 
-      if (ring && hasMovedRef.current) {
-        ring.style.transform = `translate3d(${ringCoords.current.x}px, ${ringCoords.current.y}px, 0)`;
+      if (hasMovedRef.current) {
+        if (ring) {
+          ring.style.transform = `translate3d(${ringCoords.current.x}px, ${ringCoords.current.y}px, 0)`;
+        }
+        if (dot) {
+          dot.style.transform = `translate3d(${targetX}px, ${targetY}px, 0)`;
+        }
       }
 
       animationFrameId = requestAnimationFrame(updatePosition);
@@ -172,12 +170,11 @@ export default function CursorRing() {
         target.tagName === 'INPUT' ||
         target.tagName === 'TEXTAREA' ||
         target.tagName === 'SELECT' ||
-        target.closest('button') ||
-        target.closest('a') ||
-        target.closest('[role="button"]') ||
-        target.closest('[role="link"]') ||
-        target.classList.contains('cursor-pointer') ||
-        window.getComputedStyle(target).cursor === 'pointer';
+        !!target.closest('button') ||
+        !!target.closest('a') ||
+        !!target.closest('[role="button"]') ||
+        !!target.closest('[role="link"]') ||
+        !!target.closest('.cursor-pointer');
 
       if (isHoveredRef.current !== isInteractive) {
         isHoveredRef.current = isInteractive;

@@ -62,7 +62,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             className="lg:col-span-7 flex flex-col items-start text-left"
           >
             <div className="space-y-4">
-              <div className="eyebrow font-mono text-[12.5px] tracking-[0.14em] uppercase text-brass flex items-center gap-2.5 before:content-[''] before:w-[22px] before:h-[1px] before:bg-brass font-bold">
+              <div className="eyebrow font-mono text-[12.5px] tracking-[0.14em] uppercase text-brass flex items-center gap-2.5 before:content-[''] before:w-3 before:h-[2px] before:bg-brass before:inline-block font-bold">
                 {personalInfo.name} | {personalInfo.title}
               </div>
               

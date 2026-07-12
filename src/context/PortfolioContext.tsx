@@ -87,7 +87,9 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           parsed.shortBio = PERSONAL_INFO.shortBio;
         }
         const merged = { ...PERSONAL_INFO, ...parsed };
-        merged.avatar = '/avatar.jpg';
+        if (!merged.avatar || merged.avatar === '/avatar.jpg' || merged.avatar === '/avatar.png') {
+          merged.avatar = PERSONAL_INFO.avatar;
+        }
         merged.isAvatarLocked = true;
         return merged;
       }
@@ -198,7 +200,9 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           const remoteData = await response.json();
           if (remoteData) {
             if (remoteData.personalInfo) {
-              remoteData.personalInfo.avatar = '/avatar.jpg';
+              if (!remoteData.personalInfo.avatar || remoteData.personalInfo.avatar === '/avatar.jpg' || remoteData.personalInfo.avatar === '/avatar.png') {
+                remoteData.personalInfo.avatar = PERSONAL_INFO.avatar;
+              }
               remoteData.personalInfo.isAvatarLocked = true;
               setPersonalInfo(remoteData.personalInfo);
               try {

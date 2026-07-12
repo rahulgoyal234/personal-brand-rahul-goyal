@@ -1,108 +1,96 @@
 import React from 'react';
 import { usePortfolio } from '../context/PortfolioContext';
+import { Mail, Phone, MapPin, Linkedin } from 'lucide-react';
 
 export default function Contact() {
   const { personalInfo } = usePortfolio();
 
   return (
     <section id="contact" className="py-28 bg-transparent relative scroll-mt-20">
-      <div className="max-w-[1120px] mx-auto px-6 sm:px-8 relative z-10">
+      <div className="max-w-[800px] mx-auto px-6 sm:px-8 relative z-10 text-center">
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-20 items-start">
-          
-          {/* Column 1: Info and Links */}
-          <div className="space-y-10">
-            <div className="space-y-4">
-              <h2 className="font-serif text-[38px] font-semibold text-ink leading-tight">
-                Get in Touch
-              </h2>
-              <p className="text-ink-soft text-sm sm:text-[15.5px] leading-relaxed max-w-[440px] font-sans">
-                Have a complex legal question, policy research initiative, or a contract in need of expert drafting? Reach out and let's structure your next steps.
-              </p>
-            </div>
+        <div className="space-y-6 max-w-[600px] mx-auto mb-16">
+          <h2 className="font-serif text-[42px] font-semibold text-ink leading-tight">
+            Get in Touch
+          </h2>
+          <p className="text-ink-soft text-sm sm:text-[16px] leading-relaxed font-sans">
+            Have a complex legal question, policy research initiative, or a contract in need of expert drafting? Reach out and let's structure your next steps.
+          </p>
+        </div>
 
-            <div className="contact-methods flex flex-col gap-6 pt-2">
-              <div className="contact-method flex flex-col gap-1.5">
-                <strong className="font-mono text-[11px] uppercase tracking-widest text-ink-soft font-bold">
+        {/* Beautiful, refined contact deck */}
+        <div className="bg-paper-deep/80 backdrop-blur-[6px] border border-rule/70 p-8 sm:p-12 rounded-[2px] shadow-md flex flex-col gap-10">
+          
+          {/* Main Direct Channels */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left border-b border-rule pb-10">
+            {/* Email Channel */}
+            <div className="flex items-start gap-4 p-4 rounded-[2px] hover:bg-paper/50 transition-colors duration-200">
+              <div className="w-10 h-10 rounded-full border border-rule flex items-center justify-center text-brass flex-shrink-0 bg-paper">
+                <Mail className="w-4 h-4" />
+              </div>
+              <div className="space-y-1">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-ink-soft font-bold block">
                   Email
-                </strong>
+                </span>
                 <a 
                   href={`mailto:${personalInfo.email}`} 
-                  className="text-base sm:text-[16.5px] text-ink hover:text-ink hover:underline transition-colors font-medium font-sans no-underline"
+                  className="text-base text-ink hover:text-brass hover:underline transition-all font-medium font-sans break-all"
                 >
                   {personalInfo.email}
                 </a>
               </div>
+            </div>
 
-              {personalInfo.location && (
-                <div className="contact-method flex flex-col gap-1.5">
-                  <strong className="font-mono text-[11px] uppercase tracking-widest text-ink-soft font-bold">
-                    Based in
-                  </strong>
-                  <span className="text-base sm:text-[16.5px] text-ink font-medium font-sans">
-                    {personalInfo.location}
-                  </span>
-                </div>
-              )}
+            {/* Phone Channel */}
+            <div className="flex items-start gap-4 p-4 rounded-[2px] hover:bg-paper/50 transition-colors duration-200">
+              <div className="w-10 h-10 rounded-full border border-rule flex items-center justify-center text-brass flex-shrink-0 bg-paper">
+                <Phone className="w-4 h-4" />
+              </div>
+              <div className="space-y-1">
+                <span className="font-mono text-[10px] uppercase tracking-widest text-ink-soft font-bold block">
+                  Phone
+                </span>
+                <a 
+                  href={`tel:${personalInfo.phone}`} 
+                  className="text-base text-ink hover:text-brass hover:underline transition-all font-medium font-sans"
+                >
+                  {personalInfo.phone}
+                </a>
+              </div>
             </div>
           </div>
 
-          {/* Column 2: Formspree Contact Form */}
-          <div>
-            <form 
-              action="https://formspree.io/f/xvonzgky" 
-              method="POST"
-              className="contact-form bg-paper-deep/80 backdrop-blur-[6px] border border-rule/70 p-8 sm:p-10 rounded-[2px] flex flex-col gap-6 shadow-md"
-            >
-              <div className="form-group flex flex-col gap-2">
-                <label htmlFor="name" className="font-mono text-[11px] uppercase tracking-wider text-ink-soft font-semibold">
-                  Name
-                </label>
-                <input 
-                  type="text" 
-                  id="name" 
-                  name="name" 
-                  required 
-                  placeholder="Your name"
-                  className="px-4 py-3 border border-rule/60 bg-paper rounded-[2px] font-sans text-sm text-ink hover:border-ink-soft focus:border-ink focus:ring-0 focus:outline-none transition-colors duration-200"
-                />
+          {/* Secondary Details & Socials */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8 text-left">
+            {/* Location */}
+            {personalInfo.location && (
+              <div className="flex items-center gap-3">
+                <MapPin className="w-4 h-4 text-ink-soft" />
+                <div className="space-y-0.5">
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-ink-soft font-bold block">
+                    Based In
+                  </span>
+                  <span className="text-sm sm:text-base text-ink font-medium font-sans">
+                    {personalInfo.location}
+                  </span>
+                </div>
               </div>
+            )}
 
-              <div className="form-group flex flex-col gap-2">
-                <label htmlFor="email" className="font-mono text-[11px] uppercase tracking-wider text-ink-soft font-semibold">
-                  Email
-                </label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  name="_replyto" 
-                  required 
-                  placeholder="your.email@domain.com"
-                  className="px-4 py-3 border border-rule/60 bg-paper rounded-[2px] font-sans text-sm text-ink hover:border-ink-soft focus:border-ink focus:ring-0 focus:outline-none transition-colors duration-200"
-                />
-              </div>
-
-              <div className="form-group flex flex-col gap-2">
-                <label htmlFor="message" className="font-mono text-[11px] uppercase tracking-wider text-ink-soft font-semibold">
-                  Message
-                </label>
-                <textarea 
-                  id="message" 
-                  name="message" 
-                  rows={5} 
-                  required 
-                  placeholder="Briefly describe your legal or research inquiry..."
-                  className="px-4 py-3 border border-rule/60 bg-paper rounded-[2px] font-sans text-sm text-ink hover:border-ink-soft focus:border-ink focus:ring-0 focus:outline-none transition-colors duration-200 resize-none"
-                />
-              </div>
-
-              <button 
-                type="submit" 
-                className="w-full justify-center font-mono text-[13.5px] tracking-wider px-[22px] py-4 border border-ink bg-ink text-paper hover:bg-paper hover:text-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
-              >
-                Send Message
-              </button>
-            </form>
+            {/* Social Links */}
+            <div className="flex flex-wrap items-center gap-4">
+              {personalInfo.linkedin && (
+                <a 
+                  href={personalInfo.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-xs uppercase tracking-wider px-4 py-2.5 border border-rule hover:border-ink hover:text-ink hover:bg-paper text-ink-soft rounded-[2px] transition-all duration-200 flex items-center gap-2"
+                >
+                  <Linkedin className="w-3.5 h-3.5" />
+                  <span>LinkedIn</span>
+                </a>
+              )}
+            </div>
           </div>
 
         </div>
@@ -111,4 +99,5 @@ export default function Contact() {
     </section>
   );
 }
+
 

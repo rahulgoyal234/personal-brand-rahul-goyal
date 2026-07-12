@@ -23,7 +23,6 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
   const navItems = [
     { id: 'about', label: 'About' },
     { id: 'portfolio', label: 'Writings' },
-    { id: 'contact', label: 'Contact' },
   ];
 
   const handleNavClick = (id: string) => {
@@ -70,11 +69,12 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
             ))}
           </nav>
 
-          {/* Action Button CTA */}
+          {/* Desktop Get in touch CTA */}
           <div className="hidden md:block">
             <button
+              id="get-in-touch-btn"
               onClick={() => handleNavClick('contact')}
-              className="nav-cta text-[13.5px] font-mono border border-ink text-ink px-4 py-2 rounded-[2px] tracking-wide hover:bg-ink hover:text-paper transition-all duration-200 cursor-pointer"
+              className="text-xs font-mono border border-ink text-ink px-[15px] py-2 hover:bg-ink hover:text-paper transition-all duration-200 cursor-pointer rounded-[2px] tracking-wider uppercase font-semibold"
             >
               Get in touch
             </button>
@@ -115,15 +115,14 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
                 {item.label}
               </button>
             ))}
-
-            <div className="pt-4 border-t border-rule flex flex-col">
-              <button
-                onClick={() => handleNavClick('contact')}
-                className="w-full text-center text-xs font-mono border border-ink text-ink py-3 rounded-[2px] uppercase tracking-widest hover:bg-ink hover:text-paper transition-all"
-              >
-                Get in touch
-              </button>
-            </div>
+            {/* Mobile Get in touch CTA */}
+            <button
+              id="mobile-get-in-touch-btn"
+              onClick={() => handleNavClick('contact')}
+              className="w-full text-center font-mono text-xs border border-ink text-ink py-3 hover:bg-ink hover:text-paper transition-all duration-200 cursor-pointer rounded-[2px] tracking-wider uppercase font-semibold mt-2"
+            >
+              Get in touch
+            </button>
           </div>
         </div>
       )}

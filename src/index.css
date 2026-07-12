@@ -51,6 +51,22 @@
   background: #A9803F;
 }
 
+/* Hide browser default cursor on desktop devices with precise pointer to show only custom ring cursor */
+@media (pointer: fine) {
+  body, 
+  a, 
+  button, 
+  input, 
+  textarea, 
+  select, 
+  [role="button"],
+  [role="link"],
+  .cursor-pointer,
+  .cursor-pointer * {
+    cursor: none !important;
+  }
+}
+
 
 
 
