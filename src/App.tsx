@@ -98,7 +98,10 @@ export default function App() {
                     style={{ objectPosition: '54% center' }}
                     referrerPolicy="no-referrer"
                     onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src = '/api/avatar.jpg';
+                      const img = e.currentTarget as HTMLImageElement;
+                      if (!img.src.endsWith('/api/avatar.jpg')) {
+                        img.src = '/api/avatar.jpg';
+                      }
                     }}
                   />
                 ) : (

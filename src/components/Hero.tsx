@@ -12,13 +12,13 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [avatarLoadError, setAvatarLoadError] = useState(false);
   const [avatarVersion, setAvatarVersion] = useState(() => Date.now());
-  const [imgSrc, setImgSrc] = useState(personalInfo.avatar);
+  const [imgSrc, setImgSrc] = useState(personalInfo?.avatar || '');
 
   React.useEffect(() => {
     setAvatarLoadError(false);
     setAvatarVersion(Date.now());
-    setImgSrc(personalInfo.avatar);
-  }, [personalInfo.avatar]);
+    setImgSrc(personalInfo?.avatar || '');
+  }, [personalInfo?.avatar]);
 
   const renderFormattedHeading = (text: string) => {
     const defaultText = "Making the complex, comprehensible.";
@@ -77,12 +77,19 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             </div>
 
             {/* Detailed Bio paragraph */}
-            <p
+            <div
               id="hero-bio"
-              className="text-ink-soft text-[17px] sm:text-lg leading-relaxed max-w-[540px] mt-[22px] font-sans"
+              className="text-ink-soft text-[17px] sm:text-lg leading-relaxed max-w-[540px] mt-[22px] font-sans space-y-4"
             >
-              I'm Rahul Goyal, a lawyer who reads fine print so you don't have to. I work in <strong className="text-ink font-semibold">corporate law, IP, and tech policy</strong>, turning tangled regulation into clear, confident moves. Contracts that hold up. Advice that's straight, not stuffy. Legal ground that's safe to build on.
-            </p>
+              {(personalInfo.bio || '').split('\n').map((para, i) => {
+                if (!para.trim()) return null;
+                return (
+                  <p key={i}>
+                    {para}
+                  </p>
+                );
+              })}
+            </div>
 
             {/* Call To Action Buttons */}
             <div id="hero-actions" className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-4 mt-10 w-full sm:w-auto">
@@ -132,7 +139,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   {personalInfo.avatar ? (
                     <img
                       id="hero-portrait-img"
-                      src={imgSrc.startsWith('data:') ? imgSrc : (imgSrc.startsWith('http') ? imgSrc : `${imgSrc}?v=${avatarVersion}`)}
+                      src={(imgSrc || '').startsWith('data:') ? imgSrc : ((imgSrc || '').startsWith('http') ? imgSrc : `${imgSrc}?v=${avatarVersion}`)}
                       alt={personalInfo.name}
                       referrerPolicy="no-referrer"
                       onLoad={() => setAvatarLoadError(false)}

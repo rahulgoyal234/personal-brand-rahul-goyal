@@ -65,7 +65,7 @@ export default function Portfolio() {
           className="flex flex-col divide-y divide-rule/60 border-t border-b border-rule/60"
         >
           {filteredProjects.map((project) => {
-            const year = project.stats?.find(s => s.label.toLowerCase().includes('year'))?.value || '2023';
+            const year = project.stats?.find(s => s.label && s.label.toLowerCase().includes('year'))?.value || '2023';
             const isExpanded = !!expandedAbstracts[project.id];
             
             return (
@@ -159,13 +159,13 @@ export default function Portfolio() {
 
                         {project.stats && project.stats.length > 0 && (
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3">
-                            {project.stats.map((stat) => (
-                              <div key={stat.label} className="bg-paper-deep border border-rule/60 p-3 rounded-[2px]">
+                            {project.stats.map((stat, sIdx) => (
+                              <div key={stat?.label || sIdx} className="bg-paper-deep border border-rule/60 p-3 rounded-[2px]">
                                 <span className="block text-ink font-sans text-xs sm:text-sm font-semibold">
-                                  {stat.value}
+                                  {stat?.value || ''}
                                 </span>
                                 <span className="block text-ink-soft text-[9px] font-mono uppercase tracking-wider mt-0.5">
-                                  {stat.label}
+                                  {stat?.label || ''}
                                 </span>
                               </div>
                             ))}

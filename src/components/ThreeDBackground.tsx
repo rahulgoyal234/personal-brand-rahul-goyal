@@ -179,7 +179,7 @@ export default function ThreeDBackground() {
           points,
           color: theme.color,
           glowColor: theme.glow,
-          width: 0.65 + (r % 3) * 0.18, // Crisper lines
+          width: 0.22 + (r % 3) * 0.06, // Thread-like super fine lines
           phaseOffset: r * Math.PI * 0.25,
           speed: 0.85 + r * 0.08,
         });

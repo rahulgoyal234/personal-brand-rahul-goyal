@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 export default function CursorRing() {
+  const [enabled, setEnabled] = useState(false);
   const ringRef = useRef<HTMLDivElement | null>(null);
   const dotRef = useRef<HTMLDivElement | null>(null);
 
@@ -22,6 +23,19 @@ export default function CursorRing() {
   const targetDotScaleRef = useRef(1);
 
   useEffect(() => {
+    // Enable custom cursor ONLY on devices with a fine pointer and hover support
+    const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+    const supportsHover = window.matchMedia('(hover: hover)').matches;
+    const isTouchOnly = !hasFinePointer && (('ontouchstart' in window) || navigator.maxTouchPoints > 0);
+
+    if (hasFinePointer && supportsHover && !isTouchOnly) {
+      setEnabled(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!enabled) return;
+
     const ring = ringRef.current;
     const dot = dotRef.current;
 

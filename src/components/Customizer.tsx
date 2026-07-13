@@ -28,7 +28,7 @@ export default function Customizer() {
   } = usePortfolio();
   
   const [activeTab, setActiveTab] = useState<'video' | 'info' | 'portfolio'>('info');
-  const [tempUrl, setTempUrl] = useState(personalInfo.avatar.startsWith('data:') ? '' : personalInfo.avatar);
+  const [tempUrl, setTempUrl] = useState((personalInfo?.avatar || '').startsWith('data:') ? '' : (personalInfo?.avatar || ''));
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const workshopRef = useRef<HTMLDivElement>(null);
@@ -161,7 +161,7 @@ export default function Customizer() {
   }, [cameraStream]);
 
   // Video States
-  const [videoUrlInput, setVideoUrlInput] = useState(personalInfo.introVideo && !personalInfo.introVideo.startsWith('data:') ? personalInfo.introVideo : '');
+  const [videoUrlInput, setVideoUrlInput] = useState(personalInfo?.introVideo && !personalInfo.introVideo.startsWith('data:') ? personalInfo.introVideo : '');
   const [dragVideoActive, setDragVideoActive] = useState(false);
   const videoFileInputRef = useRef<HTMLInputElement>(null);
 
@@ -213,8 +213,8 @@ export default function Customizer() {
       shortBio: personalInfo.shortBio,
       isAvatarLocked: personalInfo.isAvatarLocked || false,
     });
-    setTempUrl(personalInfo.avatar.startsWith('data:') ? '' : personalInfo.avatar);
-    setVideoUrlInput(personalInfo.introVideo && !personalInfo.introVideo.startsWith('data:') ? personalInfo.introVideo : '');
+    setTempUrl((personalInfo?.avatar || '').startsWith('data:') ? '' : (personalInfo?.avatar || ''));
+    setVideoUrlInput(personalInfo?.introVideo && !personalInfo.introVideo.startsWith('data:') ? personalInfo.introVideo : '');
   }, [personalInfo]);
 
   // Handle local file uploads with smart compression to prevent localStorage QuotaExceeded errors
@@ -302,6 +302,9 @@ export default function Customizer() {
     setCameraError(null);
     setIsCameraActive(true);
     try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error("Camera API (mediaDevices.getUserMedia) is not supported or accessible in this environment.");
+      }
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'user', width: { ideal: 400 }, height: { ideal: 400 } },
         audio: false
@@ -316,7 +319,7 @@ export default function Customizer() {
       }, 100);
     } catch (err) {
       console.error("Camera access error:", err);
-      setCameraError("Could not access your camera. Please check permissions.");
+      setCameraError("Could not access your camera. Please check permissions or browser compatibility.");
       setIsCameraActive(false);
     }
   };
@@ -1354,7 +1357,7 @@ export default function Customizer() {
                         <div className="flex gap-2">
                           <input
                             type="text"
-                            value={projectImage.startsWith('data:') ? 'Local Uploaded File' : projectImage}
+                            value={(projectImage || '').startsWith('data:') ? 'Local Uploaded File' : projectImage}
                             onChange={(e) => setProjectImage(e.target.value)}
                             className="flex-1 px-3 py-2 bg-white border border-neutral-200 font-sans text-xs focus:outline-none focus:border-black rounded-none transition-colors"
                             placeholder="Paste cover image URL"
