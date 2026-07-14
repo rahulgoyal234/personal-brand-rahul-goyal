@@ -64,12 +64,12 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
 
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8 w-full relative z-10">
         {/* Cinematic Cover Photo Banner */}
-        <div className="w-full mb-12 sm:mb-16 relative rounded-[4px] overflow-hidden border border-line shadow-sm group">
+        <div className="w-full mb-12 sm:mb-16 relative rounded-[4px] overflow-hidden border border-line shadow-sm group aspect-[2.5/1] h-auto">
           <div className="absolute inset-0 bg-gradient-to-t from-paper/40 via-transparent to-transparent z-10 pointer-events-none" />
           <img 
             src="https://res.cloudinary.com/ywmg6avw/image/upload/v1784023092/Gemini_Generated_Image_51tl351tl351tl35_qudg4a.png"
             alt="Rahul Goyal Editorial Cover"
-            className="w-full h-[180px] sm:h-[260px] md:h-[340px] object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
+            className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
             referrerPolicy="no-referrer"
           />
           {/* Elegant corner brackets for that bespoke design feel */}
