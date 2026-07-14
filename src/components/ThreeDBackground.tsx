@@ -305,16 +305,9 @@ export default function ThreeDBackground() {
 
       ctx.clearRect(0, 0, width, height);
 
-      // Render expanding ripples
+      // Render expanding ripples (only update physics, no lines)
       ripples.forEach((ripple, rIdx) => {
         ripple.radius += ripple.speed;
-        
-        ctx.beginPath();
-        ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
-        const alpha = Math.max(0, 0.055 * (1 - ripple.radius / ripple.maxRadius));
-        ctx.strokeStyle = `rgba(${currentConfig.palette[0].color}, ${alpha})`;
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
 
         if (ripple.radius >= ripple.maxRadius) {
           ripples.splice(rIdx, 1);
@@ -419,74 +412,40 @@ export default function ThreeDBackground() {
           point.y += (targetY - point.y) * 0.082;
         });
 
-        // Pass 1: Wide Deep Neon glow pass
-        if (currentConfig.isGlowOn) {
-          ctx.beginPath();
-          ctx.lineWidth = ribbon.width * 5.5; // broad atmospheric glow
-          ctx.strokeStyle = ribbon.glowColor.replace(/[\d.]+\)$/, '0.12)'); // soft background glow
-          ctx.lineCap = 'round';
-          ctx.lineJoin = 'round';
-
-          ctx.moveTo(ribbon.points[0].x, ribbon.points[0].y);
-          for (let i = 0; i < ribbon.points.length - 1; i++) {
-            const xc = (ribbon.points[i].x + ribbon.points[i + 1].x) / 2;
-            const yc = (ribbon.points[i].y + ribbon.points[i + 1].y) / 2;
-            ctx.quadraticCurveTo(ribbon.points[i].x, ribbon.points[i].y, xc, yc);
-          }
-          ctx.stroke();
-
-          // Pass 2: Medium Core Neon Glow
-          ctx.beginPath();
-          ctx.lineWidth = ribbon.width * 2.5; // tighter medium intensity glow
-          ctx.strokeStyle = ribbon.glowColor;
-          ctx.lineCap = 'round';
-          ctx.lineJoin = 'round';
-
-          ctx.moveTo(ribbon.points[0].x, ribbon.points[0].y);
-          for (let i = 0; i < ribbon.points.length - 1; i++) {
-            const xc = (ribbon.points[i].x + ribbon.points[i + 1].x) / 2;
-            const yc = (ribbon.points[i].y + ribbon.points[i + 1].y) / 2;
-            ctx.quadraticCurveTo(ribbon.points[i].x, ribbon.points[i].y, xc, yc);
-          }
-          ctx.stroke();
-        }
-
-        // Pass 3: Crisp Core Thread with moving pulse gradient
-        ctx.beginPath();
-        ctx.lineWidth = ribbon.width;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
+        // Fill the fluid wave down to the bottom of the screen with a beautiful vertical gradient
+        const minY = Math.min(...ribbon.points.map(p => p.y));
+        const gradient = ctx.createLinearGradient(0, minY, 0, height);
         
-        // Horizontal fading gradient path with traveling pulse of light
-        const gradient = ctx.createLinearGradient(0, 0, width, 0);
-        const t = (Date.now() * 0.0006 + ribbon.phaseOffset) % 2.0; // traveling wave phase
-        const pulseX = t - 0.5; // moving focus point from -0.5 to 1.5
-        
-        const stop1 = Math.max(0, Math.min(1, pulseX - 0.2));
-        const stop2 = Math.max(0, Math.min(1, pulseX));
-        const stop3 = Math.max(0, Math.min(1, pulseX + 0.2));
-
+        // Soft, organic opacities to blend multiple overlapping waves gracefully
         gradient.addColorStop(0, `rgba(${ribbon.color}, 0.08)`);
-        if (stop1 > 0 && stop1 < 1) {
-          gradient.addColorStop(stop1, `rgba(${ribbon.color}, 0.28)`);
-        }
-        if (stop2 > 0 && stop2 < 1) {
-          gradient.addColorStop(stop2, `rgba(${ribbon.color}, 0.95)`); // Highly saturated, glowing center
-        }
-        if (stop3 > 0 && stop3 < 1) {
-          gradient.addColorStop(stop3, `rgba(${ribbon.color}, 0.28)`);
-        }
-        gradient.addColorStop(1, `rgba(${ribbon.color}, 0.08)`);
+        gradient.addColorStop(0.35, `rgba(${ribbon.color}, 0.04)`);
+        gradient.addColorStop(0.8, `rgba(${ribbon.color}, 0.005)`);
+        gradient.addColorStop(1, `rgba(${ribbon.color}, 0.0)`);
 
-        ctx.strokeStyle = gradient;
-        ctx.moveTo(ribbon.points[0].x, ribbon.points[0].y);
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
         
+        // Start from bottom-left corner
+        ctx.moveTo(0, height);
+        // Line to the first point of the ribbon
+        ctx.lineTo(ribbon.points[0].x, ribbon.points[0].y);
+        
+        // Draw the smooth curved top of the fluid wave
         for (let i = 0; i < ribbon.points.length - 1; i++) {
           const xc = (ribbon.points[i].x + ribbon.points[i + 1].x) / 2;
           const yc = (ribbon.points[i].y + ribbon.points[i + 1].y) / 2;
           ctx.quadraticCurveTo(ribbon.points[i].x, ribbon.points[i].y, xc, yc);
         }
-        ctx.stroke();
+        
+        // Connect to the last point
+        const lastPt = ribbon.points[ribbon.points.length - 1];
+        ctx.lineTo(lastPt.x, lastPt.y);
+        
+        // Connect to bottom-right corner and close the path
+        ctx.lineTo(width, height);
+        ctx.closePath();
+        
+        ctx.fill();
       });
 
       // Update and Draw floating star energy dust
@@ -520,64 +479,8 @@ export default function ThreeDBackground() {
         ctx.fillStyle = `rgba(${p.color}, ${pulseAlpha})`;
         ctx.fill();
 
-        // Constellation webs between particles
-        for (let j = pIdx + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 110) {
-            const webAlpha = (1 - dist / 110) * 0.08 * Math.min(pulseAlpha, p2.alpha);
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(${p.color}, ${webAlpha})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-
-        // Constellation ties linking dust to active fine linings
-        ribbons.forEach((ribbon) => {
-          ribbon.points.forEach((pt) => {
-            const dx = p.x - pt.x;
-            const dy = p.y - pt.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist < 90) {
-              const linkAlpha = (1 - dist / 90) * 0.045 * pulseAlpha;
-              ctx.beginPath();
-              ctx.moveTo(p.x, p.y);
-              ctx.lineTo(pt.x, pt.y);
-              ctx.strokeStyle = `rgba(${ribbon.color}, ${linkAlpha})`;
-              ctx.lineWidth = 0.45;
-              ctx.stroke();
-            }
-          });
-        });
+        // Float particles cleanly without connecting lines
       });
-
-      // Pointer magnetism constellation web
-      if (mouse.active) {
-        ribbons.forEach((ribbon) => {
-          ribbon.points.forEach((pt) => {
-            const dx = mouse.x - pt.x;
-            const dy = mouse.y - pt.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist < 140) {
-              const activeWebAlpha = (1 - dist / 140) * 0.085;
-              ctx.beginPath();
-              ctx.moveTo(mouse.x, mouse.y);
-              ctx.lineTo(pt.x, pt.y);
-              ctx.strokeStyle = `rgba(${ribbon.color}, ${activeWebAlpha})`;
-              ctx.lineWidth = 0.6;
-              ctx.stroke();
-            }
-          });
-        });
-      }
 
       animationFrameId = requestAnimationFrame(tick);
     };

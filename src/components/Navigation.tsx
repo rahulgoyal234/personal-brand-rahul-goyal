@@ -47,8 +47,15 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
       }`}
     >
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8 flex items-center justify-between gap-[34px] w-full">
-        {/* Left Side: Brand Link (Hidden per request) */}
-        <div />
+        {/* Left Side: Brand Link */}
+        <div 
+          className="flex items-center cursor-pointer group select-none"
+          onClick={() => handleNavClick('about')}
+        >
+          <span className="font-serif text-[21px] sm:text-[25px] font-bold tracking-tight text-ink leading-tight group-hover:text-brass transition-colors">
+            Rahul Goyal
+          </span>
+        </div>
 
         <div className="flex items-center gap-[34px]">
           {/* Desktop Nav Links */}

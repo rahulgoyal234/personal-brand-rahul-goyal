@@ -110,9 +110,6 @@ export default function App() {
               </span>
               <span className="font-semibold">{personalInfo.name}</span>
             </div>
-            <p className="mt-3 text-ink-soft text-[13.5px] max-w-[280px] font-sans leading-relaxed">
-              Corporate, IP & Tech Policy Lawyer. Turning complex regulation into clear moves.
-            </p>
           </div>
 
           {/* Copyright section */}
