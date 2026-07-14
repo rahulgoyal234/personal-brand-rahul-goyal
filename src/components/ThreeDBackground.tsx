@@ -179,8 +179,8 @@ export default function ThreeDBackground() {
           points,
           color: theme.color,
           glowColor: theme.glow,
-          width: 0.22 + (r % 3) * 0.06, // Thread-like super fine lines
-          phaseOffset: r * Math.PI * 0.25,
+          width: 0.20 + (r % 3) * 0.05, // Thread-like super fine lines
+          phaseOffset: r * Math.PI * 0.18,
           speed: 0.85 + r * 0.08,
         });
       }
@@ -210,8 +210,28 @@ export default function ThreeDBackground() {
     initRibbons();
     initParticles();
 
-    // Event handlers
+    // Event handlers with physical velocity tracking
+    let lastMouseX = -1;
+    let lastMouseY = -1;
+    let mouseVelocity = 0;
+    let lastTime = Date.now();
+
     const handlePointerMove = (e: PointerEvent) => {
+      const now = Date.now();
+      const dt = Math.max(1, now - lastTime);
+      
+      if (lastMouseX !== -1 && lastMouseY !== -1) {
+        const dx = e.clientX - lastMouseX;
+        const dy = e.clientY - lastMouseY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const instantV = dist / dt;
+        mouseVelocity += (instantV - mouseVelocity) * 0.15;
+      }
+      
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+      lastTime = now;
+
       mouse.x = e.clientX;
       mouse.y = e.clientY;
       mouse.active = true;
@@ -221,6 +241,9 @@ export default function ThreeDBackground() {
       mouse.active = false;
       mouse.x = -9999;
       mouse.y = -9999;
+      mouseVelocity = 0;
+      lastMouseX = -1;
+      lastMouseY = -1;
     };
 
     const handlePointerDown = (e: PointerEvent) => {
@@ -299,6 +322,8 @@ export default function ThreeDBackground() {
       });
 
       // Update and Draw ribbons
+      mouseVelocity *= 0.95; // slowly decay physical velocity
+
       ribbons.forEach((ribbon) => {
         ribbon.points.forEach((point) => {
           // Progress wave motion incorporating speed controller
@@ -309,7 +334,7 @@ export default function ThreeDBackground() {
           const waveX = Math.sin(point.angleX) * (currentConfig.waveAmplitude * 0.22);
           const waveY = Math.cos(point.angleY) * (currentConfig.waveAmplitude * (0.5 + Math.sin(point.angleX) * 0.5));
 
-          // Pointer magnetic gravity attraction
+          // Pointer magnetic gravity attraction and pluck vibration
           let mouseDispX = 0;
           let mouseDispY = 0;
 
@@ -320,9 +345,18 @@ export default function ThreeDBackground() {
 
             if (dist < mouse.radius) {
               const force = (mouse.radius - dist) / mouse.radius; // scale 0 to 1
-              const strength = 75 * Math.sin(force * Math.PI * 0.5);
+              const strength = 85 * Math.sin(force * Math.PI * 0.5);
               mouseDispX = (dx / (dist || 1)) * strength;
               mouseDispY = (dy / (dist || 1)) * strength;
+
+              // Shivering string vibrations proportional to swipe speed
+              if (mouseVelocity > 0.03) {
+                const vibStrength = Math.min(30, mouseVelocity * 12) * force;
+                const freq = 0.06;
+                const vibPhase = Date.now() * freq + point.angleX * 1.5;
+                mouseDispX += Math.sin(vibPhase) * vibStrength;
+                mouseDispY += Math.cos(vibPhase) * vibStrength;
+              }
             }
           }
 
@@ -355,12 +389,25 @@ export default function ThreeDBackground() {
           point.y += (targetY - point.y) * 0.082;
         });
 
-        // Bezier strand drawing
-        ctx.beginPath();
-        
-        // Pass 1: Fine neon shadow glow
+        // Pass 1: Wide Deep Neon glow pass
         if (currentConfig.isGlowOn) {
-          ctx.lineWidth = ribbon.width * 1.8;
+          ctx.beginPath();
+          ctx.lineWidth = ribbon.width * 5.5; // broad atmospheric glow
+          ctx.strokeStyle = ribbon.glowColor.replace(/[\d.]+\)$/, '0.12)'); // soft background glow
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+
+          ctx.moveTo(ribbon.points[0].x, ribbon.points[0].y);
+          for (let i = 0; i < ribbon.points.length - 1; i++) {
+            const xc = (ribbon.points[i].x + ribbon.points[i + 1].x) / 2;
+            const yc = (ribbon.points[i].y + ribbon.points[i + 1].y) / 2;
+            ctx.quadraticCurveTo(ribbon.points[i].x, ribbon.points[i].y, xc, yc);
+          }
+          ctx.stroke();
+
+          // Pass 2: Medium Core Neon Glow
+          ctx.beginPath();
+          ctx.lineWidth = ribbon.width * 2.5; // tighter medium intensity glow
           ctx.strokeStyle = ribbon.glowColor;
           ctx.lineCap = 'round';
           ctx.lineJoin = 'round';
@@ -374,17 +421,32 @@ export default function ThreeDBackground() {
           ctx.stroke();
         }
 
-        // Pass 2: Sharp fine lining
+        // Pass 3: Crisp Core Thread with moving pulse gradient
         ctx.beginPath();
         ctx.lineWidth = ribbon.width;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
         
-        // Horizontal fading gradient path
+        // Horizontal fading gradient path with traveling pulse of light
         const gradient = ctx.createLinearGradient(0, 0, width, 0);
-        gradient.addColorStop(0, `rgba(${ribbon.color}, 0.12)`);
-        gradient.addColorStop(0.35, `rgba(${ribbon.color}, 0.62)`);
-        gradient.addColorStop(0.5, `rgba(${ribbon.color}, 0.8)`);
-        gradient.addColorStop(0.65, `rgba(${ribbon.color}, 0.62)`);
-        gradient.addColorStop(1, `rgba(${ribbon.color}, 0.12)`);
+        const t = (Date.now() * 0.0006 + ribbon.phaseOffset) % 2.0; // traveling wave phase
+        const pulseX = t - 0.5; // moving focus point from -0.5 to 1.5
+        
+        const stop1 = Math.max(0, Math.min(1, pulseX - 0.2));
+        const stop2 = Math.max(0, Math.min(1, pulseX));
+        const stop3 = Math.max(0, Math.min(1, pulseX + 0.2));
+
+        gradient.addColorStop(0, `rgba(${ribbon.color}, 0.08)`);
+        if (stop1 > 0 && stop1 < 1) {
+          gradient.addColorStop(stop1, `rgba(${ribbon.color}, 0.28)`);
+        }
+        if (stop2 > 0 && stop2 < 1) {
+          gradient.addColorStop(stop2, `rgba(${ribbon.color}, 0.95)`); // Highly saturated, glowing center
+        }
+        if (stop3 > 0 && stop3 < 1) {
+          gradient.addColorStop(stop3, `rgba(${ribbon.color}, 0.28)`);
+        }
+        gradient.addColorStop(1, `rgba(${ribbon.color}, 0.08)`);
 
         ctx.strokeStyle = gradient;
         ctx.moveTo(ribbon.points[0].x, ribbon.points[0].y);
@@ -507,7 +569,7 @@ export default function ThreeDBackground() {
         <canvas
           ref={canvasRef}
           id="interactive-colorful-lines-bg"
-          className="fixed inset-0 w-full h-full pointer-events-none z-0 select-none print:hidden opacity-[0.38] dark:opacity-[0.28]"
+          className="fixed inset-0 w-full h-full pointer-events-none z-0 select-none print:hidden opacity-[0.68] dark:opacity-[0.52]"
           style={{
             mixBlendMode: 'multiply',
           }}

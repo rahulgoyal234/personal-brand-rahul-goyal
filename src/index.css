@@ -67,6 +67,14 @@
   }
 }
 
+/* Hide custom cursor elements on touch/mobile devices where there is no fine hover pointer */
+@media (hover: none), (pointer: coarse) {
+  #custom-cursor-ring,
+  #custom-cursor-dot {
+    display: none !important;
+  }
+}
+
 
 
 

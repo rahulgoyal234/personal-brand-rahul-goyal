@@ -25,6 +25,21 @@ export default function CursorRing() {
     const ring = ringRef.current;
     const dot = dotRef.current;
 
+    // Detect touch-only devices or mobile screens to completely disable the custom cursor.
+    // This prevents cursor lag under physical fingers, improves scrolling fluidity, and saves CPU/battery.
+    const isTouchDevice = 
+      typeof window !== 'undefined' && 
+      (('ontouchstart' in window) || 
+       (navigator.maxTouchPoints > 0) || 
+       (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
+       (window.matchMedia && window.matchMedia('(hover: none)').matches));
+
+    if (isTouchDevice) {
+      if (ring) ring.style.display = 'none';
+      if (dot) dot.style.display = 'none';
+      return;
+    }
+
     // Apply color and aesthetic styling based on visual states without modifying transforms/sizes
     const updateVisualStyles = () => {
       const isHovered = isHoveredRef.current;
