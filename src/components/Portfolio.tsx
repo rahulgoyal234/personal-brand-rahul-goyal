@@ -65,7 +65,6 @@ export default function Portfolio() {
           className="flex flex-col divide-y divide-rule/60 border-t border-b border-rule/60"
         >
           {filteredProjects.map((project) => {
-            const year = project.stats?.find(s => s.label && s.label.toLowerCase().includes('year'))?.value || '2023';
             const isExpanded = !!expandedAbstracts[project.id];
             
             return (
@@ -76,16 +75,10 @@ export default function Portfolio() {
               >
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 md:gap-10">
                   
-                  {/* Left Metadata Column (Category & Year) */}
+                  {/* Left Metadata Column (Category) */}
                   <div className="flex items-center md:flex-col md:items-start gap-2 md:gap-1 min-w-[150px]">
                     <span className="font-mono text-[11px] text-ink uppercase tracking-wider font-bold">
                       {project.category}
-                    </span>
-                    <span className="hidden md:inline-block font-mono text-[10.5px] text-ink-soft font-medium">
-                      — Year: {year}
-                    </span>
-                    <span className="md:hidden font-mono text-[11px] text-ink-soft font-medium">
-                      • {year}
                     </span>
                   </div>
 

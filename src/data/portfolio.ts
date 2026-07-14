@@ -10,7 +10,7 @@ I work in corporate law, IP, and tech policy, turning tangled regulation into cl
   location: 'New Delhi, India',
   email: 'rahulgyl48@gmail.com',
   phone: '+91 8690247028',
-  avatar: 'https://res.cloudinary.com/ywmg6avw/image/upload/v1783934716/Gemini_Generated_Image_3grc2s3grc2s3grc_agzp4t.png',
+  avatar: 'https://res.cloudinary.com/ywmg6avw/image/upload/v1784014254/Gemini_Generated_Image_1p5xcv1p5xcv1p5x_cpdgrw.png',
   github: 'https://github.com/rahulgoyal',
   linkedin: 'https://www.linkedin.com/in/rahulgoyal48/',
   twitter: 'https://twitter.com/rahulgoyal',
@@ -219,15 +219,15 @@ export const EXPERIENCES: Experience[] = [
     company: 'K&S Digiprotect Services, Gurugram',
     period: 'June 2025',
     location: 'Gurugram, India',
-    description: 'Specialized in drafting cybersecurity, DPDPA 2023 compliance guidelines, and tracking policy implications of automated AI systems.',
+    description: 'Specialized in drafting cybersecurity, DPDPA compliance guidelines, and tracking policy implications of automated AI systems.',
     bullets: [
-      'Drafted comprehensive data governance policies including third-party data sharing agreements, cross-border transfer protocols, information security frameworks, and employee training programs ensuring DPDPA 2023 compliance.',
-      'Conducted extensive research on cybersecurity incidents and data breach notification requirements under India\'s Digital Personal Data Protection Act 2023.',
+      'Drafted comprehensive data governance policies including third-party data sharing agreements, cross-border transfer protocols, information security frameworks, and employee training programs ensuring DPDPA compliance.',
+      'Conducted extensive research on cybersecurity incidents and data breach notification requirements under India\'s Digital Personal Data Protection Act.',
       'Compiled detailed case law analysis on "Right to be Forgotten" and "Right to Erasure" principles, examining landmark judgments including K.S. Puttaswamy v. Union of India.',
       'Developed targeted client acquisition strategies for the healthcare sector by analyzing regulatory frameworks and data protection compliance requirements.',
       'Created comprehensive inventory of AI-related laws, regulations, and guidelines issued by Indian authorities, including ICMR ethical guidelines for AI in healthcare.'
     ],
-    tags: ['Data Protection', 'DPDPA 2023', 'Cybersecurity Law', 'AI Ethics', 'Case Law Analysis']
+    tags: ['Data Protection', 'DPDPA', 'Cybersecurity Law', 'AI Ethics', 'Case Law Analysis']
   },
   {
     id: 'karanjawala',
@@ -303,7 +303,7 @@ export const EXPERIENCES: Experience[] = [
     id: 'corpus-juris',
     role: 'Litigation Intern (LOR Received)',
     company: 'Corpus Juris India, New Delhi',
-    period: 'July 2023 - Aug 2023',
+    period: 'July 2024 - Aug 2024',
     location: 'New Delhi, India',
     description: 'Drafted petitions, represented interests, and issued statutory notices.',
     bullets: [
@@ -317,7 +317,7 @@ export const EXPERIENCES: Experience[] = [
     id: 'virendra-agrawal',
     role: 'Litigation Intern',
     company: 'Virendra Agrawal & Co., Jaipur',
-    period: 'Dec 2022 - Jan 2023',
+    period: 'Dec 2022 - Jan 2024',
     location: 'Jaipur, India',
     description: 'Assisted in litigation representation and parsed MACT liability boundaries.',
     bullets: [
@@ -399,7 +399,7 @@ export const ACHIEVEMENTS = [
   'Best Performer, Trademarks Law Workshop 2024 (IP Trademark Clinic)',
   'Winner, Illustrated Law Carousels Competition (Canonsphere)',
   'Participated in the 16th KIIT Intra Moot Court Competition, 2024',
-  'Participated in 1st MNLUA Contract Drafting Competition (2023)',
+  'Participated in 1st MNLUA Contract Drafting Competition',
   'Volunteered as Witness, 6th KIIT National Mock Trial Competition',
   'Volunteered at the 1st KIIT Polemic Intra University Debate Competition'
 ];
@@ -421,7 +421,7 @@ export const SKILL_GROUPS: SkillGroup[] = [
     category: 'Tech Policy & Cyber',
     skills: [
       'Data Protection & Privacy',
-      'DPDPA 2023',
+      'DPDPA',
       'AI Regulation & Ethics',
       'FinTech Law & Policy',
       'Web3 & Blockchain fundamentals',

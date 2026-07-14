@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export default function CursorRing() {
-  const [enabled, setEnabled] = useState(false);
   const ringRef = useRef<HTMLDivElement | null>(null);
   const dotRef = useRef<HTMLDivElement | null>(null);
 
@@ -23,19 +22,6 @@ export default function CursorRing() {
   const targetDotScaleRef = useRef(1);
 
   useEffect(() => {
-    // Enable custom cursor ONLY on devices with a fine pointer and hover support
-    const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
-    const supportsHover = window.matchMedia('(hover: hover)').matches;
-    const isTouchOnly = !hasFinePointer && (('ontouchstart' in window) || navigator.maxTouchPoints > 0);
-
-    if (hasFinePointer && supportsHover && !isTouchOnly) {
-      setEnabled(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!enabled) return;
-
     const ring = ringRef.current;
     const dot = dotRef.current;
 
@@ -129,11 +115,11 @@ export default function CursorRing() {
     };
 
     const onPointerMove = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') return;
+      isTouchRef.current = false;
+
       mouseCoords.current.x = e.clientX;
       mouseCoords.current.y = e.clientY;
-
-      const isTouch = e.pointerType === 'touch';
-      isTouchRef.current = isTouch;
 
       // Instantly snap starting frame coords on first movement to avoid slide-in from (0,0)
       if (ringCoords.current.x === 0 && ringCoords.current.y === 0) {
@@ -147,25 +133,20 @@ export default function CursorRing() {
     };
 
     const onPointerDown = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') return;
+      isTouchRef.current = false;
       isClickingRef.current = true;
-      const isTouch = e.pointerType === 'touch';
-      isTouchRef.current = isTouch;
 
       targetScaleRef.current = 0.75;
       targetDotScaleRef.current = 0.7;
-
-      if (isTouch) {
-        mouseCoords.current.x = e.clientX;
-        mouseCoords.current.y = e.clientY;
-        ringCoords.current.x = e.clientX;
-        ringCoords.current.y = e.clientY;
-      }
 
       showCursor();
       updateVisualStyles();
     };
 
-    const onPointerUp = () => {
+    const onPointerUp = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') return;
+      isTouchRef.current = false;
       isClickingRef.current = false;
       
       if (isHoveredRef.current) {
@@ -177,21 +158,16 @@ export default function CursorRing() {
       }
 
       updateVisualStyles();
-
-      if (isTouchRef.current) {
-        // Soft fade on touch devices
-        setTimeout(() => {
-          hideCursor();
-        }, 150);
-      }
     };
 
-    const onPointerCancel = () => {
+    const onPointerCancel = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') return;
       isClickingRef.current = false;
       hideCursor();
     };
 
     const onPointerOver = (e: PointerEvent) => {
+      if (e.pointerType === 'touch') return;
       scanActiveElement(e.target as HTMLElement);
     };
 
@@ -203,6 +179,7 @@ export default function CursorRing() {
 
     const onPointerEnterWindow = (e: PointerEvent) => {
       if (e.pointerType !== 'touch') {
+        isTouchRef.current = false;
         showCursor();
       }
     };
@@ -215,16 +192,12 @@ export default function CursorRing() {
         mouseCoords.current.x = touch.clientX;
         mouseCoords.current.y = touch.clientY;
 
-        if (ringCoords.current.x === 0 && ringCoords.current.y === 0) {
-          ringCoords.current.x = touch.clientX;
-          ringCoords.current.y = touch.clientY;
-        } else {
-          ringCoords.current.x += (touch.clientX - ringCoords.current.x) * 0.45;
-          ringCoords.current.y += (touch.clientY - ringCoords.current.y) * 0.45;
-        }
+        // Snaps both ring and dot instantly on touch start to eliminate lagging transitions from previous taps
+        ringCoords.current.x = touch.clientX;
+        ringCoords.current.y = touch.clientY;
       }
-      targetScaleRef.current = 0.85;
-      targetDotScaleRef.current = 0.75;
+      targetScaleRef.current = 1.3;
+      targetDotScaleRef.current = 0.8;
       showCursor();
       updateVisualStyles();
     };
@@ -249,9 +222,12 @@ export default function CursorRing() {
       targetDotScaleRef.current = 1.0;
       updateVisualStyles();
 
+      // Smooth fade transition
       setTimeout(() => {
-        hideCursor();
-      }, 250);
+        if (!isClickingRef.current) {
+          hideCursor();
+        }
+      }, 300);
     };
 
     const onTouchCancel = () => {

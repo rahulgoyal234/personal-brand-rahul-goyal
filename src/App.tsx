@@ -117,7 +117,7 @@ export default function App() {
 
           {/* Copyright section */}
           <div className="font-mono text-xs text-ink-soft tracking-wider md:text-right">
-            © {new Date().getFullYear()} {personalInfo.name}. All rights reserved.
+            © {personalInfo.name}. All rights reserved.
           </div>
           
         </div>
