@@ -48,6 +48,12 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
       id="about"
       className="relative min-h-[90vh] flex items-center justify-center pt-36 pb-20 md:py-48 overflow-hidden bg-transparent scroll-mt-20"
     >
+      {/* Subtle, elegant generated background watermark image */}
+      <div 
+        className="absolute inset-0 pointer-events-none select-none z-0 opacity-[0.05] mix-blend-multiply bg-cover bg-center"
+        style={{ backgroundImage: `url('https://res.cloudinary.com/ywmg6avw/image/upload/v1784023092/Gemini_Generated_Image_51tl351tl351tl35_qudg4a.png')` }}
+      />
+
       {/* Bespoke circular background wireframes from your design */}
       <div 
         className="absolute top-[-120px] right-[-160px] w-[520px] h-[520px] rounded-full border border-rule/60 pointer-events-none select-none z-0 hidden lg:block" 
@@ -57,6 +63,22 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
       />
 
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8 w-full relative z-10">
+        {/* Cinematic Cover Photo Banner */}
+        <div className="w-full mb-12 sm:mb-16 relative rounded-[4px] overflow-hidden border border-line shadow-sm group">
+          <div className="absolute inset-0 bg-gradient-to-t from-paper/40 via-transparent to-transparent z-10 pointer-events-none" />
+          <img 
+            src="https://res.cloudinary.com/ywmg6avw/image/upload/v1784023092/Gemini_Generated_Image_51tl351tl351tl35_qudg4a.png"
+            alt="Rahul Goyal Editorial Cover"
+            className="w-full h-[180px] sm:h-[260px] md:h-[340px] object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
+            referrerPolicy="no-referrer"
+          />
+          {/* Elegant corner brackets for that bespoke design feel */}
+          <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-brass/50 z-20 pointer-events-none" />
+          <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-brass/50 z-20 pointer-events-none" />
+          <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-brass/50 z-20 pointer-events-none" />
+          <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-brass/50 z-20 pointer-events-none" />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Main Copy Content */}
           <div
