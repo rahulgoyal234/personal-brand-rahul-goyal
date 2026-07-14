@@ -48,12 +48,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
       id="about"
       className="relative min-h-[90vh] flex items-center justify-center pt-36 pb-20 md:py-48 overflow-hidden bg-transparent scroll-mt-20"
     >
-      {/* Subtle, elegant generated background watermark image */}
-      <div 
-        className="absolute inset-0 pointer-events-none select-none z-0 opacity-[0.05] mix-blend-multiply bg-cover bg-center"
-        style={{ backgroundImage: `url('https://res.cloudinary.com/ywmg6avw/image/upload/v1784023092/Gemini_Generated_Image_51tl351tl351tl35_qudg4a.png')` }}
-      />
-
       {/* Bespoke circular background wireframes from your design */}
       <div 
         className="absolute top-[-120px] right-[-160px] w-[520px] h-[520px] rounded-full border border-rule/60 pointer-events-none select-none z-0 hidden lg:block" 
@@ -63,45 +57,22 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
       />
 
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8 w-full relative z-10">
-        {/* Cinematic Cover Photo Banner */}
-        <div className="w-full mb-12 sm:mb-16 relative rounded-[4px] overflow-hidden border border-line shadow-sm group aspect-[2.5/1] h-auto">
-          <div className="absolute inset-0 bg-gradient-to-t from-paper/40 via-transparent to-transparent z-10 pointer-events-none" />
-          <img 
-            src="https://res.cloudinary.com/ywmg6avw/image/upload/v1784023092/Gemini_Generated_Image_51tl351tl351tl35_qudg4a.png"
-            alt="Rahul Goyal Editorial Cover"
-            className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-[1.02]"
-            referrerPolicy="no-referrer"
-          />
-          {/* Elegant corner brackets for that bespoke design feel */}
-          <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-brass/50 z-20 pointer-events-none" />
-          <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-brass/50 z-20 pointer-events-none" />
-          <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-brass/50 z-20 pointer-events-none" />
-          <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-brass/50 z-20 pointer-events-none" />
-        </div>
+        
+        {/* Top Row: Info (Left) & Profile Photo (Right) - Side-by-side across all devices */}
+        <div className="flex flex-row items-start justify-between gap-5 sm:gap-8 lg:gap-12 mb-6 w-full">
+          
+          {/* Left Column: Heading and Bio */}
+          <div className="flex-1 min-w-0 flex flex-col items-start text-left">
+            <h1
+              id="hero-heading"
+              className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-[1.08] text-ink"
+            >
+              {renderFormattedHeading(personalInfo.shortBio)}
+            </h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-          {/* Main Copy Content */}
-          <div
-            id="hero-content"
-            className="lg:col-span-7 flex flex-col items-start text-left"
-          >
-            <div className="space-y-4">
-              <div className="eyebrow font-mono text-[11px] sm:text-[12.5px] tracking-[0.14em] uppercase text-brass flex flex-wrap items-center gap-2.5 before:content-[''] before:w-3 before:h-[2px] before:bg-brass before:inline-block font-bold leading-relaxed">
-                <span>{personalInfo.name} | {personalInfo.title}</span>
-              </div>
-              
-              <h1
-                id="hero-heading"
-                className="font-serif text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.08] text-ink mt-4"
-              >
-                {personalInfo.shortBio || "Making the complex, comprehensible."}
-              </h1>
-            </div>
-
-            {/* Detailed Bio paragraph */}
             <div
               id="hero-bio"
-              className="text-ink-soft text-[17px] sm:text-lg leading-relaxed max-w-[540px] mt-[22px] font-sans space-y-4"
+              className="text-ink-soft text-[14px] sm:text-[16px] md:text-[17px] leading-relaxed max-w-[720px] mt-4 sm:mt-6 font-sans space-y-3 sm:space-y-4"
             >
               {(personalInfo.bio || '').split('\n').map((para, i) => {
                 if (!para.trim()) return null;
@@ -112,49 +83,20 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 );
               })}
             </div>
-
-            {/* Call To Action Buttons */}
-            <div id="hero-actions" className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-4 mt-10 w-full sm:w-auto">
-              <button
-                id="hero-cta-portfolio"
-                onClick={onPortfolioClick}
-                className="w-full sm:w-auto justify-center font-mono text-[13px] sm:text-[13.5px] tracking-wider px-[22px] py-3.5 border border-ink bg-ink text-paper hover:bg-paper hover:text-ink hover:border-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
-              >
-                View Writings
-              </button>
-
-              {personalInfo.introVideo && (
-                <button
-                  id="hero-cta-video"
-                  onClick={() => setIsVideoModalOpen(true)}
-                  className="w-full sm:w-auto justify-center font-mono text-[13px] sm:text-[13.5px] tracking-wider px-[22px] py-3.5 border border-line bg-paper-deep text-ink hover:bg-ink hover:border-ink hover:text-paper rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
-                >
-                  <Play className="w-3.5 h-3.5 fill-current translate-x-0.5" />
-                  Play Intro Video
-                </button>
-              )}
-
-              <button
-                id="hero-cta-contact"
-                onClick={onContactClick}
-                className="w-full sm:w-auto justify-center font-mono text-[13px] sm:text-[13.5px] tracking-wider px-[22px] py-3.5 border border-ink bg-transparent text-ink hover:text-paper hover:bg-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold"
-              >
-                Get in Touch
-              </button>
-            </div>
           </div>
 
-          {/* Portrait Column styled with elegant circular ring and outer outline wrapper */}
+          {/* Right Column: Profile Photo */}
           <div
             id="hero-portrait-container"
-            className="lg:col-span-5 flex justify-center lg:justify-end"
+            className="flex-shrink-0 flex justify-end pt-2 sm:pt-4"
           >
             <div className="portrait-wrap relative flex flex-col items-center">
+              {/* Profile photo ring styled beautifully */}
               <div 
-                className="portrait-ring w-[280px] sm:w-[320px] aspect-square rounded-full p-2.5 border border-ink/40 relative transition-all duration-500 cursor-default shadow-lg"
+                className="portrait-ring w-[100px] sm:w-[180px] md:w-[220px] aspect-square rounded-full p-1 sm:p-2 border border-ink/35 relative transition-all duration-500 cursor-default shadow-md"
               >
                 {/* Outer concentric decorative border outline */}
-                <div className="absolute inset-[-16px] rounded-full border border-rule pointer-events-none" />
+                <div className="absolute inset-[-6px] sm:inset-[-10px] rounded-full border border-rule pointer-events-none" />
                 
                 {/* Image core */}
                 <div className="w-full h-full rounded-full overflow-hidden bg-paper-deep">
@@ -171,24 +113,81 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                           setImgSrc('/api/avatar.jpg');
                         }
                       }}
-                      className="w-full h-full object-cover block object-[54%_center]"
+                      className="w-full h-full object-cover block"
                       style={{ objectPosition: '54% center' }}
                     />
                   ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center text-ink-soft">
-                      <span className="font-mono text-xs">No Portrait</span>
+                    <div className="w-full h-full flex flex-col items-center justify-center p-3 sm:p-6 text-center text-ink-soft">
+                      <span className="font-mono text-[9px] sm:text-xs">No Portrait</span>
                     </div>
                   )}
                 </div>
               </div>
 
               {/* Portrait Label Caption */}
-              <div className="portrait-caption mt-[22px] font-mono text-[11px] sm:text-[12px] tracking-[0.1em] uppercase text-ink-soft font-semibold text-center px-4 max-w-full leading-normal">
+              <div className="portrait-caption mt-4 sm:mt-6 font-mono text-[9px] sm:text-[11px] tracking-[0.1em] uppercase text-brass font-bold text-center px-2 max-w-full leading-normal whitespace-nowrap">
                 {personalInfo.name} | {personalInfo.title}
               </div>
             </div>
           </div>
+
         </div>
+
+        {/* Action buttons (placed below the text/photo row but above cover photo) */}
+        <div id="hero-actions" className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 w-full md:w-auto mb-8">
+          <button
+            id="hero-cta-portfolio"
+            onClick={onPortfolioClick}
+            className="w-full sm:w-auto justify-center font-mono text-[11px] sm:text-[13px] md:text-[13.5px] tracking-wider px-[14px] sm:px-[22px] py-2.5 sm:py-3.5 border border-ink bg-ink text-paper hover:bg-paper hover:text-ink hover:border-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
+          >
+            View Writings
+          </button>
+
+          {personalInfo.introVideo && (
+            <button
+              id="hero-cta-video"
+              onClick={() => setIsVideoModalOpen(true)}
+              className="w-full sm:w-auto justify-center font-mono text-[13px] sm:text-[13.5px] tracking-wider px-[14px] sm:px-[22px] py-2.5 sm:py-3.5 border border-line bg-paper-deep text-ink hover:bg-ink hover:border-ink hover:text-paper rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
+            >
+              <Play className="w-3.5 h-3.5 fill-current translate-x-0.5" />
+              Play Intro Video
+            </button>
+          )}
+
+          <button
+            id="hero-cta-contact"
+            onClick={onContactClick}
+            className="w-full sm:w-auto justify-center font-mono text-[11px] sm:text-[13px] md:text-[13.5px] tracking-wider px-[14px] sm:px-[22px] py-2.5 sm:py-3.5 border border-ink bg-transparent text-ink hover:text-paper hover:bg-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold"
+          >
+            Get in Touch
+          </button>
+        </div>
+
+
+        {/* Middle Row: Full-width Cover Photo Banner */}
+        <div className="w-full mb-2 relative rounded-[4px] overflow-hidden border border-line shadow-sm group">
+          <div className="absolute inset-0 bg-gradient-to-t from-paper/40 via-transparent to-transparent z-10 pointer-events-none" />
+          <img 
+            src="https://res.cloudinary.com/ywmg6avw/image/upload/v1784023092/Gemini_Generated_Image_51tl351tl351tl35_qudg4a.png"
+            alt="Rahul Goyal Editorial Cover"
+            className="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.01]"
+            referrerPolicy="no-referrer"
+          />
+          {/* Elegant corner brackets for that bespoke design feel */}
+          <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-brass/50 z-20 pointer-events-none" />
+          <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-brass/50 z-20 pointer-events-none" />
+          <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-brass/50 z-20 pointer-events-none" />
+          <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-brass/50 z-20 pointer-events-none" />
+        </div>
+
+        {/* Eyebrow Label "the attached" (Now below the right side of cover photo) */}
+        <div className="w-full mb-6 flex justify-end text-right">
+          <div className="eyebrow font-mono text-[11.5px] sm:text-[13px] tracking-[0.14em] uppercase text-brass flex items-center gap-2.5 before:content-[''] before:w-3 before:h-[2px] before:bg-brass before:inline-block font-bold leading-relaxed">
+            <span>{personalInfo.name}</span>
+          </div>
+        </div>
+
+
       </div>
 
       {/* Immersive Video Theater Modal */}
