@@ -148,7 +148,7 @@ export default function ThreeDBackground() {
     // Local data stores
     let ribbons: Ribbon[] = [];
     let particles: Particle[] = [];
-    const pointsPerRibbon = 18;
+    const pointsPerRibbon = 35;
 
     const initRibbons = () => {
       ribbons = [];
@@ -330,9 +330,39 @@ export default function ThreeDBackground() {
           point.angleX += point.speedX * currentConfig.driftSpeed;
           point.angleY += point.speedY * currentConfig.driftSpeed;
 
-          // Natural wavy fluid math
-          const waveX = Math.sin(point.angleX) * (currentConfig.waveAmplitude * 0.22);
-          const waveY = Math.cos(point.angleY) * (currentConfig.waveAmplitude * (0.5 + Math.sin(point.angleX) * 0.5));
+          // Universal base state: The entire screen is a highly complex, tangled web of intersecting filaments
+          let complexityFactor = 1.0;
+
+          // When interactive (hover/pointer active), we resolve the complexity to make it "comprehensible"
+          if (mouse.active) {
+            const dx = mouse.x - point.baseX;
+            const dy = mouse.y - point.baseY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            const interactiveRadius = 260; // broad zone of comprehensibility around the cursor
+            if (dist < interactiveRadius) {
+              const proximity = (interactiveRadius - dist) / interactiveRadius; // 0 (edge) to 1 (cursor)
+              // Smooth easing function for fluid transition
+              const smoothProximity = Math.sin(proximity * Math.PI * 0.5);
+              complexityFactor = 1.0 - smoothProximity * 0.98; // reduce up to 98% of the complexity
+            }
+          }
+
+          const activeChaos = complexityFactor;
+
+          // Multi-harmonic high-frequency complex turbulent noise (creating a beautiful complex web)
+          const complexNoiseX = Math.sin(point.angleY * 4.2 + point.angleX * 1.8) * (currentConfig.waveAmplitude * 0.42) + 
+                                Math.cos(point.angleX * 7.5) * (currentConfig.waveAmplitude * 0.12);
+          const complexNoiseY = Math.cos(point.angleX * 4.6 - point.angleY * 2.8) * (currentConfig.waveAmplitude * 0.65) + 
+                                Math.sin(point.angleY * 6.0) * (currentConfig.waveAmplitude * 0.18);
+
+          // Perfect, pristine, parallel waves (representing order and clarity)
+          const cleanWaveX = Math.sin(point.angleX * 0.4) * (currentConfig.waveAmplitude * 0.08);
+          const cleanWaveY = Math.cos(point.angleY * 0.3) * (currentConfig.waveAmplitude * 0.12);
+
+          // Beautiful linear interpolation: cleanWave + chaos * (complexNoise - cleanWave)
+          const waveX = cleanWaveX + (complexNoiseX - cleanWaveX) * activeChaos;
+          const waveY = cleanWaveY + (complexNoiseY - cleanWaveY) * activeChaos;
 
           // Pointer magnetic gravity attraction and pluck vibration
           let mouseDispX = 0;
