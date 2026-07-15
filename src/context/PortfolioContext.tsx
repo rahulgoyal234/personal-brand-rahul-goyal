@@ -91,11 +91,11 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           if (!parsed.shortBio || currentShortBio === oldShortBio1.trim() || currentShortBio === oldShortBio2.trim() || currentShortBio === oldShortBio3.trim() || currentShortBio === oldShortBio4.trim() || currentShortBio === oldShortBio5.trim() || currentShortBio === oldShortBio6.trim() || currentShortBio === oldShortBio7.trim()) {
             parsed.shortBio = PERSONAL_INFO.shortBio;
           }
-          if (parsed.avatar && (parsed.avatar.includes('avatar_sabbrn.png') || parsed.avatar.includes('avatar_u0ajsb') || parsed.avatar.includes('avatar_sabbrn') || parsed.avatar.includes('photo_srai3m') || parsed.avatar.includes('photo_czmebs'))) {
+          if (parsed.avatar && (parsed.avatar.includes('avatar_sabbrn.png') || parsed.avatar.includes('avatar_u0ajsb') || parsed.avatar.includes('avatar_sabbrn') || parsed.avatar.includes('photo_srai3m') || parsed.avatar.includes('photo_czmebs') || parsed.avatar.includes('photo-split-bg-clearer'))) {
             parsed.avatar = PERSONAL_INFO.avatar;
           }
           const merged = { ...PERSONAL_INFO, ...parsed };
-          if (!merged.avatar || merged.avatar === '/avatar.jpg' || merged.avatar === '/avatar.png' || merged.avatar.includes('avatar_sabbrn.png') || merged.avatar.includes('avatar_sabbrn') || merged.avatar.includes('photo_srai3m') || merged.avatar.includes('photo_czmebs')) {
+          if (!merged.avatar || merged.avatar === '/avatar.jpg' || merged.avatar === '/avatar.png' || merged.avatar.includes('avatar_sabbrn.png') || merged.avatar.includes('avatar_sabbrn') || merged.avatar.includes('photo_srai3m') || merged.avatar.includes('photo_czmebs') || merged.avatar.includes('photo-split-bg-clearer')) {
             merged.avatar = PERSONAL_INFO.avatar;
           }
           merged.isAvatarLocked = true;
@@ -215,7 +215,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           if (remoteData) {
             if (remoteData.personalInfo) {
               const mergedInfo = { ...PERSONAL_INFO, ...remoteData.personalInfo };
-              if (!mergedInfo.avatar || mergedInfo.avatar === '/avatar.jpg' || mergedInfo.avatar === '/avatar.png' || mergedInfo.avatar.includes('avatar_sabbrn.png') || mergedInfo.avatar.includes('avatar_sabbrn') || mergedInfo.avatar.includes('photo_srai3m') || mergedInfo.avatar.includes('photo_czmebs')) {
+              if (!mergedInfo.avatar || mergedInfo.avatar === '/avatar.jpg' || mergedInfo.avatar === '/avatar.png' || mergedInfo.avatar.includes('avatar_sabbrn.png') || mergedInfo.avatar.includes('avatar_sabbrn') || mergedInfo.avatar.includes('photo_srai3m') || mergedInfo.avatar.includes('photo_czmebs') || mergedInfo.avatar.includes('photo-split-bg-clearer')) {
                 mergedInfo.avatar = PERSONAL_INFO.avatar;
               }
               mergedInfo.isAvatarLocked = true;
