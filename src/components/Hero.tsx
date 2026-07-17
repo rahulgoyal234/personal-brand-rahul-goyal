@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Play, X } from 'lucide-react';
+import { Play, X, GraduationCap, ChevronDown, ChevronUp } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
+import { motion, AnimatePresence } from 'motion/react';
 
 interface HeroProps {
   onContactClick: () => void;
@@ -13,6 +14,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
   const [avatarLoadError, setAvatarLoadError] = useState(false);
   const [avatarVersion, setAvatarVersion] = useState(() => Date.now());
   const [imgSrc, setImgSrc] = useState(personalInfo?.avatar || '');
+  const [isEducationOpen, setIsEducationOpen] = useState(false);
 
   React.useEffect(() => {
     setAvatarLoadError(false);
@@ -128,6 +130,63 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               <div className="portrait-caption mt-4 sm:mt-6 font-mono text-[9px] sm:text-[11px] tracking-[0.1em] uppercase text-brass font-bold text-center px-2 max-w-full leading-normal whitespace-nowrap">
                 {personalInfo.name} | {personalInfo.title}
               </div>
+
+              {/* Education Button with toggle */}
+              <button
+                onClick={() => setIsEducationOpen(!isEducationOpen)}
+                className="mt-3.5 sm:mt-4 font-mono text-[9px] sm:text-[10px] md:text-[10.5px] tracking-[0.12em] uppercase text-ink-soft hover:text-brass border border-ink/15 hover:border-brass/35 px-3 py-1.5 rounded-[2px] transition-all duration-300 flex items-center gap-2 cursor-pointer bg-paper-deep/30 hover:bg-paper-deep/80 select-none shadow-sm font-bold animate-fade-in"
+              >
+                <GraduationCap className="w-3.5 h-3.5 text-brass" />
+                <span>Education</span>
+                {isEducationOpen ? (
+                  <ChevronUp className="w-3 h-3 text-ink-soft/70" />
+                ) : (
+                  <ChevronDown className="w-3 h-3 text-ink-soft/70" />
+                )}
+              </button>
+
+              {/* Education Snippet under photo (Collapsible) */}
+              <AnimatePresence initial={false}>
+                {isEducationOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                    animate={{ height: "auto", opacity: 1, marginTop: 16 }}
+                    exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                    className="overflow-hidden flex flex-col items-center w-full max-w-[200px] sm:max-w-[240px] text-center"
+                  >
+                    <div className="w-10 h-[1px] bg-ink/15 mb-3.5" />
+                    
+                    <div className="space-y-3.5 w-full pb-1">
+                      {/* Bennett University */}
+                      <div className="flex flex-col items-center px-1">
+                        <p className="font-sans text-[10px] sm:text-[11.5px] font-bold text-ink uppercase tracking-wider leading-snug">
+                          Bennett University
+                        </p>
+                        <p className="font-mono text-[8.5px] sm:text-[9.5px] text-brass font-semibold tracking-wide mt-0.5 uppercase">
+                          LL.M. (Corp & Comm Law) • Ongoing
+                        </p>
+                        <p className="font-sans text-[8.5px] sm:text-[9px] text-ink-soft/85 italic mt-0.5">
+                          Greater Noida
+                        </p>
+                      </div>
+
+                      {/* KIIT School of Law */}
+                      <div className="flex flex-col items-center px-1 pt-0.5">
+                        <p className="font-sans text-[10px] sm:text-[11.5px] font-bold text-ink uppercase tracking-wider leading-snug">
+                          KIIT School of Law
+                        </p>
+                        <p className="font-mono text-[8.5px] sm:text-[9.5px] text-brass font-semibold tracking-wide mt-0.5 uppercase">
+                          B.A. LL.B. (Hons.)
+                        </p>
+                        <p className="font-sans text-[8.5px] sm:text-[9px] text-ink-soft/85 italic mt-0.5">
+                          Bhubaneswar
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
