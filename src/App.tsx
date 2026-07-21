@@ -94,8 +94,8 @@ export default function App() {
                   <img 
                     src={personalInfo.avatar} 
                     alt="" 
-                    className="w-full h-full object-cover object-[54%_center]"
-                    style={{ objectPosition: '54% center' }}
+                    className="w-full h-full object-cover object-center"
+                    style={{ objectPosition: 'center' }}
                     referrerPolicy="no-referrer"
                     onError={(e) => {
                       const img = e.currentTarget as HTMLImageElement;

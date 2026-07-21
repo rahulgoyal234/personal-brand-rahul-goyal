@@ -95,7 +95,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             <div className="portrait-wrap relative flex flex-col items-center">
               {/* Profile photo ring styled beautifully */}
               <div 
-                className="portrait-ring w-[100px] sm:w-[180px] md:w-[220px] aspect-square rounded-full p-1 sm:p-2 border border-ink/35 relative transition-all duration-500 cursor-default shadow-md"
+                className="portrait-ring w-[100px] h-[100px] sm:w-[180px] sm:h-[180px] md:w-[220px] md:h-[220px] aspect-square rounded-full p-1 sm:p-2 border border-ink/35 relative transition-all duration-500 cursor-default shadow-md"
               >
                 {/* Outer concentric decorative border outline */}
                 <div className="absolute inset-[-6px] sm:inset-[-10px] rounded-full border border-rule pointer-events-none" />
@@ -115,8 +115,8 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                           setImgSrc('/api/avatar.jpg');
                         }
                       }}
-                      className="w-full h-full object-cover block"
-                      style={{ objectPosition: '54% center' }}
+                      className="w-full h-full object-cover object-center block rounded-full"
+                      style={{ objectPosition: 'center' }}
                     />
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center p-3 sm:p-6 text-center text-ink-soft">
