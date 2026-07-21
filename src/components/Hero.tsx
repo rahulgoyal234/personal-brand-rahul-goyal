@@ -95,17 +95,17 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             <div className="portrait-wrap relative flex flex-col items-center">
               {/* Profile photo ring styled beautifully */}
               <div 
-                className="portrait-ring w-[100px] h-[100px] sm:w-[180px] sm:h-[180px] md:w-[220px] md:h-[220px] aspect-square rounded-full p-1 sm:p-2 border border-ink/35 relative transition-all duration-500 cursor-default shadow-md"
+                className="portrait-ring w-[100px] h-[100px] sm:w-[180px] sm:h-[180px] md:w-[220px] md:h-[220px] aspect-square rounded-full border border-ink/35 relative transition-all duration-500 cursor-default shadow-md"
               >
                 {/* Outer concentric decorative border outline */}
                 <div className="absolute inset-[-6px] sm:inset-[-10px] rounded-full border border-rule pointer-events-none" />
                 
-                {/* Image core */}
-                <div className="w-full h-full rounded-full overflow-hidden bg-paper-deep">
+                {/* Image core - absolutely positioned with perfect equal inset margins */}
+                <div className="absolute inset-1 sm:inset-2 rounded-full overflow-hidden bg-paper-deep">
                   {personalInfo.avatar ? (
                     <img
                       id="hero-portrait-img"
-                      src={(imgSrc || '').startsWith('data:') ? imgSrc : ((imgSrc || '').startsWith('http') ? imgSrc : `${imgSrc}?v=${avatarVersion}`)}
+                      src={(imgSrc || '').startsWith('data:') ? imgSrc : `${imgSrc}${imgSrc.includes('?') ? '&' : '?'}v=${avatarVersion}`}
                       alt={personalInfo.name}
                       referrerPolicy="no-referrer"
                       onLoad={() => setAvatarLoadError(false)}
@@ -115,11 +115,11 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                           setImgSrc('/api/avatar.jpg');
                         }
                       }}
-                      className="w-full h-full object-cover object-center block rounded-full"
-                      style={{ objectPosition: 'center' }}
+                      className="absolute inset-0 w-full h-full object-cover object-center block rounded-full scale-[1.25] translate-y-[5.5%] transition-transform duration-500"
+                      style={{ objectPosition: 'center', objectFit: 'cover' }}
                     />
                   ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center p-3 sm:p-6 text-center text-ink-soft">
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-3 sm:p-6 text-center text-ink-soft">
                       <span className="font-mono text-[9px] sm:text-xs">No Portrait</span>
                     </div>
                   )}

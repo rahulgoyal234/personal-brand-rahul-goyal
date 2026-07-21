@@ -92,10 +92,10 @@ export default function App() {
               <span className="seal w-8 h-8 rounded-full border border-ink flex items-center justify-center font-serif text-[13px] text-ink font-semibold overflow-hidden bg-paper">
                 {personalInfo.avatar ? (
                   <img 
-                    src={personalInfo.avatar} 
+                    src={personalInfo.avatar && !personalInfo.avatar.startsWith('data:') ? `${personalInfo.avatar}${personalInfo.avatar.includes('?') ? '&' : '?'}v=${Date.now()}` : personalInfo.avatar} 
                     alt="" 
-                    className="w-full h-full object-cover object-center"
-                    style={{ objectPosition: 'center' }}
+                    className="w-full h-full object-cover object-center scale-[1.25] translate-y-[5.5%]"
+                    style={{ objectPosition: 'center', objectFit: 'cover' }}
                     referrerPolicy="no-referrer"
                     onError={(e) => {
                       const img = e.currentTarget as HTMLImageElement;

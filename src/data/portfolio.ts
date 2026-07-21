@@ -10,7 +10,7 @@ I work in corporate law, IP, and tech policy, turning tangled regulation into cl
   location: 'New Delhi, India',
   email: 'rahulgyl48@gmail.com',
   phone: '+91 8690247028',
-  avatar: 'https://res.cloudinary.com/ywmg6avw/image/upload/v1784624382/headshot_centered_ppgcdl.png',
+  avatar: 'https://res.cloudinary.com/ywmg6avw/image/upload/v1784629477/Gemini_Generated_Image_8ufd0c8ufd0c8ufd_lnnrxf.png',
   github: 'https://github.com/rahulgoyal',
   linkedin: 'https://www.linkedin.com/in/rahulgoyal48/',
   twitter: 'https://twitter.com/rahulgoyal',

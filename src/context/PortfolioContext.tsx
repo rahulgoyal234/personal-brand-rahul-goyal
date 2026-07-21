@@ -2,6 +2,37 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { PERSONAL_INFO, PROJECTS } from '../data/portfolio';
 import { Project } from '../types';
 
+const isInvalidAvatar = (avatar: string | undefined): boolean => {
+  if (!avatar) return true;
+  if (avatar === '/avatar.jpg' || avatar === '/avatar.png') return true;
+  
+  // Exclude valid user headshots on Cloudinary
+  if (avatar.includes('djngfp') || avatar.includes('xtpqmk') || avatar.includes('rxwkq9') || avatar.includes('lnnrxf')) return false;
+  
+  // Unwanted placeholder/unfocused patterns
+  if (
+    avatar.includes('avatar_sabbrn') ||
+    avatar.includes('avatar_u0ajsb') ||
+    avatar.includes('photo_srai3m') ||
+    avatar.includes('photo_czmebs') ||
+    avatar.includes('photo-split-bg-clearer') ||
+    avatar.includes('photo_glow') ||
+    avatar.includes('final_vertical_split') ||
+    avatar.includes('b4wo') ||
+    avatar.includes('8ufd') ||
+    avatar.includes('6fnq') ||
+    avatar.includes('bes7') ||
+    avatar.includes('koiz') ||
+    avatar.includes('mnrg') ||
+    avatar.includes('ppgc') ||
+    avatar.includes('u3jz') ||
+    avatar.includes('cloudinary.com')
+  ) {
+    return true;
+  }
+  return false;
+};
+
 export interface PersonalInfoType {
   name: string;
   title: string;
@@ -91,11 +122,35 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           if (!parsed.shortBio || currentShortBio === oldShortBio1.trim() || currentShortBio === oldShortBio2.trim() || currentShortBio === oldShortBio3.trim() || currentShortBio === oldShortBio4.trim() || currentShortBio === oldShortBio5.trim() || currentShortBio === oldShortBio6.trim() || currentShortBio === oldShortBio7.trim()) {
             parsed.shortBio = PERSONAL_INFO.shortBio;
           }
-          if (parsed.avatar && (parsed.avatar.includes('avatar_sabbrn.png') || parsed.avatar.includes('avatar_u0ajsb') || parsed.avatar.includes('avatar_sabbrn') || parsed.avatar.includes('photo_srai3m') || parsed.avatar.includes('photo_czmebs') || parsed.avatar.includes('photo-split-bg-clearer') || parsed.avatar.includes('photo_glow') || parsed.avatar.includes('final_vertical_split') || parsed.avatar.includes('b4wo') || parsed.avatar.includes('8ufd') || parsed.avatar.includes('6fnq') || parsed.avatar.includes('bes7') || parsed.avatar.includes('koiz') || parsed.avatar.includes('mnrg'))) {
+          if (
+            !parsed.avatar ||
+            (typeof parsed.avatar === 'string' && (
+              parsed.avatar.includes('unsplash.com') ||
+              parsed.avatar.includes('djngfp') ||
+              parsed.avatar.includes('xtpqmk') ||
+              parsed.avatar.includes('rxwkq9') ||
+              (parsed.avatar.includes('cloudinary.com') && !parsed.avatar.includes('lnnrxf'))
+            ))
+          ) {
+            parsed.avatar = PERSONAL_INFO.avatar;
+          }
+          if (isInvalidAvatar(parsed.avatar)) {
             parsed.avatar = PERSONAL_INFO.avatar;
           }
           const merged = { ...PERSONAL_INFO, ...parsed };
-          if (!merged.avatar || merged.avatar === '/avatar.jpg' || merged.avatar === '/avatar.png' || merged.avatar.includes('avatar_sabbrn.png') || merged.avatar.includes('avatar_sabbrn') || merged.avatar.includes('photo_srai3m') || merged.avatar.includes('photo_czmebs') || merged.avatar.includes('photo-split-bg-clearer') || merged.avatar.includes('photo_glow') || merged.avatar.includes('final_vertical_split') || merged.avatar.includes('b4wo') || merged.avatar.includes('8ufd') || merged.avatar.includes('6fnq') || merged.avatar.includes('bes7') || merged.avatar.includes('koiz') || merged.avatar.includes('mnrg')) {
+          if (
+            !merged.avatar ||
+            (typeof merged.avatar === 'string' && (
+              merged.avatar.includes('unsplash.com') ||
+              merged.avatar.includes('djngfp') ||
+              merged.avatar.includes('xtpqmk') ||
+              merged.avatar.includes('rxwkq9') ||
+              (merged.avatar.includes('cloudinary.com') && !merged.avatar.includes('lnnrxf'))
+            ))
+          ) {
+            merged.avatar = PERSONAL_INFO.avatar;
+          }
+          if (isInvalidAvatar(merged.avatar)) {
             merged.avatar = PERSONAL_INFO.avatar;
           }
           merged.isAvatarLocked = true;
@@ -215,7 +270,19 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           if (remoteData) {
             if (remoteData.personalInfo) {
               const mergedInfo = { ...PERSONAL_INFO, ...remoteData.personalInfo };
-              if (!mergedInfo.avatar || mergedInfo.avatar === '/avatar.jpg' || mergedInfo.avatar === '/avatar.png' || mergedInfo.avatar.includes('avatar_sabbrn.png') || mergedInfo.avatar.includes('avatar_sabbrn') || mergedInfo.avatar.includes('photo_srai3m') || mergedInfo.avatar.includes('photo_czmebs') || mergedInfo.avatar.includes('photo-split-bg-clearer') || mergedInfo.avatar.includes('photo_glow') || mergedInfo.avatar.includes('final_vertical_split') || mergedInfo.avatar.includes('b4wo') || mergedInfo.avatar.includes('8ufd') || mergedInfo.avatar.includes('6fnq') || mergedInfo.avatar.includes('bes7') || mergedInfo.avatar.includes('koiz') || mergedInfo.avatar.includes('mnrg')) {
+              if (
+                !mergedInfo.avatar ||
+                (typeof mergedInfo.avatar === 'string' && (
+                  mergedInfo.avatar.includes('unsplash.com') ||
+                  mergedInfo.avatar.includes('djngfp') ||
+                  mergedInfo.avatar.includes('xtpqmk') ||
+                  mergedInfo.avatar.includes('rxwkq9') ||
+                  (mergedInfo.avatar.includes('cloudinary.com') && !mergedInfo.avatar.includes('lnnrxf'))
+                ))
+              ) {
+                mergedInfo.avatar = PERSONAL_INFO.avatar;
+              }
+              if (isInvalidAvatar(mergedInfo.avatar)) {
                 mergedInfo.avatar = PERSONAL_INFO.avatar;
               }
               mergedInfo.isAvatarLocked = true;
