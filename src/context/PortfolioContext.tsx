@@ -7,7 +7,7 @@ const isInvalidAvatar = (avatar: string | undefined): boolean => {
   if (avatar === '/avatar.jpg' || avatar === '/avatar.png') return true;
   
   // Exclude valid user headshots on Cloudinary
-  if (avatar.includes('varxn2') || avatar.includes('rkdrlt')) return false;
+  if (avatar.includes('varxn2') || avatar.includes('rkdrlt') || avatar.includes('z0fkzz')) return false;
   
   // Unwanted placeholder/unfocused patterns
   if (
@@ -124,7 +124,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           }
           if (
             !parsed.avatar ||
-            (typeof parsed.avatar === 'string' && !parsed.avatar.includes('varxn2') && !parsed.avatar.includes('rkdrlt')) ||
+            (typeof parsed.avatar === 'string' && !parsed.avatar.includes('varxn2') && !parsed.avatar.includes('rkdrlt') && !parsed.avatar.includes('z0fkzz')) ||
             isInvalidAvatar(parsed.avatar)
           ) {
             parsed.avatar = PERSONAL_INFO.avatar;
@@ -132,7 +132,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           const merged = { ...PERSONAL_INFO, ...parsed };
           if (
             !merged.avatar ||
-            (typeof merged.avatar === 'string' && !merged.avatar.includes('varxn2') && !merged.avatar.includes('rkdrlt')) ||
+            (typeof merged.avatar === 'string' && !merged.avatar.includes('varxn2') && !merged.avatar.includes('rkdrlt') && !merged.avatar.includes('z0fkzz')) ||
             isInvalidAvatar(merged.avatar)
           ) {
             merged.avatar = PERSONAL_INFO.avatar;
@@ -256,7 +256,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
               const mergedInfo = { ...PERSONAL_INFO, ...remoteData.personalInfo };
               if (
                 !mergedInfo.avatar ||
-                (typeof mergedInfo.avatar === 'string' && !mergedInfo.avatar.includes('varxn2') && !mergedInfo.avatar.includes('rkdrlt')) ||
+                (typeof mergedInfo.avatar === 'string' && !mergedInfo.avatar.includes('varxn2') && !mergedInfo.avatar.includes('rkdrlt') && !mergedInfo.avatar.includes('z0fkzz')) ||
                 isInvalidAvatar(mergedInfo.avatar)
               ) {
                 mergedInfo.avatar = PERSONAL_INFO.avatar;
