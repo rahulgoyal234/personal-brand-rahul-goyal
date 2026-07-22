@@ -7,7 +7,7 @@ const isInvalidAvatar = (avatar: string | undefined): boolean => {
   if (avatar === '/avatar.jpg' || avatar === '/avatar.png') return true;
   
   // Exclude valid user headshots on Cloudinary
-  if (avatar.includes('djngfp') || avatar.includes('xtpqmk') || avatar.includes('rxwkq9') || avatar.includes('lnnrxf') || avatar.includes('a1xulb') || avatar.includes('nlzr5a')) return false;
+  if (avatar.includes('varxn2') || avatar.includes('rkdrlt')) return false;
   
   // Unwanted placeholder/unfocused patterns
   if (
@@ -124,33 +124,17 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
           }
           if (
             !parsed.avatar ||
-            (typeof parsed.avatar === 'string' && (
-              parsed.avatar.includes('unsplash.com') ||
-              parsed.avatar.includes('djngfp') ||
-              parsed.avatar.includes('xtpqmk') ||
-              parsed.avatar.includes('rxwkq9') ||
-              (parsed.avatar.includes('cloudinary.com') && !parsed.avatar.includes('lnnrxf') && !parsed.avatar.includes('a1xulb') && !parsed.avatar.includes('nlzr5a'))
-            ))
+            (typeof parsed.avatar === 'string' && !parsed.avatar.includes('varxn2') && !parsed.avatar.includes('rkdrlt')) ||
+            isInvalidAvatar(parsed.avatar)
           ) {
-            parsed.avatar = PERSONAL_INFO.avatar;
-          }
-          if (isInvalidAvatar(parsed.avatar)) {
             parsed.avatar = PERSONAL_INFO.avatar;
           }
           const merged = { ...PERSONAL_INFO, ...parsed };
           if (
             !merged.avatar ||
-            (typeof merged.avatar === 'string' && (
-              merged.avatar.includes('unsplash.com') ||
-              merged.avatar.includes('djngfp') ||
-              merged.avatar.includes('xtpqmk') ||
-              merged.avatar.includes('rxwkq9') ||
-              (merged.avatar.includes('cloudinary.com') && !merged.avatar.includes('lnnrxf') && !merged.avatar.includes('a1xulb') && !merged.avatar.includes('nlzr5a'))
-            ))
+            (typeof merged.avatar === 'string' && !merged.avatar.includes('varxn2') && !merged.avatar.includes('rkdrlt')) ||
+            isInvalidAvatar(merged.avatar)
           ) {
-            merged.avatar = PERSONAL_INFO.avatar;
-          }
-          if (isInvalidAvatar(merged.avatar)) {
             merged.avatar = PERSONAL_INFO.avatar;
           }
           merged.isAvatarLocked = true;
@@ -272,17 +256,9 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
               const mergedInfo = { ...PERSONAL_INFO, ...remoteData.personalInfo };
               if (
                 !mergedInfo.avatar ||
-                (typeof mergedInfo.avatar === 'string' && (
-                  mergedInfo.avatar.includes('unsplash.com') ||
-                  mergedInfo.avatar.includes('djngfp') ||
-                  mergedInfo.avatar.includes('xtpqmk') ||
-                  mergedInfo.avatar.includes('rxwkq9') ||
-                  (mergedInfo.avatar.includes('cloudinary.com') && !mergedInfo.avatar.includes('lnnrxf') && !mergedInfo.avatar.includes('a1xulb') && !mergedInfo.avatar.includes('nlzr5a'))
-                ))
+                (typeof mergedInfo.avatar === 'string' && !mergedInfo.avatar.includes('varxn2') && !mergedInfo.avatar.includes('rkdrlt')) ||
+                isInvalidAvatar(mergedInfo.avatar)
               ) {
-                mergedInfo.avatar = PERSONAL_INFO.avatar;
-              }
-              if (isInvalidAvatar(mergedInfo.avatar)) {
                 mergedInfo.avatar = PERSONAL_INFO.avatar;
               }
               mergedInfo.isAvatarLocked = true;
