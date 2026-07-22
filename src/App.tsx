@@ -94,7 +94,7 @@ export default function App() {
                   <img 
                     src={personalInfo.avatar && !personalInfo.avatar.startsWith('data:') ? `${personalInfo.avatar}${personalInfo.avatar.includes('?') ? '&' : '?'}v=${Date.now()}` : personalInfo.avatar} 
                     alt="" 
-                    className="w-full h-full object-cover object-center scale-[1.25] translate-y-[5.5%]"
+                    className="w-full h-full object-cover object-center"
                     style={{ objectPosition: 'center', objectFit: 'cover' }}
                     referrerPolicy="no-referrer"
                     onError={(e) => {

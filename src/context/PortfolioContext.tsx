@@ -7,7 +7,7 @@ const isInvalidAvatar = (avatar: string | undefined): boolean => {
   if (avatar === '/avatar.jpg' || avatar === '/avatar.png') return true;
   
   // Exclude valid user headshots on Cloudinary
-  if (avatar.includes('djngfp') || avatar.includes('xtpqmk') || avatar.includes('rxwkq9') || avatar.includes('lnnrxf')) return false;
+  if (avatar.includes('djngfp') || avatar.includes('xtpqmk') || avatar.includes('rxwkq9') || avatar.includes('lnnrxf') || avatar.includes('a1xulb') || avatar.includes('nlzr5a')) return false;
   
   // Unwanted placeholder/unfocused patterns
   if (
@@ -129,7 +129,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
               parsed.avatar.includes('djngfp') ||
               parsed.avatar.includes('xtpqmk') ||
               parsed.avatar.includes('rxwkq9') ||
-              (parsed.avatar.includes('cloudinary.com') && !parsed.avatar.includes('lnnrxf'))
+              (parsed.avatar.includes('cloudinary.com') && !parsed.avatar.includes('lnnrxf') && !parsed.avatar.includes('a1xulb') && !parsed.avatar.includes('nlzr5a'))
             ))
           ) {
             parsed.avatar = PERSONAL_INFO.avatar;
@@ -145,7 +145,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
               merged.avatar.includes('djngfp') ||
               merged.avatar.includes('xtpqmk') ||
               merged.avatar.includes('rxwkq9') ||
-              (merged.avatar.includes('cloudinary.com') && !merged.avatar.includes('lnnrxf'))
+              (merged.avatar.includes('cloudinary.com') && !merged.avatar.includes('lnnrxf') && !merged.avatar.includes('a1xulb') && !merged.avatar.includes('nlzr5a'))
             ))
           ) {
             merged.avatar = PERSONAL_INFO.avatar;
@@ -277,7 +277,7 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
                   mergedInfo.avatar.includes('djngfp') ||
                   mergedInfo.avatar.includes('xtpqmk') ||
                   mergedInfo.avatar.includes('rxwkq9') ||
-                  (mergedInfo.avatar.includes('cloudinary.com') && !mergedInfo.avatar.includes('lnnrxf'))
+                  (mergedInfo.avatar.includes('cloudinary.com') && !mergedInfo.avatar.includes('lnnrxf') && !mergedInfo.avatar.includes('a1xulb') && !mergedInfo.avatar.includes('nlzr5a'))
                 ))
               ) {
                 mergedInfo.avatar = PERSONAL_INFO.avatar;

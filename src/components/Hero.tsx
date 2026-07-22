@@ -115,7 +115,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                           setImgSrc('/api/avatar.jpg');
                         }
                       }}
-                      className="absolute inset-0 w-full h-full object-cover object-center block rounded-full scale-[1.25] translate-y-[5.5%] transition-transform duration-500"
+                      className="absolute inset-0 w-full h-full object-cover object-center block rounded-full transition-transform duration-500"
                       style={{ objectPosition: 'center', objectFit: 'cover' }}
                     />
                   ) : (
