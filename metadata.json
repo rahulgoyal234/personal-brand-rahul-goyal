@@ -1,6 +1,6 @@
 {
-  "name": "Rahul Goyal | Lawyer",
-  "description": "Official portfolio of Rahul Goyal, a lawyer and legal professional specializing in Corporate & Commercial Law, Intellectual Property (IP), and Data Protection. View articles, publications, and professional updates.",
+  "name": "Rahul Goyal (Lawyer)",
+  "description": "A lawyer who reads fine print so you don't have to.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
