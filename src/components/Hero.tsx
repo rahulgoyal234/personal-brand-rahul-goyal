@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Play, X, GraduationCap, ChevronDown, ChevronUp } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { motion, AnimatePresence } from 'motion/react';
-import LexHeroScene from './LexHeroScene';
 
 interface HeroProps {
   onContactClick: () => void;
@@ -115,18 +114,13 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             </div>
           </div>
 
-          {/* Right Column: Profile Photo & 3D Wireframe Scene */}
+          {/* Right Column: Profile Photo */}
           <div
             id="hero-portrait-container"
             className="flex-shrink-0 flex justify-end pt-2 sm:pt-4 relative"
           >
             <div className="portrait-wrap relative flex flex-col items-center">
               
-              {/* Lex Three.js 3D Wireframe Scene: Centered directly behind the portrait ring */}
-              <div className="absolute top-[50px] sm:top-[90px] md:top-[110px] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[220px] h-[220px] sm:w-[340px] sm:h-[340px] md:w-[420px] md:h-[420px] pointer-events-none select-none z-0 opacity-80">
-                <LexHeroScene />
-              </div>
-
               {/* Profile photo ring styled beautifully with solid background */}
               <div 
                 className="portrait-ring w-[100px] h-[100px] sm:w-[180px] sm:h-[180px] md:w-[220px] md:h-[220px] aspect-square rounded-full border border-ink/35 relative transition-all duration-500 cursor-default shadow-md z-10 bg-paper"
