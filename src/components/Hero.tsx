@@ -31,17 +31,41 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
       targetText = "Making the complex, comprehensible.";
     }
     
-    const words = targetText.trim().split(' ');
-    if (words.length < 2) return targetText;
-    
-    const lastWord = words[words.length - 1];
-    const mainText = words.slice(0, words.length - 1).join(' ');
+    const words = targetText.trim().split(/\s+/);
     
     return (
-      <>
-        {mainText}{' '}
-        <span className="italic font-serif font-light">{lastWord}</span>
-      </>
+      <span className="inline-block">
+        <style>{`
+          @keyframes wordFadeUp {
+            to {
+              opacity: 1;
+              transform: translateY(0);
+              filter: blur(0);
+            }
+          }
+          .animate-word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            filter: blur(3px);
+            animation: wordFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          }
+        `}</style>
+        {words.map((word, idx) => {
+          const isLast = idx === words.length - 1;
+          return (
+            <React.Fragment key={idx}>
+              <span
+                className={`animate-word ${isLast ? 'italic font-serif font-light' : ''}`}
+                style={{ animationDelay: `${0.8 + idx * 0.08}s` }}
+              >
+                {word}
+              </span>
+              {idx < words.length - 1 && ' '}
+            </React.Fragment>
+          );
+        })}
+      </span>
     );
   };
 
