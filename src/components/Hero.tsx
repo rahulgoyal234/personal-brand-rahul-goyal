@@ -75,18 +75,20 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
         className="absolute top-[-60px] right-[-100px] w-[520px] h-[520px] rounded-full border border-rule/40 pointer-events-none select-none z-0 hidden lg:block" 
       />
 
-      {/* Lex Three.js 3D Wireframe Scene */}
-      <div className="absolute top-[-20px] right-[-30px] md:top-[10px] md:right-[30px] w-[320px] h-[320px] sm:w-[400px] sm:h-[400px] md:w-[480px] md:h-[480px] pointer-events-none select-none z-0 hidden sm:block opacity-80">
-        <LexHeroScene />
-      </div>
-
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8 w-full relative z-10">
+        {/* Bespoke circular background wireframes aligned to content */}
+        <div 
+          className="absolute top-[-100px] right-[-60px] w-[500px] h-[500px] rounded-full border border-rule/50 pointer-events-none select-none z-0 hidden lg:block" 
+        />
+        <div 
+          className="absolute top-[-40px] right-[-20px] w-[500px] h-[500px] rounded-full border border-rule/30 pointer-events-none select-none z-0 hidden lg:block" 
+        />
         
         {/* Top Row: Info (Left) & Profile Photo (Right) - Side-by-side across all devices */}
         <div className="flex flex-row items-start justify-between gap-5 sm:gap-8 lg:gap-12 mb-6 w-full">
           
           {/* Left Column: Heading, Gold Rule, and Bio */}
-          <div className="flex-1 min-w-0 flex flex-col items-start text-left">
+          <div className="flex-1 min-w-0 flex flex-col items-start text-left relative z-10">
 
             <h1
               id="hero-heading"
@@ -113,15 +115,21 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             </div>
           </div>
 
-          {/* Right Column: Profile Photo */}
+          {/* Right Column: Profile Photo & 3D Wireframe Scene */}
           <div
             id="hero-portrait-container"
-            className="flex-shrink-0 flex justify-end pt-2 sm:pt-4"
+            className="flex-shrink-0 flex justify-end pt-2 sm:pt-4 relative"
           >
             <div className="portrait-wrap relative flex flex-col items-center">
-              {/* Profile photo ring styled beautifully */}
+              
+              {/* Lex Three.js 3D Wireframe Scene: Centered directly behind the portrait ring */}
+              <div className="absolute top-[50px] sm:top-[90px] md:top-[110px] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[220px] h-[220px] sm:w-[340px] sm:h-[340px] md:w-[420px] md:h-[420px] pointer-events-none select-none z-0 opacity-80">
+                <LexHeroScene />
+              </div>
+
+              {/* Profile photo ring styled beautifully with solid background */}
               <div 
-                className="portrait-ring w-[100px] h-[100px] sm:w-[180px] sm:h-[180px] md:w-[220px] md:h-[220px] aspect-square rounded-full border border-ink/35 relative transition-all duration-500 cursor-default shadow-md"
+                className="portrait-ring w-[100px] h-[100px] sm:w-[180px] sm:h-[180px] md:w-[220px] md:h-[220px] aspect-square rounded-full border border-ink/35 relative transition-all duration-500 cursor-default shadow-md z-10 bg-paper"
               >
                 {/* Outer concentric decorative border outline */}
                 <div className="absolute inset-[-6px] sm:inset-[-10px] rounded-full border border-rule pointer-events-none" />
@@ -153,7 +161,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               </div>
 
               {/* Portrait Label Caption */}
-              <div className="portrait-caption mt-4 sm:mt-6 font-mono text-[9px] sm:text-[11px] tracking-[0.1em] uppercase text-brass font-bold text-center px-2 max-w-full leading-normal whitespace-nowrap">
+              <div className="portrait-caption mt-4 sm:mt-6 font-mono text-[9px] sm:text-[11px] tracking-[0.1em] uppercase text-brass font-bold text-center px-2 max-w-full leading-normal whitespace-nowrap z-10 relative bg-paper/80 backdrop-blur-xs py-0.5 rounded-[2px]">
                 {personalInfo.name} | {personalInfo.title}
               </div>
 
