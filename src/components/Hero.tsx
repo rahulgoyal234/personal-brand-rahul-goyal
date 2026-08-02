@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Play, X, GraduationCap, ChevronDown, ChevronUp } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { motion, AnimatePresence } from 'motion/react';
+import LexHeroScene from './LexHeroScene';
 
 interface HeroProps {
   onContactClick: () => void;
@@ -15,12 +16,20 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
   const [avatarVersion, setAvatarVersion] = useState(() => Date.now());
   const [imgSrc, setImgSrc] = useState(personalInfo?.avatar || '');
   const [isEducationOpen, setIsEducationOpen] = useState(false);
+  const [isRevealed, setIsRevealed] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setAvatarLoadError(false);
     setAvatarVersion(Date.now());
     setImgSrc(personalInfo?.avatar || '');
   }, [personalInfo?.avatar]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsRevealed(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const renderFormattedHeading = (text: string) => {
     const defaultText = "Making the complex, comprehensible.";
@@ -35,29 +44,13 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
     
     return (
       <span className="inline-block">
-        <style>{`
-          @keyframes wordFadeUp {
-            to {
-              opacity: 1;
-              transform: translateY(0);
-              filter: blur(0);
-            }
-          }
-          .animate-word {
-            display: inline-block;
-            opacity: 0;
-            transform: translateY(20px);
-            filter: blur(3px);
-            animation: wordFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-          }
-        `}</style>
         {words.map((word, idx) => {
           const isLast = idx === words.length - 1;
           return (
             <React.Fragment key={idx}>
               <span
-                className={`animate-word ${isLast ? 'italic font-serif font-light' : ''}`}
-                style={{ animationDelay: `${0.8 + idx * 0.08}s` }}
+                className={`lex-word ${isRevealed ? 'in' : ''} ${isLast ? 'italic font-serif font-light text-brass' : ''}`}
+                style={{ transitionDelay: `${500 + idx * 90}ms` }}
               >
                 {word}
               </span>
@@ -74,7 +67,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
       id="about"
       className="relative min-h-[90vh] flex items-center justify-center pt-36 pb-20 md:py-48 overflow-hidden bg-transparent scroll-mt-20"
     >
-      {/* Bespoke circular background wireframes from your design */}
+      {/* Bespoke circular background wireframes */}
       <div 
         className="absolute top-[-120px] right-[-160px] w-[520px] h-[520px] rounded-full border border-rule/60 pointer-events-none select-none z-0 hidden lg:block" 
       />
@@ -82,13 +75,19 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
         className="absolute top-[-60px] right-[-100px] w-[520px] h-[520px] rounded-full border border-rule/40 pointer-events-none select-none z-0 hidden lg:block" 
       />
 
+      {/* Lex Three.js 3D Wireframe Scene */}
+      <div className="absolute top-[-20px] right-[-30px] md:top-[10px] md:right-[30px] w-[320px] h-[320px] sm:w-[400px] sm:h-[400px] md:w-[480px] md:h-[480px] pointer-events-none select-none z-0 hidden sm:block opacity-80">
+        <LexHeroScene />
+      </div>
+
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8 w-full relative z-10">
         
         {/* Top Row: Info (Left) & Profile Photo (Right) - Side-by-side across all devices */}
         <div className="flex flex-row items-start justify-between gap-5 sm:gap-8 lg:gap-12 mb-6 w-full">
           
-          {/* Left Column: Heading and Bio */}
+          {/* Left Column: Heading, Gold Rule, and Bio */}
           <div className="flex-1 min-w-0 flex flex-col items-start text-left">
+
             <h1
               id="hero-heading"
               className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-[1.08] text-ink"
@@ -96,9 +95,12 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               {renderFormattedHeading(personalInfo.shortBio)}
             </h1>
 
+            {/* Expanding Gold Gradient Rule Line */}
+            <div className={`lex-gold-rule my-4 sm:my-6 ${isRevealed ? 'in' : ''}`} />
+
             <div
               id="hero-bio"
-              className="text-ink-soft text-[14px] sm:text-[16px] md:text-[17px] leading-relaxed max-w-[720px] mt-4 sm:mt-6 font-sans space-y-3 sm:space-y-4"
+              className={`lex-sub text-ink-soft text-[14px] sm:text-[16px] md:text-[17px] leading-relaxed max-w-[720px] font-sans space-y-3 sm:space-y-4 ${isRevealed ? 'in' : ''}`}
             >
               {(personalInfo.bio || '').split('\n').map((para, i) => {
                 if (!para.trim()) return null;
@@ -216,8 +218,8 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
 
         </div>
 
-        {/* Action buttons (placed below the text/photo row but above cover photo) */}
-        <div id="hero-actions" className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 w-full md:w-auto mb-8">
+        {/* Action buttons with Lex entrance animation */}
+        <div id="hero-actions" className={`lex-cta ${isRevealed ? 'in' : ''} flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 w-full md:w-auto mb-8`}>
           <button
             id="hero-cta-portfolio"
             onClick={onPortfolioClick}
@@ -242,7 +244,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             onClick={onContactClick}
             className="w-full sm:w-auto justify-center font-mono text-[11px] sm:text-[13px] md:text-[13.5px] tracking-wider px-[14px] sm:px-[22px] py-2.5 sm:py-3.5 border border-ink bg-transparent text-ink hover:text-paper hover:bg-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold"
           >
-            Get in Touch
+            Get in Touch &nbsp;→
           </button>
         </div>
 
