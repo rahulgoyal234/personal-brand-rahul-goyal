@@ -29,6 +29,20 @@ export default function CursorRing() {
     const ring = ringRef.current;
     const dot = dotRef.current;
 
+    // Detect touch/mobile devices or narrow viewports (<768px) to completely disable the custom cursor ring.
+    const isMobileOrTouch = 
+      typeof window !== 'undefined' && 
+      (('ontouchstart' in window) || 
+       (navigator.maxTouchPoints > 0) || 
+       (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
+       (window.innerWidth < 768));
+
+    if (isMobileOrTouch) {
+      if (ring) ring.style.display = 'none';
+      if (dot) dot.style.display = 'none';
+      return;
+    }
+
     // Apply color and aesthetic styling based on visual states
     const updateVisualStyles = () => {
       const isHovered = isHoveredRef.current;
@@ -359,22 +373,22 @@ export default function CursorRing() {
 
   return (
     <>
-      {/* Outer Easing Trailing Ring */}
+      {/* Outer Easing Trailing Ring - Desktop fine pointer only */}
       <div
         ref={ringRef}
         id="custom-cursor-ring"
-        className="fixed top-0 left-0 w-8 h-8 rounded-full border-[1px] border-brass/50 bg-transparent pointer-events-none z-[9999] will-change-transform"
+        className="hidden md:block fixed top-0 left-0 w-8 h-8 rounded-full border-[1px] border-brass/50 bg-transparent pointer-events-none z-[9999] will-change-transform"
         style={{
           opacity: 0,
           transition: 'opacity 0.25s ease-out, border-color 0.2s ease-out, background-color 0.2s ease-out, border-width 0.2s ease-out',
         }}
       />
 
-      {/* Precise Core Center Dot */}
+      {/* Precise Core Center Dot - Desktop fine pointer only */}
       <div
         ref={dotRef}
         id="custom-cursor-dot"
-        className="fixed top-0 left-0 w-2 h-2 rounded-full pointer-events-none z-[9999] bg-ink dark:bg-stone-100 will-change-transform"
+        className="hidden md:block fixed top-0 left-0 w-2 h-2 rounded-full pointer-events-none z-[9999] bg-ink dark:bg-stone-100 will-change-transform"
         style={{
           opacity: 0,
           transition: 'opacity 0.2s ease-out, background-color 0.15s ease-out',
