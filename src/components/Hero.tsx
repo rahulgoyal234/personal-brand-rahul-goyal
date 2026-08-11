@@ -66,21 +66,21 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
       id="about"
       className="relative min-h-[90vh] flex items-center justify-center pt-36 pb-20 md:py-48 overflow-hidden bg-transparent scroll-mt-20"
     >
-      {/* Bespoke circular background wireframes */}
+      {/* Bespoke circular background wireframes visible across all screen sizes */}
       <div 
-        className="absolute top-[-120px] right-[-160px] w-[520px] h-[520px] rounded-full border border-rule/60 pointer-events-none select-none z-0 hidden lg:block" 
+        className="absolute top-[-40px] right-[-80px] sm:top-[-80px] sm:right-[-120px] lg:top-[-120px] lg:right-[-160px] w-[260px] h-[260px] sm:w-[400px] sm:h-[400px] lg:w-[520px] lg:h-[520px] rounded-full border border-rule/60 pointer-events-none select-none z-0 block" 
       />
       <div 
-        className="absolute top-[-60px] right-[-100px] w-[520px] h-[520px] rounded-full border border-rule/40 pointer-events-none select-none z-0 hidden lg:block" 
+        className="absolute top-[-20px] right-[-40px] sm:top-[-40px] sm:right-[-70px] lg:top-[-60px] lg:right-[-100px] w-[260px] h-[260px] sm:w-[400px] sm:h-[400px] lg:w-[520px] lg:h-[520px] rounded-full border border-rule/40 pointer-events-none select-none z-0 block" 
       />
 
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8 w-full relative z-10">
         {/* Bespoke circular background wireframes aligned to content */}
         <div 
-          className="absolute top-[-100px] right-[-60px] w-[500px] h-[500px] rounded-full border border-rule/50 pointer-events-none select-none z-0 hidden lg:block" 
+          className="absolute top-[-20px] right-[-30px] sm:top-[-60px] sm:right-[-40px] lg:top-[-100px] lg:right-[-60px] w-[240px] h-[240px] sm:w-[380px] sm:h-[380px] lg:w-[500px] lg:h-[500px] rounded-full border border-rule/50 pointer-events-none select-none z-0 block" 
         />
         <div 
-          className="absolute top-[-40px] right-[-20px] w-[500px] h-[500px] rounded-full border border-rule/30 pointer-events-none select-none z-0 hidden lg:block" 
+          className="absolute top-[10px] right-[-10px] sm:top-[-20px] sm:right-[-15px] lg:top-[-40px] lg:right-[-20px] w-[240px] h-[240px] sm:w-[380px] sm:h-[380px] lg:w-[500px] lg:h-[500px] rounded-full border border-rule/30 pointer-events-none select-none z-0 block" 
         />
         
         {/* Top Row: Info (Left) & Profile Photo (Right) - Side-by-side across all devices */}
