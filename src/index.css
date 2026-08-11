@@ -51,30 +51,6 @@
   background: #A9803F;
 }
 
-/* Hide browser default cursor on desktop devices with precise pointer to show only custom ring cursor */
-@media (pointer: fine) and (min-width: 768px) {
-  body, 
-  a, 
-  button, 
-  input, 
-  textarea, 
-  select, 
-  [role="button"],
-  [role="link"],
-  .cursor-pointer,
-  .cursor-pointer * {
-    cursor: none !important;
-  }
-}
-
-/* Completely hide custom cursor ring elements on mobile view / coarse pointer screens */
-@media (pointer: coarse), (max-width: 767px) {
-  #custom-cursor-ring,
-  #custom-cursor-dot {
-    display: none !important;
-  }
-}
-
 /* Lex Hero Entrance Animation Styles */
 .lex-eyebrow {
   opacity: 0;
