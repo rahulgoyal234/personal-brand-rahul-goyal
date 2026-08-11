@@ -1,11 +1,45 @@
-import React, { useState } from 'react';
-import { ChevronRight } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ChevronRight, Search, X } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 
 export default function Portfolio() {
   const { projects } = usePortfolio();
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const [expandedAbstracts, setExpandedAbstracts] = useState<Record<string, boolean>>({});
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Focus search input when search bar opens
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isSearchOpen]);
+
+  // Keyboard shortcut listener for '/' to focus search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key === '/' &&
+        document.activeElement?.tagName !== 'INPUT' &&
+        document.activeElement?.tagName !== 'TEXTAREA'
+      ) {
+        e.preventDefault();
+        setIsSearchOpen(true);
+        setTimeout(() => searchInputRef.current?.focus(), 50);
+      } else if (e.key === 'Escape' && isSearchOpen) {
+        if (searchQuery) {
+          setSearchQuery('');
+        } else {
+          setIsSearchOpen(false);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isSearchOpen, searchQuery]);
 
   // Compute unique categories dynamically from active projects
   const categories: string[] = ['All', ...Array.from(new Set<string>(projects.map((p) => p.category)))];
@@ -13,10 +47,24 @@ export default function Portfolio() {
   // Reset selected category if it no longer exists
   const currentCategory = categories.includes(selectedCategory) ? selectedCategory : 'All';
 
-  // Categorize or filter items
+  // Categorize & Search filter items
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  
   const filteredProjects = projects.filter((project) => {
-    if (currentCategory === 'All') return true;
-    return project.category === currentCategory;
+    // Category match
+    const categoryMatches = currentCategory === 'All' || project.category === currentCategory;
+    if (!categoryMatches) return false;
+
+    // Search query match across title, description, category, tags, and long description
+    if (!normalizedQuery) return true;
+
+    const inTitle = project.title.toLowerCase().includes(normalizedQuery);
+    const inDesc = project.description.toLowerCase().includes(normalizedQuery);
+    const inCategory = project.category.toLowerCase().includes(normalizedQuery);
+    const inTags = project.tags.some((tag) => tag.toLowerCase().includes(normalizedQuery));
+    const inLongDesc = (project.longDescription || '').toLowerCase().includes(normalizedQuery);
+
+    return inTitle || inDesc || inCategory || inTags || inLongDesc;
   });
 
   const toggleAbstract = (id: string, e: React.MouseEvent) => {
@@ -25,46 +73,159 @@ export default function Portfolio() {
     setExpandedAbstracts(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const clearSearch = () => {
+    setSearchQuery('');
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  };
+
   return (
     <section id="portfolio" className="py-28 bg-paper-deep/50 backdrop-blur-[6px] border-t border-rule border-b border-rule scroll-mt-20 relative">
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8">
         
-        {/* Writings Section Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 gap-8">
+        {/* Reading Room Section Header */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-10 gap-8">
           <div className="space-y-3">
-            <h2 className="font-serif text-[38px] font-semibold text-ink leading-tight">
-              Writings
-            </h2>
+            <div className="flex items-center gap-4 flex-wrap">
+              <h2 className="font-serif text-[38px] font-semibold text-ink leading-tight">
+                Reading Room
+              </h2>
+            </div>
             <p className="text-ink-soft text-sm sm:text-[15px] leading-relaxed max-w-[480px]">
               A carefully curated selection of peer-reviewed research papers, active policy articles, and academic columns.
             </p>
           </div>
 
-          {/* IBM Plex Mono Style Category Buttons */}
-          <div className="flex flex-wrap gap-2 pt-2 lg:pt-0">
-            {categories.map((category) => (
-              <button
-                id={`portfolio-tab-${category.toLowerCase().replace(/\s+/g, '-')}`}
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`font-mono text-[11px] uppercase tracking-wider px-3.5 py-1.5 border rounded-full transition-all duration-200 font-semibold cursor-pointer ${
-                  currentCategory === category
-                    ? 'border-ink bg-ink text-paper'
-                    : 'border-rule text-ink-soft bg-transparent hover:border-ink hover:text-ink'
-                }`}
-              >
-                {category}
-              </button>
-            ))}
+          {/* Controls: Search Button & Category Filters */}
+          <div className="flex flex-col items-start lg:items-end gap-4 w-full lg:w-auto">
+            
+            <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+              {/* Search Toggle / Input Button */}
+              {!isSearchOpen ? (
+                <button
+                  id="blogs-search-toggle-btn"
+                  onClick={() => setIsSearchOpen(true)}
+                  className="font-mono text-[11px] uppercase tracking-wider px-3.5 py-1.5 border border-rule hover:border-ink text-ink-soft hover:text-ink bg-paper rounded-full transition-all duration-200 font-semibold cursor-pointer flex items-center gap-2 group shadow-xs"
+                  title="Search Reading Room (Press '/')"
+                >
+                  <Search className="w-3.5 h-3.5 text-brass group-hover:text-ink transition-colors" />
+                  <span>Search Reading Room</span>
+                  <span className="bg-paper-deep text-ink-soft border border-rule text-[9px] px-1.5 py-0.2 rounded font-mono ml-1">
+                    /
+                  </span>
+                </button>
+              ) : (
+                <div className="relative flex items-center w-full sm:w-[320px] animate-fadeIn">
+                  <Search className="w-4 h-4 text-brass absolute left-3 pointer-events-none" />
+                  <input
+                    ref={searchInputRef}
+                    id="blogs-search-input"
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search titles, topics, keywords..."
+                    className="w-full font-sans text-xs sm:text-sm pl-9 pr-8 py-1.5 bg-paper border border-ink text-ink placeholder:text-ink-soft/60 rounded-full focus:outline-none focus:ring-1 focus:ring-brass shadow-xs transition-all"
+                  />
+                  {searchQuery ? (
+                    <button
+                      id="blogs-search-clear-btn"
+                      onClick={clearSearch}
+                      className="absolute right-2.5 text-ink-soft hover:text-ink p-1 cursor-pointer"
+                      title="Clear search"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  ) : (
+                    <button
+                      id="blogs-search-close-btn"
+                      onClick={() => {
+                        setIsSearchOpen(false);
+                        setSearchQuery('');
+                      }}
+                      className="absolute right-2.5 text-ink-soft hover:text-ink p-1 cursor-pointer"
+                      title="Close search"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Category Filter Pills */}
+              <div className="flex flex-wrap gap-2">
+                {categories.map((category) => (
+                  <button
+                    id={`portfolio-tab-${category.toLowerCase().replace(/\s+/g, '-')}`}
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={`font-mono text-[11px] uppercase tracking-wider px-3.5 py-1.5 border rounded-full transition-all duration-200 font-semibold cursor-pointer ${
+                      currentCategory === category
+                        ? 'border-ink bg-ink text-paper'
+                        : 'border-rule text-ink-soft bg-transparent hover:border-ink hover:text-ink'
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+            </div>
+
           </div>
         </div>
 
+        {/* Active Search Filter Badge */}
+        {searchQuery.trim() && (
+          <div className="mb-6 flex items-center justify-between bg-paper border border-rule/80 px-4 py-2.5 rounded-[2px]">
+            <div className="flex items-center gap-2 font-mono text-xs text-ink-soft">
+              <Search className="w-3.5 h-3.5 text-brass" />
+              <span>
+                Showing <strong className="text-ink font-bold">{filteredProjects.length}</strong> {filteredProjects.length === 1 ? 'entry' : 'entries'} for &ldquo;<span className="text-ink font-semibold">{searchQuery}</span>&rdquo;
+                {currentCategory !== 'All' && <span> in <span className="text-ink font-semibold">{currentCategory}</span></span>}
+              </span>
+            </div>
+            <button
+              id="clear-active-search-badge"
+              onClick={clearSearch}
+              className="font-mono text-[11px] uppercase tracking-wider text-brass hover:text-ink underline cursor-pointer ml-4 font-semibold"
+            >
+              Clear Search
+            </button>
+          </div>
+        )}
+
+        {/* Empty Search Results State */}
+        {filteredProjects.length === 0 && (
+          <div className="py-16 text-center bg-paper border border-dashed border-rule/80 rounded-[2px] my-6 px-6">
+            <Search className="w-8 h-8 text-brass mx-auto mb-3 opacity-60" />
+            <h3 className="font-serif text-lg font-semibold text-ink mb-1">
+              No entries found
+            </h3>
+            <p className="text-ink-soft text-sm font-sans max-w-md mx-auto mb-5">
+              We couldn&apos;t find any publications or articles matching &ldquo;{searchQuery}&rdquo; {currentCategory !== 'All' ? `under ${currentCategory}` : ''}.
+            </p>
+            <div className="flex items-center justify-center gap-3">
+              <button
+                id="empty-clear-search-btn"
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedCategory('All');
+                }}
+                className="font-mono text-xs text-paper bg-ink hover:bg-paper hover:text-ink border border-ink px-4 py-2 rounded-[2px] transition-all font-semibold uppercase tracking-wider cursor-pointer"
+              >
+                Reset All Filters
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Writings List (Academic & Typography-focused format) */}
-        <div
-          id="projects-list"
-          className="flex flex-col divide-y divide-rule/60 border-t border-b border-rule/60"
-        >
-          {filteredProjects.map((project) => {
+        {filteredProjects.length > 0 && (
+          <div
+            id="projects-list"
+            className="flex flex-col divide-y divide-rule/60 border-t border-b border-rule/60"
+          >
+            {filteredProjects.map((project) => {
             const isExpanded = !!expandedAbstracts[project.id];
             
             return (
@@ -197,6 +358,7 @@ export default function Portfolio() {
             );
           })}
         </div>
+        )}
       </div>
     </section>
   );

@@ -227,7 +227,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             onClick={onPortfolioClick}
             className="w-full sm:w-auto justify-center font-mono text-[11px] sm:text-[13px] md:text-[13.5px] tracking-wider px-[14px] sm:px-[22px] py-2.5 sm:py-3.5 border border-ink bg-ink text-paper hover:bg-paper hover:text-ink hover:border-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
           >
-            View Writings
+            View Reading Room
           </button>
 
           {personalInfo.introVideo && (

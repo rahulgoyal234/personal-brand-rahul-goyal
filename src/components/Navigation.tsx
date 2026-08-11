@@ -22,7 +22,7 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
 
   const navItems = [
     { id: 'about', label: 'About' },
-    { id: 'portfolio', label: 'Writings' },
+    { id: 'portfolio', label: 'Reading Room' },
   ];
 
   const handleNavClick = (id: string) => {

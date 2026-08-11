@@ -5,8 +5,8 @@ export default function CursorRing() {
   const dotRef = useRef<HTMLDivElement | null>(null);
 
   // Motion positions tracked in refs for ultimate 120Hz/60Hz sub-pixel fluidity
-  const mouseCoords = useRef({ x: 0, y: 0 });
-  const ringCoords = useRef({ x: 0, y: 0 });
+  const mouseCoords = useRef({ x: -100, y: -100 });
+  const ringCoords = useRef({ x: -100, y: -100 });
 
   // Semantic interaction states
   const isHoveredRef = useRef(false);
@@ -14,7 +14,7 @@ export default function CursorRing() {
   const isTouchRef = useRef(false);
   const isVisibleRef = useRef(false);
 
-  // JS-driven animated scales (resolves CSS-transform conflicts & browser translation lag)
+  // JS-driven animated scales
   const scaleRef = useRef(1);
   const targetScaleRef = useRef(1);
 
@@ -25,22 +25,7 @@ export default function CursorRing() {
     const ring = ringRef.current;
     const dot = dotRef.current;
 
-    // Detect touch-only devices or mobile screens to completely disable the custom cursor.
-    // This prevents cursor lag under physical fingers, improves scrolling fluidity, and saves CPU/battery.
-    const isTouchDevice = 
-      typeof window !== 'undefined' && 
-      (('ontouchstart' in window) || 
-       (navigator.maxTouchPoints > 0) || 
-       (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) ||
-       (window.matchMedia && window.matchMedia('(hover: none)').matches));
-
-    if (isTouchDevice) {
-      if (ring) ring.style.display = 'none';
-      if (dot) dot.style.display = 'none';
-      return;
-    }
-
-    // Apply color and aesthetic styling based on visual states without modifying transforms/sizes
+    // Apply color and aesthetic styling based on visual states
     const updateVisualStyles = () => {
       const isHovered = isHoveredRef.current;
       const isClicking = isClickingRef.current;
@@ -50,18 +35,18 @@ export default function CursorRing() {
       if (ring) {
         if (isHovered) {
           ring.style.borderColor = 'rgba(169, 128, 63, 0.9)'; // Rich Brass
-          ring.style.backgroundColor = 'rgba(169, 128, 63, 0.08)'; // Light brass tint
-          ring.style.borderWidth = '0.5px';
+          ring.style.backgroundColor = 'rgba(169, 128, 63, 0.12)'; // Light brass tint
+          ring.style.borderWidth = '1px';
         } else if (isClicking) {
           ring.style.borderColor = 'rgba(169, 128, 63, 0.95)';
-          ring.style.backgroundColor = 'rgba(169, 128, 63, 0.22)'; // Denser tint
-          ring.style.borderWidth = '0.75px';
+          ring.style.backgroundColor = 'rgba(169, 128, 63, 0.25)'; // Denser tint
+          ring.style.borderWidth = '1.5px';
         } else {
           ring.style.borderColor = isTouch 
-            ? 'rgba(169, 128, 63, 0.55)' 
-            : 'rgba(169, 128, 63, 0.45)';
-          ring.style.backgroundColor = 'transparent';
-          ring.style.borderWidth = '0.5px';
+            ? 'rgba(169, 128, 63, 0.75)' 
+            : 'rgba(169, 128, 63, 0.5)';
+          ring.style.backgroundColor = 'rgba(169, 128, 63, 0.05)';
+          ring.style.borderWidth = '1px';
         }
       }
 
@@ -72,10 +57,9 @@ export default function CursorRing() {
           dot.style.backgroundColor = 'rgba(169, 128, 63, 1)';
         } else {
           if (isTouch) {
-            dot.style.backgroundColor = 'rgba(169, 128, 63, 0.65)';
+            dot.style.backgroundColor = 'rgba(169, 128, 63, 0.85)';
           } else {
-            // Elegant Ink color depending on active dark theme
-            dot.style.backgroundColor = isDark ? '#f5f5f4' : '#1c1917';
+            dot.style.backgroundColor = isDark ? '#f5f5f4' : '#12213A';
           }
         }
       }
@@ -97,9 +81,17 @@ export default function CursorRing() {
       }
     };
 
-    // Scans element hierarchies on pointer events
+    // Scans element hierarchies on pointer / touch
     const scanActiveElement = (target: HTMLElement | null) => {
-      if (!target) return;
+      if (!target) {
+        if (isHoveredRef.current) {
+          isHoveredRef.current = false;
+          targetScaleRef.current = 1.0;
+          targetDotScaleRef.current = 1.0;
+          updateVisualStyles();
+        }
+        return;
+      }
 
       const isInteractive = 
         target.tagName === 'BUTTON' ||
@@ -116,52 +108,68 @@ export default function CursorRing() {
       if (isHoveredRef.current !== isInteractive) {
         isHoveredRef.current = isInteractive;
 
-        // Dynamic targets for JS animated scales
         if (isInteractive) {
           targetScaleRef.current = 1.5;
           targetDotScaleRef.current = 1.35;
         } else {
-          targetScaleRef.current = 1.0;
-          targetDotScaleRef.current = 1.0;
+          targetScaleRef.current = isClickingRef.current ? 0.85 : 1.0;
+          targetDotScaleRef.current = isClickingRef.current ? 0.8 : 1.0;
         }
 
         updateVisualStyles();
       }
     };
 
-    const onPointerMove = (e: PointerEvent) => {
-      if (e.pointerType === 'touch') return;
-      isTouchRef.current = false;
+    let touchFadeTimeout: number | null = null;
 
-      mouseCoords.current.x = e.clientX;
-      mouseCoords.current.y = e.clientY;
+    // Helper to process input location across mouse, pen, or touch
+    const handleLocation = (x: number, y: number, isTouchType: boolean, targetElement?: HTMLElement | null) => {
+      isTouchRef.current = isTouchType;
 
-      // Instantly snap starting frame coords on first movement to avoid slide-in from (0,0)
-      if (ringCoords.current.x === 0 && ringCoords.current.y === 0) {
-        ringCoords.current.x = e.clientX;
-        ringCoords.current.y = e.clientY;
+      // Snap ring coordinates if offscreen/first interaction to avoid sliding from corner
+      if (mouseCoords.current.x < 0 || ringCoords.current.x < 0) {
+        ringCoords.current.x = x;
+        ringCoords.current.y = y;
       }
+
+      mouseCoords.current.x = x;
+      mouseCoords.current.y = y;
 
       showCursor();
       updateVisualStyles();
-      scanActiveElement(e.target as HTMLElement);
+
+      if (targetElement) {
+        scanActiveElement(targetElement);
+      } else {
+        const el = document.elementFromPoint(x, y);
+        scanActiveElement(el as HTMLElement);
+      }
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      const isTouch = e.pointerType === 'touch';
+      handleLocation(e.clientX, e.clientY, isTouch, e.target as HTMLElement);
     };
 
     const onPointerDown = (e: PointerEvent) => {
-      if (e.pointerType === 'touch') return;
-      isTouchRef.current = false;
+      const isTouch = e.pointerType === 'touch';
+      isTouchRef.current = isTouch;
       isClickingRef.current = true;
+
+      if (touchFadeTimeout) {
+        clearTimeout(touchFadeTimeout);
+        touchFadeTimeout = null;
+      }
+
+      handleLocation(e.clientX, e.clientY, isTouch, e.target as HTMLElement);
 
       targetScaleRef.current = 0.75;
       targetDotScaleRef.current = 0.7;
-
-      showCursor();
       updateVisualStyles();
     };
 
     const onPointerUp = (e: PointerEvent) => {
-      if (e.pointerType === 'touch') return;
-      isTouchRef.current = false;
+      const isTouch = e.pointerType === 'touch';
       isClickingRef.current = false;
       
       if (isHoveredRef.current) {
@@ -173,17 +181,19 @@ export default function CursorRing() {
       }
 
       updateVisualStyles();
+
+      if (isTouch) {
+        touchFadeTimeout = window.setTimeout(() => {
+          if (!isClickingRef.current) {
+            hideCursor();
+          }
+        }, 750);
+      }
     };
 
-    const onPointerCancel = (e: PointerEvent) => {
-      if (e.pointerType === 'touch') return;
+    const onPointerCancel = () => {
       isClickingRef.current = false;
       hideCursor();
-    };
-
-    const onPointerOver = (e: PointerEvent) => {
-      if (e.pointerType === 'touch') return;
-      scanActiveElement(e.target as HTMLElement);
     };
 
     const onPointerLeaveWindow = () => {
@@ -193,41 +203,39 @@ export default function CursorRing() {
     };
 
     const onPointerEnterWindow = (e: PointerEvent) => {
-      if (e.pointerType !== 'touch') {
+      const isTouch = e.pointerType === 'touch';
+      if (!isTouch) {
         isTouchRef.current = false;
         showCursor();
       }
     };
 
+    // Touch event handlers for seamless touch/drag on mobile devices
     const onTouchStart = (e: TouchEvent) => {
-      isTouchRef.current = true;
-      isClickingRef.current = true;
       if (e.touches && e.touches[0]) {
         const touch = e.touches[0];
-        mouseCoords.current.x = touch.clientX;
-        mouseCoords.current.y = touch.clientY;
+        isTouchRef.current = true;
+        isClickingRef.current = true;
 
-        // Snaps both ring and dot instantly on touch start to eliminate lagging transitions from previous taps
-        ringCoords.current.x = touch.clientX;
-        ringCoords.current.y = touch.clientY;
+        if (touchFadeTimeout) {
+          clearTimeout(touchFadeTimeout);
+          touchFadeTimeout = null;
+        }
+
+        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+        handleLocation(touch.clientX, touch.clientY, true, el as HTMLElement);
+
+        targetScaleRef.current = 1.35;
+        targetDotScaleRef.current = 0.85;
+        updateVisualStyles();
       }
-      targetScaleRef.current = 1.3;
-      targetDotScaleRef.current = 0.8;
-      showCursor();
-      updateVisualStyles();
     };
 
     const onTouchMove = (e: TouchEvent) => {
-      isTouchRef.current = true;
       if (e.touches && e.touches[0]) {
         const touch = e.touches[0];
-        mouseCoords.current.x = touch.clientX;
-        mouseCoords.current.y = touch.clientY;
-        showCursor();
-        updateVisualStyles();
-
-        const element = document.elementFromPoint(touch.clientX, touch.clientY);
-        scanActiveElement(element as HTMLElement);
+        const el = document.elementFromPoint(touch.clientX, touch.clientY);
+        handleLocation(touch.clientX, touch.clientY, true, el as HTMLElement);
       }
     };
 
@@ -237,12 +245,12 @@ export default function CursorRing() {
       targetDotScaleRef.current = 1.0;
       updateVisualStyles();
 
-      // Smooth fade transition
-      setTimeout(() => {
+      if (touchFadeTimeout) clearTimeout(touchFadeTimeout);
+      touchFadeTimeout = window.setTimeout(() => {
         if (!isClickingRef.current) {
           hideCursor();
         }
-      }, 300);
+      }, 750);
     };
 
     const onTouchCancel = () => {
@@ -259,39 +267,39 @@ export default function CursorRing() {
     // Smooth update animation frame loop
     let animationFrameId: number;
     const updateLoop = () => {
-      // Lag-easing values:
-      // Touch is snappier; Hover has faster response so it adheres perfectly to targeted elements
+      // Snappier lag-easing value on touch to track finger without lagging far behind
       const ease = isTouchRef.current 
-        ? 0.35 
-        : (isHoveredRef.current ? 0.32 : 0.18);
+        ? 0.45 
+        : (isHoveredRef.current ? 0.35 : 0.22);
 
       const targetX = mouseCoords.current.x;
       const targetY = mouseCoords.current.y;
 
-      ringCoords.current.x += (targetX - ringCoords.current.x) * ease;
-      ringCoords.current.y += (targetY - ringCoords.current.y) * ease;
+      if (targetX >= 0 && targetY >= 0) {
+        ringCoords.current.x += (targetX - ringCoords.current.x) * ease;
+        ringCoords.current.y += (targetY - ringCoords.current.y) * ease;
 
-      // Smooth step scaling
-      scaleRef.current += (targetScaleRef.current - scaleRef.current) * 0.22;
-      dotScaleRef.current += (targetDotScaleRef.current - dotScaleRef.current) * 0.22;
+        // Smooth step scaling
+        scaleRef.current += (targetScaleRef.current - scaleRef.current) * 0.25;
+        dotScaleRef.current += (targetDotScaleRef.current - dotScaleRef.current) * 0.25;
 
-      // Absolute positioning via centering translates
-      if (ring) {
-        ring.style.transform = `translate3d(${ringCoords.current.x}px, ${ringCoords.current.y}px, 0) translate(-50%, -50%) scale(${scaleRef.current})`;
-      }
-      if (dot) {
-        dot.style.transform = `translate3d(${targetX}px, ${targetY}px, 0) translate(-50%, -50%) scale(${dotScaleRef.current})`;
+        // Absolute hardware-accelerated positioning via translate3d
+        if (ring) {
+          ring.style.transform = `translate3d(${ringCoords.current.x}px, ${ringCoords.current.y}px, 0) translate(-50%, -50%) scale(${scaleRef.current})`;
+        }
+        if (dot) {
+          dot.style.transform = `translate3d(${targetX}px, ${targetY}px, 0) translate(-50%, -50%) scale(${dotScaleRef.current})`;
+        }
       }
 
       animationFrameId = requestAnimationFrame(updateLoop);
     };
 
-    // Attach passive events for maximum performance
+    // Attach passive events for maximum performance & 60-120fps mobile scrolling
     window.addEventListener('pointermove', onPointerMove, { passive: true });
     window.addEventListener('pointerdown', onPointerDown, { passive: true });
     window.addEventListener('pointerup', onPointerUp, { passive: true });
     window.addEventListener('pointercancel', onPointerCancel, { passive: true });
-    window.addEventListener('pointerover', onPointerOver, { passive: true });
     window.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('touchmove', onTouchMove, { passive: true });
     window.addEventListener('touchend', onTouchEnd, { passive: true });
@@ -308,13 +316,13 @@ export default function CursorRing() {
       window.removeEventListener('pointerdown', onPointerDown);
       window.removeEventListener('pointerup', onPointerUp);
       window.removeEventListener('pointercancel', onPointerCancel);
-      window.removeEventListener('pointerover', onPointerOver);
       window.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('touchmove', onTouchMove);
       window.removeEventListener('touchend', onTouchEnd);
       window.removeEventListener('touchcancel', onTouchCancel);
       document.removeEventListener('pointerleave', onPointerLeaveWindow);
       document.removeEventListener('pointerenter', onPointerEnterWindow);
+      if (touchFadeTimeout) clearTimeout(touchFadeTimeout);
       observer.disconnect();
       cancelAnimationFrame(animationFrameId);
     };
@@ -322,28 +330,28 @@ export default function CursorRing() {
 
   return (
     <>
-      {/* Outer Easing Trailing Ring - Rendered across all devices */}
+      {/* Outer Easing Trailing Ring */}
       <div
         ref={ringRef}
         id="custom-cursor-ring"
-        className="fixed top-0 left-0 w-8 h-8 rounded-full border-[0.5px] border-brass/45 bg-transparent pointer-events-none z-[9999] will-change-transform"
+        className="fixed top-0 left-0 w-8 h-8 rounded-full border-[1px] border-brass/50 bg-transparent pointer-events-none z-[9999] will-change-transform"
         style={{
           opacity: 0,
-          borderWidth: '0.5px',
-          transition: 'opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease-out, background-color 0.2s ease-out, border-width 0.2s ease-out',
+          transition: 'opacity 0.25s ease-out, border-color 0.2s ease-out, background-color 0.2s ease-out, border-width 0.2s ease-out',
         }}
       />
 
-      {/* Precise Core Center Dot - Rendered across all devices */}
+      {/* Precise Core Center Dot */}
       <div
         ref={dotRef}
         id="custom-cursor-dot"
-        className="fixed top-0 left-0 w-2 h-2 rounded-full pointer-events-none z-[9999] bg-stone-900 dark:bg-stone-100 will-change-transform"
+        className="fixed top-0 left-0 w-2 h-2 rounded-full pointer-events-none z-[9999] bg-ink dark:bg-stone-100 will-change-transform"
         style={{
           opacity: 0,
-          transition: 'opacity 0.15s ease-out, background-color 0.15s ease-out',
+          transition: 'opacity 0.2s ease-out, background-color 0.15s ease-out',
         }}
       />
     </>
   );
 }
+
