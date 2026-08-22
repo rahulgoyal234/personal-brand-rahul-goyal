@@ -138,125 +138,11 @@ export default function ThreeDBackground() {
     const masterGroup = new THREE.Group();
     scene.add(masterGroup);
 
-    // 1. HERO MONUMENT: 3D Golden Armillary & Icosahedron Seal (Top Zone)
-    const monumentGroup = new THREE.Group();
-    monumentGroup.position.set(6, 2, -2);
-    masterGroup.add(monumentGroup);
-
-    // Central Multi-faceted Icosahedron Gem
-    const gemGeo = new THREE.IcosahedronGeometry(2.4, 0);
-    const gemMat = new THREE.MeshPhysicalMaterial({
-      color: currentTheme.mainColor,
-      emissive: currentTheme.mainColor,
-      emissiveIntensity: 0.15,
-      metalness: 0.85,
-      roughness: 0.22,
-      clearcoat: 0.8,
-      clearcoatRoughness: 0.1,
-      wireframe: wireframeMode,
-      transparent: true,
-      opacity: 0.92,
-    });
-    const gemMesh = new THREE.Mesh(gemGeo, gemMat);
-    monumentGroup.add(gemMesh);
-
-    // Outer Wireframe Cage
-    const cageGeo = new THREE.IcosahedronGeometry(3.1, 1);
-    const cageMat = new THREE.MeshBasicMaterial({
-      color: currentTheme.wireframeColor,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.35,
-    });
-    const cageMesh = new THREE.Mesh(cageGeo, cageMat);
-    monumentGroup.add(cageMesh);
-
-    // Rotating Brass Torus Rings
-    const ringMat = new THREE.MeshStandardMaterial({
-      color: currentTheme.accentColor,
-      metalness: 0.9,
-      roughness: 0.3,
-      wireframe: wireframeMode,
-    });
-    
-    const ring1 = new THREE.Mesh(new THREE.TorusGeometry(4.2, 0.06, 16, 100), ringMat);
-    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(4.8, 0.05, 16, 100), ringMat);
-    const ring3 = new THREE.Mesh(new THREE.TorusGeometry(5.4, 0.04, 16, 100), ringMat);
-    
-    ring1.rotation.x = Math.PI / 3;
-    ring2.rotation.y = Math.PI / 4;
-    ring3.rotation.z = Math.PI / 6;
-    
-    monumentGroup.add(ring1);
-    monumentGroup.add(ring2);
-    monumentGroup.add(ring3);
-
-    // 2. MIDDLE ZONE: 3D Floating Polyhedral Nodes & Torus Knot (Portfolio depth zone)
-    const middleGroup = new THREE.Group();
-    middleGroup.position.set(-6, -18, -4);
-    masterGroup.add(middleGroup);
-
-    const knotGeo = new THREE.TorusKnotGeometry(2.0, 0.35, 100, 16);
-    const knotMat = new THREE.MeshPhysicalMaterial({
-      color: currentTheme.mainColor,
-      metalness: 0.88,
-      roughness: 0.28,
-      wireframe: wireframeMode,
-      transparent: true,
-      opacity: 0.88,
-    });
-    const knotMesh = new THREE.Mesh(knotGeo, knotMat);
-    middleGroup.add(knotMesh);
-
-    // Surrounding floating octahedra
-    const floatingNodes: THREE.Mesh[] = [];
-    const octaGeo = new THREE.OctahedronGeometry(0.7, 0);
-    const octaMat = new THREE.MeshStandardMaterial({
-      color: currentTheme.accentColor,
-      metalness: 0.9,
-      roughness: 0.2,
-      wireframe: wireframeMode,
-    });
-
-    for (let i = 0; i < 8; i++) {
-      const node = new THREE.Mesh(octaGeo, octaMat);
-      const angle = (i / 8) * Math.PI * 2;
-      const radius = 5.2 + (i % 2) * 1.5;
-      node.position.set(
-        Math.cos(angle) * radius,
-        Math.sin(angle * 2) * 1.8,
-        Math.sin(angle) * radius
-      );
-      middleGroup.add(node);
-      floatingNodes.push(node);
-    }
-
-    // 3. BOTTOM ZONE: 3D Consultation Seal & Compass (Contact depth zone)
-    const bottomGroup = new THREE.Group();
-    bottomGroup.position.set(4, -36, -3);
-    masterGroup.add(bottomGroup);
-
-    const compassGeo = new THREE.DodecahedronGeometry(2.2, 0);
-    const compassMat = new THREE.MeshPhysicalMaterial({
-      color: currentTheme.accentColor,
-      metalness: 0.92,
-      roughness: 0.25,
-      wireframe: wireframeMode,
-    });
-    const compassMesh = new THREE.Mesh(compassGeo, compassMat);
-    bottomGroup.add(compassMesh);
-
-    const compassRing = new THREE.Mesh(
-      new THREE.TorusGeometry(3.6, 0.08, 16, 80),
-      ringMat
-    );
-    bottomGroup.add(compassRing);
-
-    // 4. 3D DYNAMIC PARAMETRIC WAVE RIBBON
-    const waveWidth = 48;
-    const waveHeight = 48;
-    const waveSegmentsW = 40;
-    const waveSegmentsH = 40;
+    // 1. 3D DYNAMIC PARAMETRIC WAVE RIBBON
+    const waveWidth = 52;
+    const waveHeight = 52;
+    const waveSegmentsW = 44;
+    const waveSegmentsH = 44;
     const waveGeo = new THREE.PlaneGeometry(waveWidth, waveHeight, waveSegmentsW, waveSegmentsH);
     waveGeo.rotateX(-Math.PI / 2.3);
     waveGeo.translate(0, -6, -8);
@@ -265,7 +151,7 @@ export default function ThreeDBackground() {
       color: currentTheme.mainColor,
       wireframe: true,
       transparent: true,
-      opacity: 0.28,
+      opacity: 0.22,
       roughness: 0.4,
       metalness: 0.6,
     });
@@ -274,7 +160,7 @@ export default function ThreeDBackground() {
 
     const waveBasePositions = waveGeo.attributes.position.array.slice();
 
-    // 5. 3D PARTICLE CONSTELLATION NEBULA
+    // 2. 3D PARTICLE CONSTELLATION NEBULA
     let particleGeo = new THREE.BufferGeometry();
     const updateParticles = (count: number) => {
       const positions = new Float32Array(count * 3);
@@ -416,27 +302,13 @@ export default function ThreeDBackground() {
 
       // Update theme materials if theme changed
       const theme = THEMES_3D[state.themeKey];
-      if (gemMat.color.getHex() !== theme.mainColor) {
-        gemMat.color.setHex(theme.mainColor);
-        gemMat.emissive.setHex(theme.mainColor);
-        cageMat.color.setHex(theme.wireframeColor);
-        ringMat.color.setHex(theme.accentColor);
-        knotMat.color.setHex(theme.mainColor);
-        octaMat.color.setHex(theme.accentColor);
-        compassMat.color.setHex(theme.accentColor);
+      if (waveMat.color.getHex() !== theme.mainColor) {
         waveMat.color.setHex(theme.mainColor);
         particleMat.color.setHex(theme.particleColor);
         cursorPointLight.color.setHex(theme.accentColor);
         dirLight1.color.setHex(theme.lightColor);
         ambientLight.color.setHex(theme.ambientColor);
         scene.fog = new THREE.FogExp2(theme.fogColor, 0.022);
-      }
-
-      // Toggle wireframe mode dynamically
-      if (gemMat.wireframe !== state.wireframe) {
-        gemMat.wireframe = state.wireframe;
-        knotMat.wireframe = state.wireframe;
-        compassMat.wireframe = state.wireframe;
       }
 
       // Smooth mouse interpolation
@@ -468,35 +340,6 @@ export default function ThreeDBackground() {
         masterGroup.rotation.y = state.mouse.x * 0.18 + Math.sin(elapsedTime * 0.25) * 0.08;
         masterGroup.rotation.x = -state.mouse.y * 0.14;
       }
-
-      // Rotate Hero Monument meshes
-      gemMesh.rotation.x = elapsedTime * 0.45;
-      gemMesh.rotation.y = elapsedTime * 0.65;
-      cageMesh.rotation.x = -elapsedTime * 0.25;
-      cageMesh.rotation.y = -elapsedTime * 0.35;
-
-      ring1.rotation.x += 0.008 * state.speed;
-      ring1.rotation.y += 0.012 * state.speed;
-      ring2.rotation.y += 0.010 * state.speed;
-      ring2.rotation.z += 0.007 * state.speed;
-      ring3.rotation.z += 0.009 * state.speed;
-      ring3.rotation.x += 0.006 * state.speed;
-
-      // Rotate Middle Knot & Nodes
-      knotMesh.rotation.x = elapsedTime * 0.55;
-      knotMesh.rotation.y = elapsedTime * 0.4;
-      floatingNodes.forEach((node, idx) => {
-        const speedMultiplier = (idx % 2 === 0 ? 1 : -1) * 0.4;
-        node.rotation.x = elapsedTime * speedMultiplier;
-        node.rotation.y = elapsedTime * speedMultiplier * 1.5;
-        node.position.y += Math.sin(elapsedTime * 1.5 + idx) * 0.015;
-      });
-
-      // Rotate Bottom Compass
-      compassMesh.rotation.y = elapsedTime * 0.5;
-      compassMesh.rotation.z = Math.sin(elapsedTime * 0.8) * 0.3;
-      compassRing.rotation.x = Math.PI / 2.5 + Math.sin(elapsedTime * 0.5) * 0.2;
-      compassRing.rotation.z += 0.006;
 
       // Update 3D Parametric Wave Mesh Vertices
       const posAttr = waveGeo.attributes.position;
@@ -558,17 +401,6 @@ export default function ThreeDBackground() {
       cancelAnimationFrame(animationFrameId);
 
       // Clean memory deallocation
-      gemGeo.dispose();
-      gemMat.dispose();
-      cageGeo.dispose();
-      cageMat.dispose();
-      ringMat.dispose();
-      knotGeo.dispose();
-      knotMat.dispose();
-      octaGeo.dispose();
-      octaMat.dispose();
-      compassGeo.dispose();
-      compassMat.dispose();
       waveGeo.dispose();
       waveMat.dispose();
       particleGeo.dispose();
