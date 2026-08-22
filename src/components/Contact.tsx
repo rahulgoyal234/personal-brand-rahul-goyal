@@ -85,7 +85,7 @@ export default function Contact() {
                 </div>
                 <div className="space-y-0.5 sm:space-y-1 min-w-0 flex-1">
                   <span className="font-mono text-[9.5px] sm:text-[10px] uppercase tracking-widest text-ink-soft font-bold block">
-                    Telephone
+                    Contact Number
                   </span>
                   <a 
                     href={`tel:${personalInfo.phone}`} 
@@ -100,7 +100,7 @@ export default function Contact() {
               <button
                 onClick={handleCopyPhone}
                 className="p-1.5 sm:p-2 text-ink-soft hover:text-ink hover:bg-paper-deep rounded-[2px] transition-colors cursor-pointer flex-shrink-0"
-                title="Copy telephone"
+                title="Copy contact number"
               >
                 {copiedPhone ? <Check className="w-4 h-4 text-brass" /> : <Copy className="w-4 h-4" />}
               </button>

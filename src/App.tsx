@@ -5,7 +5,6 @@ import Portfolio from './components/Portfolio';
 import Contact from './components/Contact';
 import Customizer from './components/Customizer';
 import ThreeDBackground from './components/ThreeDBackground';
-import EntranceCurtain from './components/EntranceCurtain';
 import { usePortfolio } from './context/PortfolioContext';
 import { ChevronUp } from 'lucide-react';
 
@@ -56,8 +55,6 @@ export default function App() {
 
   return (
     <div id="root-layout" className="min-h-screen flex flex-col bg-paper selection:bg-brass selection:text-paper text-ink relative overflow-x-hidden">
-      {/* Entrance curtain animation */}
-      <EntranceCurtain />
 
       {/* Interactive colorful animated lines background */}
       <ThreeDBackground />

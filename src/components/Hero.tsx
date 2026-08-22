@@ -246,7 +246,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
         <div className="w-full mb-4 flex justify-end text-right">
           <div className="font-mono text-[11px] sm:text-[12px] tracking-[0.14em] uppercase text-brass flex items-center gap-2 font-bold leading-relaxed">
             <span className="w-3 h-[1.5px] bg-brass inline-block" />
-            <span>Rahul Goyal &bull; Editorial Profile</span>
+            <span>Rahul Goyal</span>
           </div>
         </div>
 
