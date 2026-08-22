@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
-import { ArrowRight, Sparkles, Volume2, VolumeX } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { ArrowRight } from 'lucide-react';
+import { motion } from 'motion/react';
 
 export default function EntranceCurtain() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -387,81 +387,39 @@ export default function EntranceCurtain() {
       <div className="absolute inset-0 z-[1] bg-radial from-transparent via-[#0e0b08]/30 to-[#0e0b08]/90 pointer-events-none" />
 
       {/* Top Header Bar */}
-      <header className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-6 sm:pt-8 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full border border-[#c8a15a]/40 bg-[#c8a15a]/10 flex items-center justify-center text-[#ecd08c]">
-            <Sparkles className="w-4 h-4 text-[#c8a15a] animate-pulse" />
-          </div>
-          <div>
-            <span className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.25em] text-[#c8a15a] font-bold block">
-              Digital Chambers
-            </span>
-            <span className="text-[12px] text-[#faf8f5]/70 font-sans tracking-wide">
-              Supreme Court & High Court Counsel
-            </span>
-          </div>
-        </div>
-
+      <header className="relative z-10 w-full max-w-6xl mx-auto px-6 pt-6 sm:pt-8 flex items-center justify-end">
         {/* Skip direct button */}
         <button
           onClick={handleEnter}
           className="font-mono text-[10.5px] sm:text-[11.5px] uppercase tracking-widest px-4 py-2 rounded-[2px] border border-[#c8a15a]/30 text-[#ecd08c] hover:bg-[#c8a15a]/15 hover:border-[#c8a15a] transition-all duration-200 cursor-pointer flex items-center gap-2"
         >
-          <span>Skip to Chambers</span>
+          <span>Enter</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </header>
 
-      {/* Center 3D Monogram & Title Deck */}
-      <div className="relative z-10 text-center max-w-2xl px-6 my-auto flex flex-col items-center pointer-events-auto">
+      {/* Center 3D Initials Deck */}
+      <div className="relative z-10 text-center max-w-xl px-6 my-auto flex flex-col items-center pointer-events-auto">
         
-        {/* Monogram Badge */}
+        {/* Initials Badge / Monogram */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="mb-6 relative"
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-8 relative"
         >
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border border-[#c8a15a]/50 bg-[#0e0b08]/80 backdrop-blur-md flex items-center justify-center shadow-[0_0_35px_rgba(200,161,90,0.25)] mx-auto">
-            <span className="font-serif text-3xl sm:text-4xl text-[#ecd08c] font-bold tracking-[0.15em] translate-x-0.5">
+          <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-full border-2 border-[#c8a15a]/60 bg-[#0e0b08]/85 backdrop-blur-md flex items-center justify-center shadow-[0_0_50px_rgba(200,161,90,0.35)] mx-auto ring-4 ring-[#c8a15a]/20">
+            <span className="font-serif text-5xl sm:text-6xl md:text-7xl text-[#ecd08c] font-bold tracking-[0.18em] translate-x-1 drop-shadow-[0_4px_12px_rgba(0,0,0,0.8)]">
               RG
             </span>
           </div>
         </motion.div>
 
-        {/* Main Headings */}
-        <motion.h1
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.15 }}
-          className="font-serif text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#faf8f5] mb-3 text-balance leading-tight"
-        >
-          Rahul Goyal
-        </motion.h1>
-
-        {/* Elegant Gold Divider */}
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: '80px' }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="h-[1.5px] bg-gradient-to-r from-transparent via-[#c8a15a] to-transparent my-3 mx-auto"
-        />
-
-        {/* Subtitle / Fine Print */}
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="font-sans text-sm sm:text-base text-[#faf8f5]/80 font-normal max-w-lg mb-8 leading-relaxed"
-        >
-          A lawyer who reads fine print so you don’t have to.
-        </motion.p>
-
         {/* Interactive 3D Enter CTA */}
         <motion.button
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.55 }}
+          transition={{ duration: 0.8, delay: 0.35 }}
           onClick={handleEnter}
           id="enter-chambers-3d-btn"
           className="group relative px-8 py-3.5 sm:px-10 sm:py-4 rounded-[2px] bg-gradient-to-r from-[#c8a15a] via-[#dfbe7b] to-[#c8a15a] text-[#0e0b08] font-mono text-xs sm:text-sm font-bold uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(200,161,90,0.35)] hover:shadow-[0_0_45px_rgba(200,161,90,0.6)] hover:scale-[1.03] active:scale-[0.98] transition-all duration-300 flex items-center gap-3 cursor-pointer overflow-hidden"
