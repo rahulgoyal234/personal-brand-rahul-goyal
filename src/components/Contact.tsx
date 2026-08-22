@@ -47,20 +47,21 @@ export default function Contact() {
         >
           
           {/* Main Direct Channels */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-left">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 text-left">
             {/* Email Channel */}
-            <div className="bg-paper border border-rule/70 p-5 rounded-[2px] flex items-start justify-between gap-4 hover:border-ink/40 transition-all shadow-xs">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full border border-rule flex items-center justify-center text-brass flex-shrink-0 bg-paper-deep">
+            <div className="bg-paper border border-rule/70 p-4 sm:p-5 rounded-[2px] flex items-center justify-between gap-3 sm:gap-4 hover:border-ink/40 transition-all shadow-xs min-w-0">
+              <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-rule flex items-center justify-center text-brass flex-shrink-0 bg-paper-deep">
                   <Mail className="w-4 h-4" />
                 </div>
-                <div className="space-y-1">
-                  <span className="font-mono text-[10px] uppercase tracking-widest text-ink-soft font-bold block">
+                <div className="space-y-0.5 sm:space-y-1 min-w-0 flex-1">
+                  <span className="font-mono text-[9.5px] sm:text-[10px] uppercase tracking-widest text-ink-soft font-bold block">
                     Email
                   </span>
                   <a 
                     href={`mailto:${personalInfo.email}`} 
-                    className="text-sm sm:text-base text-ink hover:text-brass hover:underline transition-all font-semibold font-sans break-all"
+                    className="text-[12.5px] xs:text-[13.5px] sm:text-[12.5px] md:text-[14px] lg:text-[15px] text-ink hover:text-brass hover:underline transition-all font-semibold font-sans whitespace-nowrap block truncate"
+                    title={personalInfo.email}
                   >
                     {personalInfo.email}
                   </a>
@@ -69,7 +70,7 @@ export default function Contact() {
 
               <button
                 onClick={handleCopyEmail}
-                className="p-2 text-ink-soft hover:text-ink hover:bg-paper-deep rounded-[2px] transition-colors cursor-pointer flex-shrink-0"
+                className="p-1.5 sm:p-2 text-ink-soft hover:text-ink hover:bg-paper-deep rounded-[2px] transition-colors cursor-pointer flex-shrink-0"
                 title="Copy email"
               >
                 {copiedEmail ? <Check className="w-4 h-4 text-brass" /> : <Copy className="w-4 h-4" />}
@@ -77,18 +78,19 @@ export default function Contact() {
             </div>
 
             {/* Phone Channel */}
-            <div className="bg-paper border border-rule/70 p-5 rounded-[2px] flex items-start justify-between gap-4 hover:border-ink/40 transition-all shadow-xs">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full border border-rule flex items-center justify-center text-brass flex-shrink-0 bg-paper-deep">
+            <div className="bg-paper border border-rule/70 p-4 sm:p-5 rounded-[2px] flex items-center justify-between gap-3 sm:gap-4 hover:border-ink/40 transition-all shadow-xs min-w-0">
+              <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-rule flex items-center justify-center text-brass flex-shrink-0 bg-paper-deep">
                   <Phone className="w-4 h-4" />
                 </div>
-                <div className="space-y-1">
-                  <span className="font-mono text-[10px] uppercase tracking-widest text-ink-soft font-bold block">
+                <div className="space-y-0.5 sm:space-y-1 min-w-0 flex-1">
+                  <span className="font-mono text-[9.5px] sm:text-[10px] uppercase tracking-widest text-ink-soft font-bold block">
                     Telephone
                   </span>
                   <a 
                     href={`tel:${personalInfo.phone}`} 
-                    className="text-sm sm:text-base text-ink hover:text-brass hover:underline transition-all font-semibold font-sans"
+                    className="text-[12.5px] xs:text-[13.5px] sm:text-[12.5px] md:text-[14px] lg:text-[15px] text-ink hover:text-brass hover:underline transition-all font-semibold font-sans whitespace-nowrap block truncate"
+                    title={personalInfo.phone}
                   >
                     {personalInfo.phone}
                   </a>
@@ -97,7 +99,7 @@ export default function Contact() {
 
               <button
                 onClick={handleCopyPhone}
-                className="p-2 text-ink-soft hover:text-ink hover:bg-paper-deep rounded-[2px] transition-colors cursor-pointer flex-shrink-0"
+                className="p-1.5 sm:p-2 text-ink-soft hover:text-ink hover:bg-paper-deep rounded-[2px] transition-colors cursor-pointer flex-shrink-0"
                 title="Copy telephone"
               >
                 {copiedPhone ? <Check className="w-4 h-4 text-brass" /> : <Copy className="w-4 h-4" />}

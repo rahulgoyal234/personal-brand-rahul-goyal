@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as THREE from 'three';
-import { Eye, Rotate3d, Sparkles, Sliders, Box, Layers, Palette, RefreshCw, X } from 'lucide-react';
 
 // Palette definitions for 3D materials
 export const THEMES_3D = {
@@ -38,15 +37,15 @@ export const THEMES_3D = {
     fogColor: 0xfff1f2,
   },
   emerald: {
-    name: 'Emerald & Platinum',
+    name: 'Emerald & Jade',
     mainColor: 0x059669,
     accentColor: 0x10b981,
-    ambientColor: 0xf0fdf4,
-    lightColor: 0x6ee7b7,
-    particleColor: 0x34d399,
-    bgTint: '#F0FDF4',
+    ambientColor: 0xfaf8f5,
+    lightColor: 0x34d399,
+    particleColor: 0x059669,
+    bgTint: '#FAF8F5',
     wireframeColor: 0x047857,
-    fogColor: 0xf0fdf4,
+    fogColor: 0xfaf8f5,
   },
 };
 
@@ -55,10 +54,10 @@ export type ThemeKey = keyof typeof THEMES_3D;
 export default function ThreeDBackground() {
   const containerRef = useRef<HTMLDivElement | null>(null);
   
-  // 3D Scene Controls State
-  const [activeTheme, setActiveTheme] = useState<ThemeKey>('brass');
+  // 3D Scene Controls State - Set to Emerald at Highest Speed
+  const [activeTheme, setActiveTheme] = useState<ThemeKey>('emerald');
   const [wireframeMode, setWireframeMode] = useState<boolean>(false);
-  const [rotationSpeed, setRotationSpeed] = useState<number>(1.0);
+  const [rotationSpeed, setRotationSpeed] = useState<number>(3.0);
   const [interactiveOrbit, setInteractiveOrbit] = useState<boolean>(false);
   const [particleDensity, setParticleDensity] = useState<number>(450);
   const [isControlsOpen, setIsControlsOpen] = useState<boolean>(false);
@@ -599,144 +598,6 @@ export default function ThreeDBackground() {
           mixBlendMode: 'normal',
         }}
       />
-
-      {/* Floating 3D Control Studio Toggle (Bottom Left) */}
-      <div className="fixed bottom-6 left-6 z-40 print:hidden">
-        <button
-          id="toggle-3d-studio-btn"
-          onClick={() => setIsControlsOpen(!isControlsOpen)}
-          className={`px-3.5 py-2.5 rounded-[2px] font-mono text-[11px] font-bold uppercase tracking-wider border shadow-md transition-all duration-200 flex items-center gap-2 cursor-pointer ${
-            isControlsOpen
-              ? 'bg-ink text-paper border-ink'
-              : 'bg-paper text-ink border-rule hover:border-ink hover:bg-paper-deep/80'
-          }`}
-          title="Toggle 3D Interactive Engine Controls"
-        >
-          <Rotate3d className="w-4 h-4 text-brass" />
-          <span className="hidden sm:inline">3D Studio</span>
-        </button>
-      </div>
-
-      {/* Floating 3D Control Studio Drawer Panel */}
-      {isControlsOpen && (
-        <div
-          id="controls-3d-panel"
-          className="controls-3d-panel fixed bottom-20 left-6 z-50 w-[300px] sm:w-[340px] bg-paper/95 backdrop-blur-md border border-ink/20 shadow-2xl rounded-[2px] p-5 font-sans space-y-4 animate-fadeIn select-none"
-        >
-          <div className="flex items-center justify-between border-b border-rule pb-3">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-brass" />
-              <h4 className="font-serif text-base font-bold text-ink">3D WebGL Engine</h4>
-            </div>
-            <button
-              onClick={() => setIsControlsOpen(false)}
-              className="p-1 hover:bg-paper-deep text-ink-soft hover:text-ink rounded-[2px] cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Interactive 3D Orbit Mode Toggle */}
-          <div className="flex items-center justify-between bg-paper-deep/60 p-3 rounded-[2px] border border-rule/70">
-            <div>
-              <span className="font-mono text-xs font-bold text-ink block">3D Drag & Orbit Mode</span>
-              <span className="text-[11px] text-ink-soft block">Drag mouse to spin 3D structures</span>
-            </div>
-            <button
-              id="orbit-mode-toggle-btn"
-              onClick={() => setInteractiveOrbit(!interactiveOrbit)}
-              className={`px-3 py-1.5 font-mono text-[10px] uppercase font-bold tracking-wider rounded-[2px] border transition-colors cursor-pointer ${
-                interactiveOrbit
-                  ? 'bg-brass text-paper border-brass'
-                  : 'bg-paper text-ink border-rule hover:border-ink'
-              }`}
-            >
-              {interactiveOrbit ? 'Enabled' : 'Disabled'}
-            </button>
-          </div>
-
-          {/* 3D Color Palette Switcher */}
-          <div className="space-y-2">
-            <label className="font-mono text-[11px] font-bold text-ink uppercase tracking-wider flex items-center gap-1.5">
-              <Palette className="w-3.5 h-3.5 text-brass" />
-              <span>3D Material Palette</span>
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              {(Object.keys(THEMES_3D) as ThemeKey[]).map((themeKey) => (
-                <button
-                  key={themeKey}
-                  onClick={() => setActiveTheme(themeKey)}
-                  className={`p-2 text-left rounded-[2px] border font-sans text-xs transition-all cursor-pointer ${
-                    activeTheme === themeKey
-                      ? 'border-brass bg-brass/10 text-ink font-bold shadow-xs'
-                      : 'border-rule bg-paper text-ink-soft hover:text-ink hover:border-ink/40'
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="w-3 h-3 rounded-full border border-black/20"
-                      style={{ backgroundColor: `#${THEMES_3D[themeKey].mainColor.toString(16).padStart(6, '0')}` }}
-                    />
-                    <span className="truncate">{THEMES_3D[themeKey].name.split(' ')[0]}</span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Wireframe Toggle & Speed Controls */}
-          <div className="space-y-3 pt-2 border-t border-rule">
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[11px] text-ink uppercase font-bold flex items-center gap-1.5">
-                <Box className="w-3.5 h-3.5 text-brass" />
-                <span>Wireframe Geometry</span>
-              </span>
-              <button
-                onClick={() => setWireframeMode(!wireframeMode)}
-                className={`px-2.5 py-1 font-mono text-[10px] uppercase font-bold rounded-[2px] border cursor-pointer ${
-                  wireframeMode
-                    ? 'bg-ink text-paper border-ink'
-                    : 'bg-paper text-ink border-rule hover:border-ink'
-                }`}
-              >
-                {wireframeMode ? 'ON' : 'OFF'}
-              </button>
-            </div>
-
-            {/* 3D Spin Speed Slider */}
-            <div className="space-y-1">
-              <div className="flex justify-between font-mono text-[10px] text-ink-soft uppercase">
-                <span>Animation Speed</span>
-                <span className="text-brass font-bold">{rotationSpeed.toFixed(1)}x</span>
-              </div>
-              <input
-                type="range"
-                min="0.2"
-                max="2.5"
-                step="0.1"
-                value={rotationSpeed}
-                onChange={(e) => setRotationSpeed(parseFloat(e.target.value))}
-                className="w-full accent-brass cursor-pointer"
-              />
-            </div>
-          </div>
-
-          {/* Reset Orbit Button */}
-          {interactiveOrbit && (
-            <button
-              onClick={handleResetOrbit}
-              className="w-full py-2 font-mono text-xs uppercase tracking-wider text-ink-soft hover:text-ink bg-paper border border-rule hover:border-ink rounded-[2px] transition-colors flex items-center justify-center gap-1.5 cursor-pointer font-bold"
-            >
-              <RefreshCw className="w-3 h-3" />
-              <span>Reset 3D Orientation</span>
-            </button>
-          )}
-
-          <div className="text-[10px] font-mono text-ink-soft/70 text-center pt-1">
-            Click anywhere on the screen to trigger a 3D shockwave
-          </div>
-        </div>
-      )}
     </>
   );
 }
