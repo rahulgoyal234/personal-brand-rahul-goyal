@@ -1,513 +1,742 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import * as THREE from 'three';
+import { Eye, Rotate3d, Sparkles, Sliders, Box, Layers, Palette, RefreshCw, X } from 'lucide-react';
 
-interface RibbonPoint {
-  x: number;
-  y: number;
-  baseX: number;
-  baseY: number;
-  angleX: number;
-  angleY: number;
-  speedX: number;
-  speedY: number;
-  waveAmplitude: number;
-}
-
-interface Ribbon {
-  points: RibbonPoint[];
-  color: string;
-  glowColor: string;
-  width: number;
-  phaseOffset: number;
-  speed: number;
-}
-
-interface Particle {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  radius: number;
-  color: string;
-  glowColor: string;
-  alpha: number;
-  pulseSpeed: number;
-  pulsePhase: number;
-}
-
-interface Ripple {
-  x: number;
-  y: number;
-  radius: number;
-  maxRadius: number;
-  speed: number;
-  strength: number;
-}
-
-// Preset color palettes that harmonize with the brand
-const PALETTES = {
-  brass: [
-    { color: '169, 128, 63', glow: 'rgba(169, 128, 63, 0.45)' }, // Elegant Brass
-    { color: '184, 134, 11', glow: 'rgba(184, 134, 11, 0.4)' },  // Dark Goldenrod
-    { color: '205, 127, 50', glow: 'rgba(205, 127, 50, 0.35)' }, // Bronze
-    { color: '139, 101, 8', glow: 'rgba(139, 101, 8, 0.45)' },   // Antique Gold
-  ],
-  cyber: [
-    { color: '13, 148, 136', glow: 'rgba(13, 148, 136, 0.45)' }, // Deep Teal
-    { color: '6, 182, 212', glow: 'rgba(6, 182, 212, 0.5)' },    // Cyan Blue
-    { color: '20, 184, 166', glow: 'rgba(20, 184, 166, 0.4)' },   // Mint
-    { color: '56, 189, 248', glow: 'rgba(56, 189, 248, 0.45)' },  // Sky
-  ],
-  sunset: [
-    { color: '219, 39, 119', glow: 'rgba(219, 39, 119, 0.4)' },  // Sunset Rose
-    { color: '124, 58, 237', glow: 'rgba(124, 58, 237, 0.35)' }, // Electric Violet
-    { color: '249, 115, 22', glow: 'rgba(249, 115, 22, 0.4)' },   // Warm Amber
-    { color: '236, 72, 153', glow: 'rgba(236, 72, 153, 0.4)' },  // Pink
-  ],
-  aurora: [
-    { color: '34, 197, 94', glow: 'rgba(34, 197, 94, 0.4)' },    // Emerald Green
-    { color: '20, 184, 166', glow: 'rgba(20, 184, 166, 0.45)' },  // Turquoise
-    { color: '168, 85, 247', glow: 'rgba(168, 85, 247, 0.35)' },  // Purple
-    { color: '234, 179, 8', glow: 'rgba(234, 179, 8, 0.35)' },    // Warm Yellow
-  ],
-  rainbow: [
-    { color: '169, 128, 63', glow: 'rgba(169, 128, 63, 0.4)' },  // Brass
-    { color: '13, 148, 136', glow: 'rgba(13, 148, 136, 0.35)' }, // Deep Teal
-    { color: '124, 58, 237', glow: 'rgba(124, 58, 237, 0.3)' },  // Electric Violet
-    { color: '219, 39, 119', glow: 'rgba(219, 39, 119, 0.35)' }, // Sunset Rose
-    { color: '6, 182, 212', glow: 'rgba(6, 182, 212, 0.4)' },    // Cyan Blue
-    { color: '249, 115, 22', glow: 'rgba(249, 115, 22, 0.3)' },   // Warm Amber
-  ]
+// Palette definitions for 3D materials
+export const THEMES_3D = {
+  brass: {
+    name: 'Imperial Brass & Gold',
+    mainColor: 0x9e7b3b,
+    accentColor: 0xd4af37,
+    ambientColor: 0xfaf8f5,
+    lightColor: 0xffe8b3,
+    particleColor: 0xc5a566,
+    bgTint: '#FAF8F5',
+    wireframeColor: 0x9e7b3b,
+    fogColor: 0xfaf8f5,
+  },
+  cyber: {
+    name: 'Obsidian & Cyan',
+    mainColor: 0x06b6d4,
+    accentColor: 0x0ea5e9,
+    ambientColor: 0x0f172a,
+    lightColor: 0x38bdf8,
+    particleColor: 0x22d3ee,
+    bgTint: '#F0FDFA',
+    wireframeColor: 0x0891b2,
+    fogColor: 0xf0fdfa,
+  },
+  sunset: {
+    name: 'Rose Gold & Amethyst',
+    mainColor: 0xd97706,
+    accentColor: 0xe11d48,
+    ambientColor: 0xfff1f2,
+    lightColor: 0xfbbf24,
+    particleColor: 0xf43f5e,
+    bgTint: '#FFF1F2',
+    wireframeColor: 0xbe123c,
+    fogColor: 0xfff1f2,
+  },
+  emerald: {
+    name: 'Emerald & Platinum',
+    mainColor: 0x059669,
+    accentColor: 0x10b981,
+    ambientColor: 0xf0fdf4,
+    lightColor: 0x6ee7b7,
+    particleColor: 0x34d399,
+    bgTint: '#F0FDF4',
+    wireframeColor: 0x047857,
+    fogColor: 0xf0fdf4,
+  },
 };
 
-export default function ThreeDBackground() {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  
-  // Real-time custom settings State
-  const [isOpen, setIsOpen] = useState(false);
-  const [numRibbons, setNumRibbons] = useState(16);
-  const [waveAmplitude, setWaveAmplitude] = useState(45);
-  const [driftSpeed, setDriftSpeed] = useState(1.1);
-  const [particleCount, setParticleCount] = useState(40);
-  const [paletteKey, setPaletteKey] = useState<keyof typeof PALETTES>('brass');
-  const [isGlowOn, setIsGlowOn] = useState(true);
+export type ThemeKey = keyof typeof THEMES_3D;
 
-  // Use configuration refs to sync instantly with high-performance draw loop without recreating event listeners
-  const configRef = useRef({
-    numRibbons,
-    waveAmplitude,
-    driftSpeed,
-    particleCount,
-    palette: PALETTES[paletteKey],
-    isGlowOn
+export default function ThreeDBackground() {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  
+  // 3D Scene Controls State
+  const [activeTheme, setActiveTheme] = useState<ThemeKey>('brass');
+  const [wireframeMode, setWireframeMode] = useState<boolean>(false);
+  const [rotationSpeed, setRotationSpeed] = useState<number>(1.0);
+  const [interactiveOrbit, setInteractiveOrbit] = useState<boolean>(false);
+  const [particleDensity, setParticleDensity] = useState<number>(450);
+  const [isControlsOpen, setIsControlsOpen] = useState<boolean>(false);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+
+  // Sync refs for high-frequency 60fps render loop
+  const sceneStateRef = useRef({
+    themeKey: activeTheme,
+    wireframe: wireframeMode,
+    speed: rotationSpeed,
+    orbit: interactiveOrbit,
+    particleCount: particleDensity,
+    isDragging: false,
+    dragStart: { x: 0, y: 0 },
+    orbitAngles: { theta: 0, phi: 0 },
+    targetOrbitAngles: { theta: 0, phi: 0 },
+    mouse: { x: 0, y: 0, targetX: 0, targetY: 0 },
+    scrollRatio: 0,
+    shockwaves: [] as { x: number; y: number; z: number; radius: number; maxRadius: number; age: number }[],
   });
 
-  // Track if we need to regenerate arrays
-  const reinitTrigger = useRef(false);
-  // Manual scatter wave trigger
-  const triggerScatter = useRef(false);
-
-  // Keep configRef in absolute synchronization with state changes
+  // Keep state synced
   useEffect(() => {
-    configRef.current = {
-      numRibbons,
-      waveAmplitude,
-      driftSpeed,
-      particleCount,
-      palette: PALETTES[paletteKey],
-      isGlowOn
-    };
-  }, [numRibbons, waveAmplitude, driftSpeed, particleCount, paletteKey, isGlowOn]);
-
-  // Re-trigger ribbon/particle generation when count or colors change
-  useEffect(() => {
-    reinitTrigger.current = true;
-  }, [numRibbons, particleCount, paletteKey]);
+    sceneStateRef.current.themeKey = activeTheme;
+    sceneStateRef.current.wireframe = wireframeMode;
+    sceneStateRef.current.speed = rotationSpeed;
+    sceneStateRef.current.orbit = interactiveOrbit;
+    sceneStateRef.current.particleCount = particleDensity;
+  }, [activeTheme, wireframeMode, rotationSpeed, interactiveOrbit, particleDensity]);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    // --- THREE.JS SCENE SETUP ---
+    const scene = new THREE.Scene();
+    const currentTheme = THEMES_3D[activeTheme];
+    scene.fog = new THREE.FogExp2(currentTheme.fogColor, 0.022);
 
-    let animationFrameId: number;
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+    const camera = new THREE.PerspectiveCamera(
+      55,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    camera.position.set(0, 0, 24);
 
-    // Mouse Tracking state
-    const mouse = {
-      x: -9999,
-      y: -9999,
-      active: false,
-      radius: 250,
-    };
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+      powerPreference: 'high-performance',
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
 
-    // Click Ripple shocks
-    let ripples: Ripple[] = [];
+    container.appendChild(renderer.domElement);
 
-    // Local data stores
-    let ribbons: Ribbon[] = [];
-    let particles: Particle[] = [];
-    const pointsPerRibbon = 35;
+    // --- LIGHTING ---
+    const ambientLight = new THREE.AmbientLight(currentTheme.ambientColor, 1.8);
+    scene.add(ambientLight);
 
-    const initRibbons = () => {
-      ribbons = [];
-      const currentConfig = configRef.current;
-      const segmentWidth = width / (pointsPerRibbon - 1);
+    const dirLight1 = new THREE.DirectionalLight(currentTheme.lightColor, 2.5);
+    dirLight1.position.set(15, 20, 15);
+    scene.add(dirLight1);
 
-      for (let r = 0; r < currentConfig.numRibbons; r++) {
-        const points: RibbonPoint[] = [];
-        const targetY = height * (0.12 + (r * (0.76 / Math.max(1, currentConfig.numRibbons - 1))));
-        const theme = currentConfig.palette[r % currentConfig.palette.length];
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, 1.2);
+    dirLight2.position.set(-15, -10, -10);
+    scene.add(dirLight2);
 
-        for (let p = 0; p < pointsPerRibbon; p++) {
-          const x = p * segmentWidth;
-          points.push({
-            x,
-            y: targetY,
-            baseX: x,
-            baseY: targetY,
-            angleX: p * 0.42 + r * 1.6,
-            angleY: p * 0.48 + r * 2.2,
-            speedX: 0.012 + Math.sin(r + p) * 0.006,
-            speedY: 0.008 + Math.cos(r * p) * 0.006,
-            waveAmplitude: currentConfig.waveAmplitude * (0.6 + Math.sin(r) * 0.4),
-          });
-        }
+    // Dynamic 3D Cursor Light with golden glow
+    const cursorPointLight = new THREE.PointLight(currentTheme.accentColor, 4, 30);
+    cursorPointLight.position.set(0, 0, 10);
+    scene.add(cursorPointLight);
 
-        ribbons.push({
-          points,
-          color: theme.color,
-          glowColor: theme.glow,
-          width: 0.20 + (r % 3) * 0.05, // Thread-like super fine lines
-          phaseOffset: r * Math.PI * 0.18,
-          speed: 0.85 + r * 0.08,
-        });
+    // --- 3D OBJECT GROUPS ---
+    const masterGroup = new THREE.Group();
+    scene.add(masterGroup);
+
+    // 1. HERO MONUMENT: 3D Golden Armillary & Icosahedron Seal (Top Zone)
+    const monumentGroup = new THREE.Group();
+    monumentGroup.position.set(6, 2, -2);
+    masterGroup.add(monumentGroup);
+
+    // Central Multi-faceted Icosahedron Gem
+    const gemGeo = new THREE.IcosahedronGeometry(2.4, 0);
+    const gemMat = new THREE.MeshPhysicalMaterial({
+      color: currentTheme.mainColor,
+      emissive: currentTheme.mainColor,
+      emissiveIntensity: 0.15,
+      metalness: 0.85,
+      roughness: 0.22,
+      clearcoat: 0.8,
+      clearcoatRoughness: 0.1,
+      wireframe: wireframeMode,
+      transparent: true,
+      opacity: 0.92,
+    });
+    const gemMesh = new THREE.Mesh(gemGeo, gemMat);
+    monumentGroup.add(gemMesh);
+
+    // Outer Wireframe Cage
+    const cageGeo = new THREE.IcosahedronGeometry(3.1, 1);
+    const cageMat = new THREE.MeshBasicMaterial({
+      color: currentTheme.wireframeColor,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.35,
+    });
+    const cageMesh = new THREE.Mesh(cageGeo, cageMat);
+    monumentGroup.add(cageMesh);
+
+    // Rotating Brass Torus Rings
+    const ringMat = new THREE.MeshStandardMaterial({
+      color: currentTheme.accentColor,
+      metalness: 0.9,
+      roughness: 0.3,
+      wireframe: wireframeMode,
+    });
+    
+    const ring1 = new THREE.Mesh(new THREE.TorusGeometry(4.2, 0.06, 16, 100), ringMat);
+    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(4.8, 0.05, 16, 100), ringMat);
+    const ring3 = new THREE.Mesh(new THREE.TorusGeometry(5.4, 0.04, 16, 100), ringMat);
+    
+    ring1.rotation.x = Math.PI / 3;
+    ring2.rotation.y = Math.PI / 4;
+    ring3.rotation.z = Math.PI / 6;
+    
+    monumentGroup.add(ring1);
+    monumentGroup.add(ring2);
+    monumentGroup.add(ring3);
+
+    // 2. MIDDLE ZONE: 3D Floating Polyhedral Nodes & Torus Knot (Portfolio depth zone)
+    const middleGroup = new THREE.Group();
+    middleGroup.position.set(-6, -18, -4);
+    masterGroup.add(middleGroup);
+
+    const knotGeo = new THREE.TorusKnotGeometry(2.0, 0.35, 100, 16);
+    const knotMat = new THREE.MeshPhysicalMaterial({
+      color: currentTheme.mainColor,
+      metalness: 0.88,
+      roughness: 0.28,
+      wireframe: wireframeMode,
+      transparent: true,
+      opacity: 0.88,
+    });
+    const knotMesh = new THREE.Mesh(knotGeo, knotMat);
+    middleGroup.add(knotMesh);
+
+    // Surrounding floating octahedra
+    const floatingNodes: THREE.Mesh[] = [];
+    const octaGeo = new THREE.OctahedronGeometry(0.7, 0);
+    const octaMat = new THREE.MeshStandardMaterial({
+      color: currentTheme.accentColor,
+      metalness: 0.9,
+      roughness: 0.2,
+      wireframe: wireframeMode,
+    });
+
+    for (let i = 0; i < 8; i++) {
+      const node = new THREE.Mesh(octaGeo, octaMat);
+      const angle = (i / 8) * Math.PI * 2;
+      const radius = 5.2 + (i % 2) * 1.5;
+      node.position.set(
+        Math.cos(angle) * radius,
+        Math.sin(angle * 2) * 1.8,
+        Math.sin(angle) * radius
+      );
+      middleGroup.add(node);
+      floatingNodes.push(node);
+    }
+
+    // 3. BOTTOM ZONE: 3D Consultation Seal & Compass (Contact depth zone)
+    const bottomGroup = new THREE.Group();
+    bottomGroup.position.set(4, -36, -3);
+    masterGroup.add(bottomGroup);
+
+    const compassGeo = new THREE.DodecahedronGeometry(2.2, 0);
+    const compassMat = new THREE.MeshPhysicalMaterial({
+      color: currentTheme.accentColor,
+      metalness: 0.92,
+      roughness: 0.25,
+      wireframe: wireframeMode,
+    });
+    const compassMesh = new THREE.Mesh(compassGeo, compassMat);
+    bottomGroup.add(compassMesh);
+
+    const compassRing = new THREE.Mesh(
+      new THREE.TorusGeometry(3.6, 0.08, 16, 80),
+      ringMat
+    );
+    bottomGroup.add(compassRing);
+
+    // 4. 3D DYNAMIC PARAMETRIC WAVE RIBBON
+    const waveWidth = 48;
+    const waveHeight = 48;
+    const waveSegmentsW = 40;
+    const waveSegmentsH = 40;
+    const waveGeo = new THREE.PlaneGeometry(waveWidth, waveHeight, waveSegmentsW, waveSegmentsH);
+    waveGeo.rotateX(-Math.PI / 2.3);
+    waveGeo.translate(0, -6, -8);
+
+    const waveMat = new THREE.MeshStandardMaterial({
+      color: currentTheme.mainColor,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.28,
+      roughness: 0.4,
+      metalness: 0.6,
+    });
+    const waveMesh = new THREE.Mesh(waveGeo, waveMat);
+    masterGroup.add(waveMesh);
+
+    const waveBasePositions = waveGeo.attributes.position.array.slice();
+
+    // 5. 3D PARTICLE CONSTELLATION NEBULA
+    let particleGeo = new THREE.BufferGeometry();
+    const updateParticles = (count: number) => {
+      const positions = new Float32Array(count * 3);
+      const scales = new Float32Array(count);
+      const phases = new Float32Array(count);
+
+      for (let i = 0; i < count; i++) {
+        const i3 = i * 3;
+        positions[i3] = (Math.random() - 0.5) * 44;
+        positions[i3 + 1] = (Math.random() - 0.5) * 65 - 12; // Span across scroll height
+        positions[i3 + 2] = (Math.random() - 0.5) * 32 - 4;
+        scales[i] = Math.random() * 0.8 + 0.3;
+        phases[i] = Math.random() * Math.PI * 2;
       }
+
+      particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      particleGeo.setAttribute('aScale', new THREE.BufferAttribute(scales, 1));
+      particleGeo.setAttribute('aPhase', new THREE.BufferAttribute(phases, 1));
     };
 
-    const initParticles = () => {
-      particles = [];
-      const currentConfig = configRef.current;
-      for (let i = 0; i < currentConfig.particleCount; i++) {
-        const theme = currentConfig.palette[i % currentConfig.palette.length];
-        particles.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.42,
-          vy: (Math.random() - 0.5) * 0.42,
-          radius: 1.2 + Math.random() * 1.8,
-          color: theme.color,
-          glowColor: theme.glow,
-          alpha: 0.15 + Math.random() * 0.35,
-          pulseSpeed: 0.008 + Math.random() * 0.016,
-          pulsePhase: Math.random() * Math.PI * 2,
-        });
+    updateParticles(particleDensity);
+
+    // Create custom smooth circle particle canvas texture
+    const createParticleTexture = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 64;
+      canvas.height = 64;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+        grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+        grad.addColorStop(0.35, 'rgba(255, 255, 255, 0.7)');
+        grad.addColorStop(0.7, 'rgba(255, 255, 255, 0.2)');
+        grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 64, 64);
       }
+      return new THREE.CanvasTexture(canvas);
     };
 
-    // Initial setup
-    initRibbons();
-    initParticles();
+    const particleMat = new THREE.PointsMaterial({
+      color: currentTheme.particleColor,
+      size: 0.38,
+      map: createParticleTexture(),
+      transparent: true,
+      opacity: 0.65,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
 
-    // Event handlers with physical velocity tracking
-    let lastMouseX = -1;
-    let lastMouseY = -1;
-    let mouseVelocity = 0;
-    let lastTime = Date.now();
+    const particleSystem = new THREE.Points(particleGeo, particleMat);
+    masterGroup.add(particleSystem);
 
+    // --- EVENT LISTENERS ---
     const handlePointerMove = (e: PointerEvent) => {
-      const now = Date.now();
-      const dt = Math.max(1, now - lastTime);
+      const state = sceneStateRef.current;
+      const normX = (e.clientX / window.innerWidth) * 2 - 1;
+      const normY = -(e.clientY / window.innerHeight) * 2 + 1;
       
-      if (lastMouseX !== -1 && lastMouseY !== -1) {
-        const dx = e.clientX - lastMouseX;
-        const dy = e.clientY - lastMouseY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const instantV = dist / dt;
-        mouseVelocity += (instantV - mouseVelocity) * 0.15;
+      state.mouse.targetX = normX;
+      state.mouse.targetY = normY;
+
+      if (state.orbit && state.isDragging) {
+        const deltaX = e.clientX - state.dragStart.x;
+        const deltaY = e.clientY - state.dragStart.y;
+        state.targetOrbitAngles.theta += deltaX * 0.006;
+        state.targetOrbitAngles.phi += deltaY * 0.006;
+        state.dragStart.x = e.clientX;
+        state.dragStart.y = e.clientY;
       }
-      
-      lastMouseX = e.clientX;
-      lastMouseY = e.clientY;
-      lastTime = now;
-
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-      mouse.active = true;
-    };
-
-    const handlePointerLeave = () => {
-      mouse.active = false;
-      mouse.x = -9999;
-      mouse.y = -9999;
-      mouseVelocity = 0;
-      lastMouseX = -1;
-      lastMouseY = -1;
     };
 
     const handlePointerDown = (e: PointerEvent) => {
-      // Prevent spawning shockwave if clicking settings panel
       const target = e.target as HTMLElement;
-      if (target?.closest('.linings-engine-panel') || target?.closest('.linings-engine-toggle')) {
+      if (target?.closest('.controls-3d-panel') || target?.closest('.controls-3d-toggle')) {
         return;
       }
 
-      ripples.push({
-        x: e.clientX,
-        y: e.clientY,
-        radius: 0,
-        maxRadius: Math.max(width, height) * 0.65,
-        speed: 8.5,
-        strength: 65,
+      const state = sceneStateRef.current;
+      if (state.orbit) {
+        state.isDragging = true;
+        state.dragStart = { x: e.clientX, y: e.clientY };
+        setIsDragging(true);
+      }
+
+      // Add 3D Shockwave
+      const normX = (e.clientX / window.innerWidth) * 2 - 1;
+      const normY = -(e.clientY / window.innerHeight) * 2 + 1;
+      const worldPos = new THREE.Vector3(normX * 12, normY * 8, 2);
+      
+      state.shockwaves.push({
+        x: worldPos.x,
+        y: worldPos.y,
+        z: worldPos.z,
+        radius: 0.2,
+        maxRadius: 18,
+        age: 0,
       });
 
-      if (ripples.length > 5) {
-        ripples.shift();
+      if (state.shockwaves.length > 4) {
+        state.shockwaves.shift();
       }
+    };
+
+    const handlePointerUp = () => {
+      sceneStateRef.current.isDragging = false;
+      setIsDragging(false);
+    };
+
+    const handleScroll = () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const currentScroll = window.scrollY;
+      sceneStateRef.current.scrollRatio = maxScroll > 0 ? currentScroll / maxScroll : 0;
     };
 
     const handleResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      initRibbons();
-      initParticles();
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
     };
 
     window.addEventListener('pointermove', handlePointerMove, { passive: true });
-    document.addEventListener('pointerleave', handlePointerLeave, { passive: true });
-    window.addEventListener('pointerdown', handlePointerDown, { passive: true });
+    window.addEventListener('pointerdown', handlePointerDown);
+    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleResize);
 
-    // Main Draw Tick
-    const tick = () => {
-      const currentConfig = configRef.current;
+    // Initial scroll setup
+    handleScroll();
 
-      // Handle structural re-initialization requests
-      if (reinitTrigger.current) {
-        initRibbons();
-        initParticles();
-        reinitTrigger.current = false;
+    // --- ANIMATION LOOP ---
+    let animationFrameId: number;
+    let clock = new THREE.Clock();
+
+    const animate = () => {
+      const state = sceneStateRef.current;
+      const delta = clock.getDelta();
+      const elapsedTime = clock.getElapsedTime() * state.speed;
+
+      // Update theme materials if theme changed
+      const theme = THEMES_3D[state.themeKey];
+      if (gemMat.color.getHex() !== theme.mainColor) {
+        gemMat.color.setHex(theme.mainColor);
+        gemMat.emissive.setHex(theme.mainColor);
+        cageMat.color.setHex(theme.wireframeColor);
+        ringMat.color.setHex(theme.accentColor);
+        knotMat.color.setHex(theme.mainColor);
+        octaMat.color.setHex(theme.accentColor);
+        compassMat.color.setHex(theme.accentColor);
+        waveMat.color.setHex(theme.mainColor);
+        particleMat.color.setHex(theme.particleColor);
+        cursorPointLight.color.setHex(theme.accentColor);
+        dirLight1.color.setHex(theme.lightColor);
+        ambientLight.color.setHex(theme.ambientColor);
+        scene.fog = new THREE.FogExp2(theme.fogColor, 0.022);
       }
 
-      // Handle manual scatter shock wave request
-      if (triggerScatter.current) {
-        ripples.push({
-          x: width / 2,
-          y: height / 2,
-          radius: 0,
-          maxRadius: Math.max(width, height) * 0.75,
-          speed: 12,
-          strength: 120,
-        });
-        triggerScatter.current = false;
+      // Toggle wireframe mode dynamically
+      if (gemMat.wireframe !== state.wireframe) {
+        gemMat.wireframe = state.wireframe;
+        knotMat.wireframe = state.wireframe;
+        compassMat.wireframe = state.wireframe;
       }
 
-      ctx.clearRect(0, 0, width, height);
+      // Smooth mouse interpolation
+      state.mouse.x += (state.mouse.targetX - state.mouse.x) * 0.06;
+      state.mouse.y += (state.mouse.targetY - state.mouse.y) * 0.06;
 
-      // Render expanding ripples (only update physics, no lines)
-      ripples.forEach((ripple, rIdx) => {
-        ripple.radius += ripple.speed;
+      // Smooth 3D Cursor PointLight position
+      cursorPointLight.position.x = state.mouse.x * 14;
+      cursorPointLight.position.y = state.mouse.y * 10;
+      cursorPointLight.position.z = 6 + Math.sin(elapsedTime * 2) * 1.5;
 
-        if (ripple.radius >= ripple.maxRadius) {
-          ripples.splice(rIdx, 1);
-        }
+      // Smooth Orbit Angles damping
+      state.orbitAngles.theta += (state.targetOrbitAngles.theta - state.orbitAngles.theta) * 0.1;
+      state.orbitAngles.phi += (state.targetOrbitAngles.phi - state.orbitAngles.phi) * 0.1;
+
+      // Calculate 3D Camera scroll trajectory through depth
+      const scrollYTarget = -state.scrollRatio * 36;
+      
+      if (state.orbit) {
+        // Free Orbit Mode
+        masterGroup.rotation.y = state.orbitAngles.theta;
+        masterGroup.rotation.x = state.orbitAngles.phi;
+      } else {
+        // Cinematic Camera Flight Mode
+        camera.position.y += (scrollYTarget - camera.position.y) * 0.05;
+        camera.position.x += (state.mouse.x * 2.5 - camera.position.x) * 0.04;
+        camera.position.z = 24 + Math.sin(state.scrollRatio * Math.PI) * 4;
+        
+        masterGroup.rotation.y = state.mouse.x * 0.18 + Math.sin(elapsedTime * 0.25) * 0.08;
+        masterGroup.rotation.x = -state.mouse.y * 0.14;
+      }
+
+      // Rotate Hero Monument meshes
+      gemMesh.rotation.x = elapsedTime * 0.45;
+      gemMesh.rotation.y = elapsedTime * 0.65;
+      cageMesh.rotation.x = -elapsedTime * 0.25;
+      cageMesh.rotation.y = -elapsedTime * 0.35;
+
+      ring1.rotation.x += 0.008 * state.speed;
+      ring1.rotation.y += 0.012 * state.speed;
+      ring2.rotation.y += 0.010 * state.speed;
+      ring2.rotation.z += 0.007 * state.speed;
+      ring3.rotation.z += 0.009 * state.speed;
+      ring3.rotation.x += 0.006 * state.speed;
+
+      // Rotate Middle Knot & Nodes
+      knotMesh.rotation.x = elapsedTime * 0.55;
+      knotMesh.rotation.y = elapsedTime * 0.4;
+      floatingNodes.forEach((node, idx) => {
+        const speedMultiplier = (idx % 2 === 0 ? 1 : -1) * 0.4;
+        node.rotation.x = elapsedTime * speedMultiplier;
+        node.rotation.y = elapsedTime * speedMultiplier * 1.5;
+        node.position.y += Math.sin(elapsedTime * 1.5 + idx) * 0.015;
       });
 
-      // Update and Draw ribbons
-      mouseVelocity *= 0.95; // slowly decay physical velocity
+      // Rotate Bottom Compass
+      compassMesh.rotation.y = elapsedTime * 0.5;
+      compassMesh.rotation.z = Math.sin(elapsedTime * 0.8) * 0.3;
+      compassRing.rotation.x = Math.PI / 2.5 + Math.sin(elapsedTime * 0.5) * 0.2;
+      compassRing.rotation.z += 0.006;
 
-      ribbons.forEach((ribbon) => {
-        ribbon.points.forEach((point) => {
-          // Progress wave motion incorporating speed controller
-          point.angleX += point.speedX * currentConfig.driftSpeed;
-          point.angleY += point.speedY * currentConfig.driftSpeed;
+      // Update 3D Parametric Wave Mesh Vertices
+      const posAttr = waveGeo.attributes.position;
+      const posArray = posAttr.array as Float32Array;
+      
+      for (let i = 0; i < posArray.length; i += 3) {
+        const bx = waveBasePositions[i];
+        const by = waveBasePositions[i + 1];
+        const bz = waveBasePositions[i + 2];
 
-          // Universal base state: The entire screen is a highly complex, tangled web of intersecting filaments
-          let complexityFactor = 1.0;
+        // Harmonic continuous 3D wave formula
+        const distToCenter = Math.sqrt(bx * bx + by * by);
+        const wave = Math.sin(distToCenter * 0.35 - elapsedTime * 1.2) * 1.4 +
+                     Math.cos(bx * 0.25 + elapsedTime * 0.8) * 0.8;
 
-          // When interactive (hover/pointer active), we resolve the complexity to make it "comprehensible"
-          if (mouse.active) {
-            const dx = mouse.x - point.baseX;
-            const dy = mouse.y - point.baseY;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            
-            const interactiveRadius = 260; // broad zone of comprehensibility around the cursor
-            if (dist < interactiveRadius) {
-              const proximity = (interactiveRadius - dist) / interactiveRadius; // 0 (edge) to 1 (cursor)
-              // Smooth easing function for fluid transition
-              const smoothProximity = Math.sin(proximity * Math.PI * 0.5);
-              complexityFactor = 1.0 - smoothProximity * 0.98; // reduce up to 98% of the complexity
-            }
+        // Interactive ripple effect
+        let shockwaveDisp = 0;
+        state.shockwaves.forEach((shock) => {
+          const distToShock = Math.sqrt((bx - shock.x) ** 2 + (by - shock.y) ** 2);
+          const diff = Math.abs(distToShock - shock.radius);
+          if (diff < 3.0) {
+            shockwaveDisp += Math.sin((1 - diff / 3.0) * Math.PI) * 2.2 * (1 - shock.age / shock.maxRadius);
           }
-
-          const activeChaos = complexityFactor;
-
-          // Multi-harmonic high-frequency complex turbulent noise (creating a beautiful complex web)
-          const complexNoiseX = Math.sin(point.angleY * 4.2 + point.angleX * 1.8) * (currentConfig.waveAmplitude * 0.42) + 
-                                Math.cos(point.angleX * 7.5) * (currentConfig.waveAmplitude * 0.12);
-          const complexNoiseY = Math.cos(point.angleX * 4.6 - point.angleY * 2.8) * (currentConfig.waveAmplitude * 0.65) + 
-                                Math.sin(point.angleY * 6.0) * (currentConfig.waveAmplitude * 0.18);
-
-          // Perfect, pristine, parallel waves (representing order and clarity)
-          const cleanWaveX = Math.sin(point.angleX * 0.4) * (currentConfig.waveAmplitude * 0.08);
-          const cleanWaveY = Math.cos(point.angleY * 0.3) * (currentConfig.waveAmplitude * 0.12);
-
-          // Beautiful linear interpolation: cleanWave + chaos * (complexNoise - cleanWave)
-          const waveX = cleanWaveX + (complexNoiseX - cleanWaveX) * activeChaos;
-          const waveY = cleanWaveY + (complexNoiseY - cleanWaveY) * activeChaos;
-
-          // Pointer magnetic gravity attraction and pluck vibration
-          let mouseDispX = 0;
-          let mouseDispY = 0;
-
-          if (mouse.active) {
-            const dx = mouse.x - point.baseX;
-            const dy = mouse.y - point.baseY;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist < mouse.radius) {
-              const force = (mouse.radius - dist) / mouse.radius; // scale 0 to 1
-              const strength = 85 * Math.sin(force * Math.PI * 0.5);
-              mouseDispX = (dx / (dist || 1)) * strength;
-              mouseDispY = (dy / (dist || 1)) * strength;
-
-              // Shivering string vibrations proportional to swipe speed
-              if (mouseVelocity > 0.03) {
-                const vibStrength = Math.min(30, mouseVelocity * 12) * force;
-                const freq = 0.06;
-                const vibPhase = Date.now() * freq + point.angleX * 1.5;
-                mouseDispX += Math.sin(vibPhase) * vibStrength;
-                mouseDispY += Math.cos(vibPhase) * vibStrength;
-              }
-            }
-          }
-
-          // Apply expanding Click Ripple displacement force
-          let rippleDispX = 0;
-          let rippleDispY = 0;
-
-          ripples.forEach((ripple) => {
-            const dx = point.baseX - ripple.x;
-            const dy = point.baseY - ripple.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            const rippleWidth = 150;
-            const distFromRing = Math.abs(dist - ripple.radius);
-
-            if (distFromRing < rippleWidth) {
-              const force = Math.sin((1 - distFromRing / rippleWidth) * Math.PI);
-              const strength = ripple.strength * force * (1 - ripple.radius / ripple.maxRadius);
-              rippleDispX += (dx / (dist || 1)) * strength;
-              rippleDispY += (dy / (dist || 1)) * strength;
-            }
-          });
-
-          // Compute raw target coordinates
-          const targetX = point.baseX + waveX + mouseDispX + rippleDispX;
-          const targetY = point.baseY + waveY + mouseDispY + rippleDispY;
-
-          // Smooth interpolation
-          point.x += (targetX - point.x) * 0.082;
-          point.y += (targetY - point.y) * 0.082;
         });
 
-        // Fill the fluid wave down to the bottom of the screen with a beautiful vertical gradient
-        const minY = Math.min(...ribbon.points.map(p => p.y));
-        const gradient = ctx.createLinearGradient(0, minY, 0, height);
-        
-        // Soft, organic opacities to blend multiple overlapping waves gracefully
-        gradient.addColorStop(0, `rgba(${ribbon.color}, 0.08)`);
-        gradient.addColorStop(0.35, `rgba(${ribbon.color}, 0.04)`);
-        gradient.addColorStop(0.8, `rgba(${ribbon.color}, 0.005)`);
-        gradient.addColorStop(1, `rgba(${ribbon.color}, 0.0)`);
+        posArray[i + 2] = bz + wave + shockwaveDisp;
+      }
+      posAttr.needsUpdate = true;
 
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        
-        // Start from bottom-left corner
-        ctx.moveTo(0, height);
-        // Line to the first point of the ribbon
-        ctx.lineTo(ribbon.points[0].x, ribbon.points[0].y);
-        
-        // Draw the smooth curved top of the fluid wave
-        for (let i = 0; i < ribbon.points.length - 1; i++) {
-          const xc = (ribbon.points[i].x + ribbon.points[i + 1].x) / 2;
-          const yc = (ribbon.points[i].y + ribbon.points[i + 1].y) / 2;
-          ctx.quadraticCurveTo(ribbon.points[i].x, ribbon.points[i].y, xc, yc);
+      // Update 3D Shockwaves physics
+      for (let i = state.shockwaves.length - 1; i >= 0; i--) {
+        const shock = state.shockwaves[i];
+        shock.radius += 0.45;
+        shock.age += 0.45;
+        if (shock.radius >= shock.maxRadius) {
+          state.shockwaves.splice(i, 1);
         }
-        
-        // Connect to the last point
-        const lastPt = ribbon.points[ribbon.points.length - 1];
-        ctx.lineTo(lastPt.x, lastPt.y);
-        
-        // Connect to bottom-right corner and close the path
-        ctx.lineTo(width, height);
-        ctx.closePath();
-        
-        ctx.fill();
-      });
+      }
 
-      // Update and Draw floating star energy dust
-      particles.forEach((p, pIdx) => {
-        p.x += p.vx * currentConfig.driftSpeed;
-        p.y += p.vy * currentConfig.driftSpeed;
+      // Update 3D Particles drift
+      const particlePos = particleGeo.attributes.position.array as Float32Array;
+      for (let i = 0; i < particlePos.length; i += 3) {
+        particlePos[i + 1] += Math.sin(elapsedTime * 0.5 + i) * 0.012;
+      }
+      particleGeo.attributes.position.needsUpdate = true;
 
-        p.pulsePhase += p.pulseSpeed * currentConfig.driftSpeed;
-        const pulseAlpha = p.alpha * (0.6 + Math.sin(p.pulsePhase) * 0.4);
-
-        // Repel from cursor
-        if (mouse.active) {
-          const dx = p.x - mouse.x;
-          const dy = p.y - mouse.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 180) {
-            const force = (180 - dist) / 180;
-            p.x += (dx / (dist || 1)) * force * 1.6;
-            p.y += (dy / (dist || 1)) * force * 1.6;
-          }
-        }
-
-        // Screen boundary loops
-        if (p.x < 0) p.x = width;
-        if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height;
-        if (p.y > height) p.y = 0;
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${p.color}, ${pulseAlpha})`;
-        ctx.fill();
-
-        // Float particles cleanly without connecting lines
-      });
-
-      animationFrameId = requestAnimationFrame(tick);
+      renderer.render(scene, camera);
+      animationFrameId = requestAnimationFrame(animate);
     };
 
-    tick();
+    animate();
 
     return () => {
       window.removeEventListener('pointermove', handlePointerMove);
-      document.removeEventListener('pointerleave', handlePointerLeave);
       window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
+
+      // Clean memory deallocation
+      gemGeo.dispose();
+      gemMat.dispose();
+      cageGeo.dispose();
+      cageMat.dispose();
+      ringMat.dispose();
+      knotGeo.dispose();
+      knotMat.dispose();
+      octaGeo.dispose();
+      octaMat.dispose();
+      compassGeo.dispose();
+      compassMat.dispose();
+      waveGeo.dispose();
+      waveMat.dispose();
+      particleGeo.dispose();
+      particleMat.dispose();
+      renderer.dispose();
+
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement);
+      }
     };
+  }, [activeTheme, particleDensity]);
+
+  const handleResetOrbit = useCallback(() => {
+    sceneStateRef.current.targetOrbitAngles = { theta: 0, phi: 0 };
   }, []);
 
   return (
     <>
-      <div className="absolute inset-0 w-full h-full pointer-events-none select-none z-0 overflow-hidden">
-        <canvas
-          ref={canvasRef}
-          id="interactive-colorful-lines-bg"
-          className="fixed inset-0 w-full h-full pointer-events-none z-0 select-none print:hidden opacity-[0.68] dark:opacity-[0.52]"
-          style={{
-            mixBlendMode: 'multiply',
-          }}
-        />
+      {/* Three.js 3D WebGL Canvas Viewport */}
+      <div
+        ref={containerRef}
+        id="three-js-webgl-container"
+        className={`fixed inset-0 w-full h-full pointer-events-auto select-none z-0 overflow-hidden ${
+          interactiveOrbit ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'
+        }`}
+        style={{
+          mixBlendMode: 'normal',
+        }}
+      />
+
+      {/* Floating 3D Control Studio Toggle (Bottom Left) */}
+      <div className="fixed bottom-6 left-6 z-40 print:hidden">
+        <button
+          id="toggle-3d-studio-btn"
+          onClick={() => setIsControlsOpen(!isControlsOpen)}
+          className={`px-3.5 py-2.5 rounded-[2px] font-mono text-[11px] font-bold uppercase tracking-wider border shadow-md transition-all duration-200 flex items-center gap-2 cursor-pointer ${
+            isControlsOpen
+              ? 'bg-ink text-paper border-ink'
+              : 'bg-paper text-ink border-rule hover:border-ink hover:bg-paper-deep/80'
+          }`}
+          title="Toggle 3D Interactive Engine Controls"
+        >
+          <Rotate3d className="w-4 h-4 text-brass" />
+          <span className="hidden sm:inline">3D Studio</span>
+        </button>
       </div>
+
+      {/* Floating 3D Control Studio Drawer Panel */}
+      {isControlsOpen && (
+        <div
+          id="controls-3d-panel"
+          className="controls-3d-panel fixed bottom-20 left-6 z-50 w-[300px] sm:w-[340px] bg-paper/95 backdrop-blur-md border border-ink/20 shadow-2xl rounded-[2px] p-5 font-sans space-y-4 animate-fadeIn select-none"
+        >
+          <div className="flex items-center justify-between border-b border-rule pb-3">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-brass" />
+              <h4 className="font-serif text-base font-bold text-ink">3D WebGL Engine</h4>
+            </div>
+            <button
+              onClick={() => setIsControlsOpen(false)}
+              className="p-1 hover:bg-paper-deep text-ink-soft hover:text-ink rounded-[2px] cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Interactive 3D Orbit Mode Toggle */}
+          <div className="flex items-center justify-between bg-paper-deep/60 p-3 rounded-[2px] border border-rule/70">
+            <div>
+              <span className="font-mono text-xs font-bold text-ink block">3D Drag & Orbit Mode</span>
+              <span className="text-[11px] text-ink-soft block">Drag mouse to spin 3D structures</span>
+            </div>
+            <button
+              id="orbit-mode-toggle-btn"
+              onClick={() => setInteractiveOrbit(!interactiveOrbit)}
+              className={`px-3 py-1.5 font-mono text-[10px] uppercase font-bold tracking-wider rounded-[2px] border transition-colors cursor-pointer ${
+                interactiveOrbit
+                  ? 'bg-brass text-paper border-brass'
+                  : 'bg-paper text-ink border-rule hover:border-ink'
+              }`}
+            >
+              {interactiveOrbit ? 'Enabled' : 'Disabled'}
+            </button>
+          </div>
+
+          {/* 3D Color Palette Switcher */}
+          <div className="space-y-2">
+            <label className="font-mono text-[11px] font-bold text-ink uppercase tracking-wider flex items-center gap-1.5">
+              <Palette className="w-3.5 h-3.5 text-brass" />
+              <span>3D Material Palette</span>
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {(Object.keys(THEMES_3D) as ThemeKey[]).map((themeKey) => (
+                <button
+                  key={themeKey}
+                  onClick={() => setActiveTheme(themeKey)}
+                  className={`p-2 text-left rounded-[2px] border font-sans text-xs transition-all cursor-pointer ${
+                    activeTheme === themeKey
+                      ? 'border-brass bg-brass/10 text-ink font-bold shadow-xs'
+                      : 'border-rule bg-paper text-ink-soft hover:text-ink hover:border-ink/40'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="w-3 h-3 rounded-full border border-black/20"
+                      style={{ backgroundColor: `#${THEMES_3D[themeKey].mainColor.toString(16).padStart(6, '0')}` }}
+                    />
+                    <span className="truncate">{THEMES_3D[themeKey].name.split(' ')[0]}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Wireframe Toggle & Speed Controls */}
+          <div className="space-y-3 pt-2 border-t border-rule">
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[11px] text-ink uppercase font-bold flex items-center gap-1.5">
+                <Box className="w-3.5 h-3.5 text-brass" />
+                <span>Wireframe Geometry</span>
+              </span>
+              <button
+                onClick={() => setWireframeMode(!wireframeMode)}
+                className={`px-2.5 py-1 font-mono text-[10px] uppercase font-bold rounded-[2px] border cursor-pointer ${
+                  wireframeMode
+                    ? 'bg-ink text-paper border-ink'
+                    : 'bg-paper text-ink border-rule hover:border-ink'
+                }`}
+              >
+                {wireframeMode ? 'ON' : 'OFF'}
+              </button>
+            </div>
+
+            {/* 3D Spin Speed Slider */}
+            <div className="space-y-1">
+              <div className="flex justify-between font-mono text-[10px] text-ink-soft uppercase">
+                <span>Animation Speed</span>
+                <span className="text-brass font-bold">{rotationSpeed.toFixed(1)}x</span>
+              </div>
+              <input
+                type="range"
+                min="0.2"
+                max="2.5"
+                step="0.1"
+                value={rotationSpeed}
+                onChange={(e) => setRotationSpeed(parseFloat(e.target.value))}
+                className="w-full accent-brass cursor-pointer"
+              />
+            </div>
+          </div>
+
+          {/* Reset Orbit Button */}
+          {interactiveOrbit && (
+            <button
+              onClick={handleResetOrbit}
+              className="w-full py-2 font-mono text-xs uppercase tracking-wider text-ink-soft hover:text-ink bg-paper border border-rule hover:border-ink rounded-[2px] transition-colors flex items-center justify-center gap-1.5 cursor-pointer font-bold"
+            >
+              <RefreshCw className="w-3 h-3" />
+              <span>Reset 3D Orientation</span>
+            </button>
+          )}
+
+          <div className="text-[10px] font-mono text-ink-soft/70 text-center pt-1">
+            Click anywhere on the screen to trigger a 3D shockwave
+          </div>
+        </div>
+      )}
     </>
   );
 }

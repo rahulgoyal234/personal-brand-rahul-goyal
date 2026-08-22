@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronRight, Search, X } from 'lucide-react';
+import { ChevronRight, Search, X, ExternalLink } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
+import Card3D from './Card3D';
 
 export default function Portfolio() {
   const { projects } = usePortfolio();
@@ -17,30 +18,6 @@ export default function Portfolio() {
     }
   }, [isSearchOpen]);
 
-  // Keyboard shortcut listener for '/' to focus search
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (
-        e.key === '/' &&
-        document.activeElement?.tagName !== 'INPUT' &&
-        document.activeElement?.tagName !== 'TEXTAREA'
-      ) {
-        e.preventDefault();
-        setIsSearchOpen(true);
-        setTimeout(() => searchInputRef.current?.focus(), 50);
-      } else if (e.key === 'Escape' && isSearchOpen) {
-        if (searchQuery) {
-          setSearchQuery('');
-        } else {
-          setIsSearchOpen(false);
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isSearchOpen, searchQuery]);
-
   // Compute unique categories dynamically from active projects
   const categories: string[] = ['All', ...Array.from(new Set<string>(projects.map((p) => p.category)))];
 
@@ -51,11 +28,9 @@ export default function Portfolio() {
   const normalizedQuery = searchQuery.trim().toLowerCase();
   
   const filteredProjects = projects.filter((project) => {
-    // Category match
     const categoryMatches = currentCategory === 'All' || project.category === currentCategory;
     if (!categoryMatches) return false;
 
-    // Search query match across title, description, category, tags, and long description
     if (!normalizedQuery) return true;
 
     const inTitle = project.title.toLowerCase().includes(normalizedQuery);
@@ -81,24 +56,22 @@ export default function Portfolio() {
   };
 
   return (
-    <section id="portfolio" className="py-28 bg-paper-deep/50 backdrop-blur-[6px] border-t border-rule border-b border-rule scroll-mt-20 relative">
+    <section id="portfolio" className="py-24 md:py-32 bg-paper-deep/40 backdrop-blur-[6px] border-t border-b border-rule scroll-mt-20 relative">
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8">
         
-        {/* Reading Room Section Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-10 gap-8">
+        {/* Section Header */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-8">
           <div className="space-y-3">
-            <div className="flex items-center gap-4 flex-wrap">
-              <h2 className="font-serif text-[38px] font-semibold text-ink leading-tight">
-                Reading Room
-              </h2>
-            </div>
-            <p className="text-ink-soft text-sm sm:text-[15px] leading-relaxed max-w-[480px]">
-              A carefully curated selection of peer-reviewed research papers, active policy articles, and academic columns.
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-[42px] font-semibold text-ink leading-tight">
+              Reading Room
+            </h2>
+            <p className="text-ink-soft text-sm sm:text-[15.5px] leading-relaxed max-w-[520px] font-sans">
+              Peer-reviewed comparative research papers, trademark analyses, constitutional studies, and national legal commentary.
             </p>
           </div>
 
           {/* Controls: Search Button & Category Filters */}
-          <div className="flex flex-col items-start lg:items-end gap-4 w-full lg:w-auto">
+          <div className="flex flex-col items-start lg:items-end gap-3.5 w-full lg:w-auto">
             
             <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
               {/* Search Toggle / Input Button */}
@@ -107,16 +80,13 @@ export default function Portfolio() {
                   id="blogs-search-toggle-btn"
                   onClick={() => setIsSearchOpen(true)}
                   className="font-mono text-[11px] uppercase tracking-wider px-3.5 py-1.5 border border-rule hover:border-ink text-ink-soft hover:text-ink bg-paper rounded-full transition-all duration-200 font-semibold cursor-pointer flex items-center gap-2 group shadow-xs"
-                  title="Search Reading Room (Press '/')"
+                  title="Search reading room"
                 >
                   <Search className="w-3.5 h-3.5 text-brass group-hover:text-ink transition-colors" />
-                  <span>Search Reading Room</span>
-                  <span className="bg-paper-deep text-ink-soft border border-rule text-[9px] px-1.5 py-0.2 rounded font-mono ml-1">
-                    /
-                  </span>
+                  <span>Search</span>
                 </button>
               ) : (
-                <div className="relative flex items-center w-full sm:w-[320px] animate-fadeIn">
+                <div className="relative flex items-center w-full sm:w-[280px]">
                   <Search className="w-4 h-4 text-brass absolute left-3 pointer-events-none" />
                   <input
                     ref={searchInputRef}
@@ -161,8 +131,8 @@ export default function Portfolio() {
                     onClick={() => setSelectedCategory(category)}
                     className={`font-mono text-[11px] uppercase tracking-wider px-3.5 py-1.5 border rounded-full transition-all duration-200 font-semibold cursor-pointer ${
                       currentCategory === category
-                        ? 'border-ink bg-ink text-paper'
-                        : 'border-rule text-ink-soft bg-transparent hover:border-ink hover:text-ink'
+                        ? 'border-ink bg-ink text-paper shadow-xs'
+                        : 'border-rule text-ink-soft bg-paper hover:border-ink hover:text-ink'
                     }`}
                   >
                     {category}
@@ -176,20 +146,19 @@ export default function Portfolio() {
 
         {/* Active Search Filter Badge */}
         {searchQuery.trim() && (
-          <div className="mb-6 flex items-center justify-between bg-paper border border-rule/80 px-4 py-2.5 rounded-[2px]">
+          <div className="mb-6 flex items-center justify-between bg-paper border border-rule/80 px-4 py-2 rounded-[2px]">
             <div className="flex items-center gap-2 font-mono text-xs text-ink-soft">
               <Search className="w-3.5 h-3.5 text-brass" />
               <span>
-                Showing <strong className="text-ink font-bold">{filteredProjects.length}</strong> {filteredProjects.length === 1 ? 'entry' : 'entries'} for &ldquo;<span className="text-ink font-semibold">{searchQuery}</span>&rdquo;
-                {currentCategory !== 'All' && <span> in <span className="text-ink font-semibold">{currentCategory}</span></span>}
+                Showing {filteredProjects.length} results for &ldquo;<span className="text-ink font-semibold">{searchQuery}</span>&rdquo;
               </span>
             </div>
             <button
               id="clear-active-search-badge"
               onClick={clearSearch}
-              className="font-mono text-[11px] uppercase tracking-wider text-brass hover:text-ink underline cursor-pointer ml-4 font-semibold"
+              className="font-mono text-[11px] uppercase tracking-wider text-brass hover:text-ink underline cursor-pointer"
             >
-              Clear Search
+              Clear
             </button>
           </div>
         )}
@@ -197,170 +166,155 @@ export default function Portfolio() {
         {/* Empty Search Results State */}
         {filteredProjects.length === 0 && (
           <div className="py-16 text-center bg-paper border border-dashed border-rule/80 rounded-[2px] my-6 px-6">
-            <Search className="w-8 h-8 text-brass mx-auto mb-3 opacity-60" />
             <h3 className="font-serif text-lg font-semibold text-ink mb-1">
               No entries found
             </h3>
-            <p className="text-ink-soft text-sm font-sans max-w-md mx-auto mb-5">
-              We couldn&apos;t find any publications or articles matching &ldquo;{searchQuery}&rdquo; {currentCategory !== 'All' ? `under ${currentCategory}` : ''}.
+            <p className="text-ink-soft text-sm font-sans max-w-md mx-auto mb-4">
+              We couldn&apos;t find any publications matching &ldquo;{searchQuery}&rdquo;.
             </p>
-            <div className="flex items-center justify-center gap-3">
-              <button
-                id="empty-clear-search-btn"
-                onClick={() => {
-                  setSearchQuery('');
-                  setSelectedCategory('All');
-                }}
-                className="font-mono text-xs text-paper bg-ink hover:bg-paper hover:text-ink border border-ink px-4 py-2 rounded-[2px] transition-all font-semibold uppercase tracking-wider cursor-pointer"
-              >
-                Reset All Filters
-              </button>
-            </div>
+            <button
+              id="empty-clear-search-btn"
+              onClick={() => {
+                setSearchQuery('');
+                setSelectedCategory('All');
+              }}
+              className="font-mono text-xs text-paper bg-ink hover:bg-paper hover:text-ink border border-ink px-4 py-2 rounded-[2px] transition-all font-semibold uppercase tracking-wider cursor-pointer"
+            >
+              Reset Filters
+            </button>
           </div>
         )}
 
-        {/* Writings List (Academic & Typography-focused format) */}
+        {/* Writings List */}
         {filteredProjects.length > 0 && (
           <div
             id="projects-list"
-            className="flex flex-col divide-y divide-rule/60 border-t border-b border-rule/60"
+            className="flex flex-col divide-y divide-rule/70 border-t border-b border-rule/70"
           >
             {filteredProjects.map((project) => {
-            const isExpanded = !!expandedAbstracts[project.id];
-            
-            return (
-              <div
-                id={`project-list-row-${project.id}`}
-                key={project.id}
-                className="group py-8 transition-colors duration-200 hover:bg-paper/20"
-              >
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 md:gap-10">
-                  
-                  {/* Left Metadata Column (Category) */}
-                  <div className="flex items-center md:flex-col md:items-start gap-2 md:gap-1 min-w-[150px]">
-                    <span className="font-mono text-[11px] text-ink uppercase tracking-wider font-bold">
-                      {project.category}
-                    </span>
-                  </div>
-
-                  {/* Center Content Column (Title, Description, Collapsible Abstract, Tags) */}
-                  <div className="flex-1 space-y-4">
-                    {project.demoUrl ? (
-                      <a
-                        id={`project-title-link-${project.id}`}
-                        href={project.demoUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="group/title inline-block text-left"
-                      >
-                        <h3 className="font-serif text-lg sm:text-[21px] font-semibold leading-snug text-ink group-hover/title:text-ink group-hover/title:underline transition-all flex items-start gap-1.5">
-                          <span>{project.title}</span>
-                        </h3>
-                      </a>
-                    ) : (
-                      <h3 className="font-serif text-lg sm:text-[21px] font-semibold leading-snug text-ink">
-                        {project.title}
-                      </h3>
-                    )}
-
-                    <p className="text-ink-soft text-sm sm:text-[14.5px] leading-relaxed font-sans max-w-[720px]">
-                      {project.description}
-                    </p>
-
-                    {/* Subject Matter Tags */}
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {project.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="bg-paper text-ink-soft border border-rule/70 text-[9px] font-mono px-2.5 py-0.5 uppercase rounded-[2px]"
-                        >
-                          {tag}
-                        </span>
-                      ))}
+              const isExpanded = !!expandedAbstracts[project.id];
+              
+              return (
+                <Card3D
+                  id={`project-list-row-${project.id}`}
+                  key={project.id}
+                  intensity={6}
+                  depth={12}
+                  glareOpacity={0.12}
+                  className="group py-6 sm:py-7 px-4 sm:px-6 my-2 rounded-[2px] transition-colors duration-200 hover:bg-paper/80 border border-transparent hover:border-rule/80 hover:shadow-md"
+                >
+                  <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 md:gap-10">
+                    
+                    {/* Left Category Column */}
+                    <div className="flex items-center md:flex-col md:items-start gap-2 min-w-[140px]">
+                      <span className="font-mono text-[10.5px] text-ink uppercase tracking-wider font-bold bg-paper px-2.5 py-0.5 border border-rule rounded-[2px]">
+                        {project.category}
+                      </span>
                     </div>
 
-                    {/* Collapsible Full Abstract Section */}
-                    {isExpanded && (
-                      <div 
-                        className="mt-6 p-5 sm:p-6 bg-paper border border-rule/70 rounded-[2px] text-sm text-ink-soft leading-relaxed font-sans space-y-4 overflow-hidden"
-                      >
-                        <div className="space-y-1.5">
-                          <strong className="block text-[11px] font-mono uppercase tracking-wider text-ink font-bold border-b border-rule/30 pb-1.5">
-                            Abstract & Overview
-                          </strong>
-                          <p className="text-[14px] leading-relaxed whitespace-pre-line text-ink-soft pt-1">
-                            {project.longDescription || project.description}
-                          </p>
-                        </div>
+                    {/* Center Content Column */}
+                    <div className="flex-1 space-y-3.5">
+                      {project.demoUrl ? (
+                        <a
+                          id={`project-title-link-${project.id}`}
+                          href={project.demoUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="group/title inline-block text-left"
+                        >
+                          <h3 className="font-serif text-lg sm:text-[22px] font-semibold leading-snug text-ink group-hover/title:text-brass transition-colors flex items-start gap-2">
+                            <span>{project.title}</span>
+                            <ExternalLink className="w-4 h-4 text-ink-soft/40 group-hover/title:text-brass flex-shrink-0 mt-1 transition-colors" />
+                          </h3>
+                        </a>
+                      ) : (
+                        <h3 className="font-serif text-lg sm:text-[22px] font-semibold leading-snug text-ink">
+                          {project.title}
+                        </h3>
+                      )}
 
-                        {project.highlights && project.highlights.length > 0 && (
-                          <div className="space-y-2 pt-2">
-                            <strong className="block text-[11px] font-mono uppercase tracking-wider text-ink font-bold border-b border-rule/30 pb-1.5">
-                              Key Research Highlights
-                            </strong>
-                            <ul className="space-y-2 pt-1">
-                              {project.highlights.map((highlight, index) => (
-                                <li key={index} className="flex items-start gap-3 text-xs sm:text-[13px] text-ink-soft">
-                                  <span className="flex-shrink-0 w-5 h-5 rounded-full border border-ink/40 flex items-center justify-center text-[9px] font-mono text-ink font-bold mt-0.5">
-                                    {index + 1}
-                                  </span>
-                                  <span className="leading-relaxed font-sans">{highlight}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                      <p className="text-ink-soft text-sm sm:text-[14.5px] leading-relaxed font-sans max-w-[740px]">
+                        {project.description}
+                      </p>
 
-                        {project.stats && project.stats.length > 0 && (
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3">
-                            {project.stats.map((stat, sIdx) => (
-                              <div key={stat?.label || sIdx} className="bg-paper-deep border border-rule/60 p-3 rounded-[2px]">
-                                <span className="block text-ink font-sans text-xs sm:text-sm font-semibold">
-                                  {stat?.value || ''}
-                                </span>
-                                <span className="block text-ink-soft text-[9px] font-mono uppercase tracking-wider mt-0.5">
-                                  {stat?.label || ''}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                      {/* Tags */}
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {project.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="bg-paper text-ink-soft border border-rule/70 text-[9px] font-mono px-2.5 py-0.5 uppercase rounded-[2px]"
+                          >
+                            {tag}
+                          </span>
+                        ))}
                       </div>
-                    )}
-                  </div>
 
-                  {/* Right Actions Column (Direct Link CTA + Inline Toggle) */}
-                  <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-4 w-full md:w-auto md:min-w-[150px]">
-                    {project.demoUrl && (
-                      <a
-                        id={`project-direct-link-${project.id}`}
-                        href={project.demoUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="font-mono text-[11px] text-paper bg-ink hover:bg-paper hover:text-ink border border-ink px-4 py-2.5 rounded-[2px] transition-all duration-200 uppercase tracking-wider flex items-center justify-center font-bold cursor-pointer w-fit md:w-full hover:-translate-y-[1px] hover:shadow-md"
+                      {/* Collapsible Abstract Section */}
+                      {isExpanded && (
+                        <div 
+                          className="mt-6 p-5 bg-paper border border-rule rounded-[2px] text-sm text-ink-soft leading-relaxed font-sans space-y-4 shadow-sm"
+                        >
+                          <div>
+                            <strong className="text-[11px] font-mono uppercase tracking-wider text-ink font-bold block mb-1.5">
+                              Abstract & Details
+                            </strong>
+                            <p className="text-[14px] leading-relaxed whitespace-pre-line text-ink-soft">
+                              {project.longDescription || project.description}
+                            </p>
+                          </div>
+
+                          {project.highlights && project.highlights.length > 0 && (
+                            <div className="space-y-2 pt-2 border-t border-rule/30">
+                              <strong className="block text-[11px] font-mono uppercase tracking-wider text-ink font-bold">
+                                Key Highlights
+                              </strong>
+                              <ul className="space-y-1.5">
+                                {project.highlights.map((highlight, index) => (
+                                  <li key={index} className="flex items-start gap-2.5 text-xs sm:text-[13px] text-ink-soft">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-brass flex-shrink-0 mt-1.5" />
+                                    <span>{highlight}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Right Actions Column */}
+                    <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-3 w-full md:w-auto md:min-w-[130px]">
+                      {project.demoUrl && (
+                        <a
+                          id={`project-direct-link-${project.id}`}
+                          href={project.demoUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="font-mono text-[11px] text-paper bg-ink hover:bg-paper hover:text-ink border border-ink px-4 py-2 rounded-[2px] transition-all duration-200 uppercase tracking-wider flex items-center justify-center gap-1.5 font-bold cursor-pointer w-fit md:w-full"
+                        >
+                          <span>Read Full</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+
+                      <button
+                        id={`project-toggle-abstract-${project.id}`}
+                        onClick={(e) => toggleAbstract(project.id, e)}
+                        className="font-mono text-[11px] text-ink-soft hover:text-ink flex items-center gap-1 cursor-pointer bg-transparent border-none p-1 font-semibold transition-colors uppercase tracking-wider"
                       >
-                        <span>Full Text</span>
-                      </a>
-                    )}
+                        <span>{isExpanded ? 'Hide Abstract' : 'View Abstract'}</span>
+                        <ChevronRight className={`w-3.5 h-3.5 transition-transform duration-200 ${isExpanded ? 'rotate-90 text-ink' : ''}`} />
+                      </button>
+                    </div>
 
-                    <button
-                      id={`project-toggle-abstract-${project.id}`}
-                      onClick={(e) => toggleAbstract(project.id, e)}
-                      className="font-mono text-[11px] text-ink-soft hover:text-ink hover:underline flex items-center gap-1 cursor-pointer bg-transparent border-none p-1 font-semibold transition-colors uppercase tracking-wider"
-                    >
-                      <span>{isExpanded ? 'Hide' : 'Abstract'}</span>
-                      <ChevronRight className={`w-3.5 h-3.5 transition-transform duration-200 ${isExpanded ? 'rotate-90 text-ink' : ''}`} />
-                    </button>
                   </div>
-
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                </Card3D>
+              );
+            })}
+          </div>
         )}
+
       </div>
     </section>
   );
 }
-

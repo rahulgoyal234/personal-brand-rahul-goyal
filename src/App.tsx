@@ -7,10 +7,10 @@ import Customizer from './components/Customizer';
 import ThreeDBackground from './components/ThreeDBackground';
 import EntranceCurtain from './components/EntranceCurtain';
 import { usePortfolio } from './context/PortfolioContext';
-import { Linkedin, Mail, ChevronUp } from 'lucide-react';
+import { ChevronUp } from 'lucide-react';
 
 export default function App() {
-  const { personalInfo, setIsEditorOpen } = usePortfolio();
+  const { personalInfo } = usePortfolio();
   const [activeSection, setActiveSection] = useState<string>('about');
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
 
@@ -18,9 +18,8 @@ export default function App() {
   useEffect(() => {
     const handleScrollSpy = () => {
       const sections = ['about', 'portfolio', 'contact'];
-      const scrollPosition = window.scrollY + 120; // Offset for navbar
+      const scrollPosition = window.scrollY + 140; // Offset for navbar
 
-      // Scroll to top visibility check
       setShowScrollTop(window.scrollY > 400);
 
       for (const section of sections) {
@@ -36,7 +35,7 @@ export default function App() {
       }
     };
 
-    window.addEventListener('scroll', handleScrollSpy);
+    window.addEventListener('scroll', handleScrollSpy, { passive: true });
     return () => window.removeEventListener('scroll', handleScrollSpy);
   }, []);
 
@@ -47,6 +46,14 @@ export default function App() {
     });
   };
 
+  const scrollToSection = (id: string) => {
+    setActiveSection(id);
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <div id="root-layout" className="min-h-screen flex flex-col bg-paper selection:bg-brass selection:text-paper text-ink relative overflow-x-hidden">
       {/* Entrance curtain animation */}
@@ -55,7 +62,7 @@ export default function App() {
       {/* Interactive colorful animated lines background */}
       <ThreeDBackground />
 
-      {/* Premium Floating Navigation Menu */}
+      {/* Floating Navigation Menu */}
       <Navigation
         activeSection={activeSection}
         setActiveSection={setActiveSection}
@@ -65,73 +72,73 @@ export default function App() {
       <main className="flex-1">
         {/* Intro Section */}
         <Hero
-          onContactClick={() => {
-            setActiveSection('contact');
-            document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }}
-          onPortfolioClick={() => {
-            setActiveSection('portfolio');
-            document.getElementById('portfolio')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }}
+          onContactClick={() => scrollToSection('contact')}
+          onPortfolioClick={() => scrollToSection('portfolio')}
         />
 
-        {/* Selected Projects Showcase */}
+        {/* Reading Room / Writing Section */}
         <Portfolio />
 
-        {/* Fully Interactive Contact Details */}
+        {/* Contact Section */}
         <Contact />
       </main>
 
-      {/* Footer Design Matching Your HTML Template */}
-      <footer id="main-footer" className="bg-paper-deep text-ink-soft py-16 px-6 sm:px-8 border-t border-rule print:hidden">
+      {/* Minimalist Footer */}
+      <footer id="main-footer" className="bg-paper-deep/80 text-ink-soft py-16 px-6 sm:px-8 border-t border-rule print:hidden relative z-10">
         <div className="max-w-[1120px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-8">
           
           {/* Brand section */}
-          <div>
-            <div className="mark flex items-center gap-3 font-mono font-medium text-sm tracking-wide text-ink">
-              <span className="seal w-8 h-8 rounded-full border border-ink flex items-center justify-center font-serif text-[13px] text-ink font-semibold overflow-hidden bg-paper">
-                {personalInfo.avatar ? (
-                  <img 
-                    src={personalInfo.avatar && !personalInfo.avatar.startsWith('data:') ? `${personalInfo.avatar}${personalInfo.avatar.includes('?') ? '&' : '?'}v=${Date.now()}` : personalInfo.avatar} 
-                    alt="" 
-                    className="w-full h-full object-cover object-center"
-                    style={{ objectPosition: 'center', objectFit: 'cover' }}
-                    referrerPolicy="no-referrer"
-                    onError={(e) => {
-                      const img = e.currentTarget as HTMLImageElement;
-                      if (!img.src.endsWith('/api/avatar.jpg')) {
-                        img.src = '/api/avatar.jpg';
-                      }
-                    }}
-                  />
-                ) : (
-                  'RG'
-                )}
-              </span>
-              <span className="font-semibold">{personalInfo.name}</span>
+          <div className="flex items-center gap-3">
+            <span className="w-9 h-9 rounded-full border border-ink/40 flex items-center justify-center font-serif text-[13px] text-ink font-semibold overflow-hidden bg-paper shadow-xs">
+              {personalInfo.avatar ? (
+                <img 
+                  src={personalInfo.avatar && !personalInfo.avatar.startsWith('data:') ? `${personalInfo.avatar}${personalInfo.avatar.includes('?') ? '&' : '?'}v=${Date.now()}` : personalInfo.avatar} 
+                  alt={personalInfo.name} 
+                  className="w-full h-full object-cover object-center"
+                  style={{ objectPosition: 'center', objectFit: 'cover' }}
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const img = e.currentTarget as HTMLImageElement;
+                    if (!img.src.endsWith('/api/avatar.jpg')) {
+                      img.src = '/api/avatar.jpg';
+                    }
+                  }}
+                />
+              ) : (
+                'RG'
+              )}
+            </span>
+            <div>
+              <span className="font-serif text-base font-bold text-ink block">{personalInfo.name}</span>
             </div>
           </div>
 
-          {/* Copyright section */}
+          {/* Quick links */}
+          <div className="flex flex-wrap items-center gap-6 font-mono text-xs text-ink-soft">
+            <button onClick={() => scrollToSection('about')} className="hover:text-ink cursor-pointer">About</button>
+            <button onClick={() => scrollToSection('portfolio')} className="hover:text-ink cursor-pointer">Reading Room</button>
+            <button onClick={() => scrollToSection('contact')} className="hover:text-ink cursor-pointer">Contact</button>
+          </div>
+
+          {/* Copyright */}
           <div className="font-mono text-xs text-ink-soft tracking-wider md:text-right">
-            © {personalInfo.name}. All rights reserved.
+            © {new Date().getFullYear()} {personalInfo.name}. All rights reserved.
           </div>
           
         </div>
       </footer>
 
-      {/* Floating Scroll to Top trigger */}
+      {/* Floating Scroll to Top button */}
       {showScrollTop && (
         <button
           id="scroll-to-top-btn"
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 p-3 bg-paper text-ink rounded-[2px] border border-rule hover:border-ink hover:text-ink shadow-none transition-all duration-300 cursor-pointer z-40"
+          className="fixed bottom-6 right-6 p-3 bg-paper text-ink rounded-[2px] border border-rule hover:border-ink hover:text-ink shadow-sm transition-all duration-300 cursor-pointer z-40"
           title="Scroll to Top"
         >
           <ChevronUp className="w-4 h-4" />
         </button>
       )}
-
 
       {/* Slide-over Profile Settings Panel */}
       <Customizer />

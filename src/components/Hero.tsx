@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Play, X, GraduationCap, ChevronDown, ChevronUp } from 'lucide-react';
+import { Play, X, GraduationCap, ChevronDown, ChevronUp, Box } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { motion, AnimatePresence } from 'motion/react';
+import Card3D from './Card3D';
 
 interface HeroProps {
   onContactClick: () => void;
@@ -34,7 +35,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
     const defaultText = "Making the complex, comprehensible.";
     let targetText = text || defaultText;
     
-    // Fallback if targetText is empty or is literally "Rahul Goyal"
     if (!targetText || targetText.trim().toLowerCase() === 'rahul goyal') {
       targetText = "Making the complex, comprehensible.";
     }
@@ -48,8 +48,8 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
           return (
             <React.Fragment key={idx}>
               <span
-                className={`lex-word ${isRevealed ? 'in' : ''} ${isLast ? 'italic font-serif font-light text-brass' : ''}`}
-                style={{ transitionDelay: `${500 + idx * 90}ms` }}
+                className={`lex-word ${isRevealed ? 'in' : ''} ${isLast ? 'italic font-serif font-normal' : ''}`}
+                style={{ transitionDelay: `${400 + idx * 90}ms` }}
               >
                 {word}
               </span>
@@ -64,19 +64,19 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
   return (
     <section
       id="about"
-      className="relative min-h-[90vh] flex items-center justify-center pt-36 pb-20 md:py-48 overflow-hidden bg-transparent scroll-mt-20"
+      className="relative min-h-[85vh] flex items-center justify-center pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-transparent scroll-mt-20"
     >
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8 w-full relative z-10">
         
-        {/* Top Row: Info (Left) & Profile Photo (Right) - Side-by-side across all devices */}
-        <div className="flex flex-row items-start justify-between gap-5 sm:gap-8 lg:gap-12 mb-6 w-full">
+        {/* Top Row: Info (Left) & Profile Photo (Right) */}
+        <div className="flex flex-row items-start justify-between gap-4 sm:gap-8 lg:gap-12 mb-8 w-full">
           
           {/* Left Column: Heading, Gold Rule, and Bio */}
           <div className="flex-1 min-w-0 flex flex-col items-start text-left relative z-10">
-
+            
             <h1
               id="hero-heading"
-              className="font-serif text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold leading-[1.08] text-ink"
+              className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-semibold leading-[1.1] text-ink tracking-tight"
             >
               {renderFormattedHeading(personalInfo.shortBio)}
             </h1>
@@ -86,7 +86,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
 
             <div
               id="hero-bio"
-              className={`lex-sub text-ink-soft text-[14px] sm:text-[16px] md:text-[17px] leading-relaxed max-w-[720px] font-sans space-y-3 sm:space-y-4 ${isRevealed ? 'in' : ''}`}
+              className={`lex-sub text-ink-soft text-[14.5px] sm:text-[16px] md:text-[17px] leading-relaxed max-w-[720px] font-sans space-y-3.5 sm:space-y-4 ${isRevealed ? 'in' : ''}`}
             >
               {(personalInfo.bio || '').split('\n').map((para, i) => {
                 if (!para.trim()) return null;
@@ -97,23 +97,24 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 );
               })}
             </div>
+
           </div>
 
-          {/* Right Column: Profile Photo */}
+          {/* Right Column: Profile Photo Container */}
           <div
             id="hero-portrait-container"
             className="flex-shrink-0 flex justify-end pt-2 sm:pt-4 relative"
           >
-            <div className="portrait-wrap relative flex flex-col items-center">
+            <Card3D intensity={18} depth={24} glareOpacity={0.2} className="portrait-wrap relative flex flex-col items-center">
               
-              {/* Profile photo ring styled beautifully with solid background */}
+              {/* Profile photo ring */}
               <div 
-                className="portrait-ring w-[100px] h-[100px] sm:w-[180px] sm:h-[180px] md:w-[220px] md:h-[220px] aspect-square rounded-full border border-ink/35 relative transition-all duration-500 cursor-default shadow-md z-10 bg-paper"
+                className="portrait-ring w-[100px] h-[100px] sm:w-[170px] sm:h-[170px] md:w-[210px] md:h-[210px] aspect-square rounded-full border border-ink/20 relative transition-all duration-500 cursor-default shadow-md z-10 bg-paper"
               >
                 {/* Outer concentric decorative border outline */}
-                <div className="absolute inset-[-6px] sm:inset-[-10px] rounded-full border border-rule pointer-events-none" />
+                <div className="absolute inset-[-6px] sm:inset-[-8px] rounded-full border border-brass/30 pointer-events-none" />
                 
-                {/* Image core - absolutely positioned with perfect equal inset margins */}
+                {/* Image core */}
                 <div className="absolute inset-1 sm:inset-2 rounded-full overflow-hidden bg-paper-deep">
                   {personalInfo.avatar ? (
                     <img
@@ -128,26 +129,26 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                           setImgSrc('/api/avatar.jpg');
                         }
                       }}
-                      className="absolute inset-0 w-full h-full object-cover object-center block rounded-full transition-transform duration-500"
+                      className="absolute inset-0 w-full h-full object-cover object-center block rounded-full"
                       style={{ objectPosition: 'center', objectFit: 'cover' }}
                     />
                   ) : (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center p-3 sm:p-6 text-center text-ink-soft">
-                      <span className="font-mono text-[9px] sm:text-xs">No Portrait</span>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-3 text-center text-ink-soft">
+                      <span className="font-mono text-[9px] sm:text-xs">Rahul Goyal</span>
                     </div>
                   )}
                 </div>
               </div>
 
               {/* Portrait Label Caption */}
-              <div className="portrait-caption mt-4 sm:mt-6 font-mono text-[9px] sm:text-[11px] tracking-[0.1em] uppercase text-brass font-bold text-center px-2 max-w-full leading-normal whitespace-nowrap z-10 relative bg-paper/80 backdrop-blur-xs py-0.5 rounded-[2px]">
+              <div className="portrait-caption mt-4 sm:mt-5 font-mono text-[9px] sm:text-[11px] tracking-[0.12em] uppercase text-brass font-bold text-center px-2.5 max-w-full leading-normal whitespace-nowrap z-10 relative">
                 {personalInfo.name} | {personalInfo.title}
               </div>
 
               {/* Education Button with toggle */}
               <button
                 onClick={() => setIsEducationOpen(!isEducationOpen)}
-                className="mt-3.5 sm:mt-4 font-mono text-[9px] sm:text-[10px] md:text-[10.5px] tracking-[0.12em] uppercase text-ink-soft hover:text-brass border border-ink/15 hover:border-brass/35 px-3 py-1.5 rounded-[2px] transition-all duration-300 flex items-center gap-2 cursor-pointer bg-paper-deep/30 hover:bg-paper-deep/80 select-none shadow-sm font-bold animate-fade-in"
+                className="mt-3 font-mono text-[9px] sm:text-[10px] tracking-[0.12em] uppercase text-ink-soft hover:text-brass border border-ink/15 hover:border-brass/35 px-3 py-1 rounded-[2px] transition-all duration-200 flex items-center gap-1.5 cursor-pointer bg-paper hover:bg-paper-deep/60 select-none shadow-xs font-bold"
               >
                 <GraduationCap className="w-3.5 h-3.5 text-brass" />
                 <span>Education</span>
@@ -163,106 +164,95 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 {isEducationOpen && (
                   <motion.div
                     initial={{ height: 0, opacity: 0, marginTop: 0 }}
-                    animate={{ height: "auto", opacity: 1, marginTop: 16 }}
+                    animate={{ height: "auto", opacity: 1, marginTop: 12 }}
                     exit={{ height: 0, opacity: 0, marginTop: 0 }}
-                    transition={{ duration: 0.25, ease: "easeInOut" }}
-                    className="overflow-hidden flex flex-col items-center w-full max-w-[200px] sm:max-w-[240px] text-center"
+                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                    className="overflow-hidden flex flex-col items-center w-full max-w-[210px] sm:max-w-[240px] text-center"
                   >
-                    <div className="w-10 h-[1px] bg-ink/15 mb-3.5" />
+                    <div className="w-10 h-[1px] bg-rule mb-3" />
                     
-                    <div className="space-y-3.5 w-full pb-1">
+                    <div className="space-y-3 w-full pb-1">
                       {/* Bennett University */}
                       <div className="flex flex-col items-center px-1">
-                        <p className="font-sans text-[10px] sm:text-[11.5px] font-bold text-ink uppercase tracking-wider leading-snug">
+                        <p className="font-sans text-[11px] font-bold text-ink uppercase tracking-wider leading-snug">
                           Bennett University
                         </p>
-                        <p className="font-mono text-[8.5px] sm:text-[9.5px] text-brass font-semibold tracking-wide mt-0.5 uppercase">
-                          LL.M. (Corp & Comm Law) • Ongoing
-                        </p>
-                        <p className="font-sans text-[8.5px] sm:text-[9px] text-ink-soft/85 italic mt-0.5">
-                          Greater Noida
+                        <p className="font-mono text-[9px] text-brass font-semibold tracking-wide mt-0.5 uppercase">
+                          LL.M. (Corp & Comm Law)
                         </p>
                       </div>
 
                       {/* KIIT School of Law */}
-                      <div className="flex flex-col items-center px-1 pt-0.5">
-                        <p className="font-sans text-[10px] sm:text-[11.5px] font-bold text-ink uppercase tracking-wider leading-snug">
+                      <div className="flex flex-col items-center px-1">
+                        <p className="font-sans text-[11px] font-bold text-ink uppercase tracking-wider leading-snug">
                           KIIT School of Law
                         </p>
-                        <p className="font-mono text-[8.5px] sm:text-[9.5px] text-brass font-semibold tracking-wide mt-0.5 uppercase">
+                        <p className="font-mono text-[9px] text-brass font-semibold tracking-wide mt-0.5 uppercase">
                           B.A. LL.B. (Hons.)
-                        </p>
-                        <p className="font-sans text-[8.5px] sm:text-[9px] text-ink-soft/85 italic mt-0.5">
-                          Bhubaneswar
                         </p>
                       </div>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+            </Card3D>
           </div>
 
         </div>
 
-        {/* Action buttons with Lex entrance animation */}
-        <div id="hero-actions" className={`lex-cta ${isRevealed ? 'in' : ''} flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 w-full md:w-auto mb-8`}>
+        {/* Action Buttons */}
+        <div id="hero-actions" className={`lex-cta ${isRevealed ? 'in' : ''} flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 w-full md:w-auto mb-10`}>
           <button
             id="hero-cta-portfolio"
             onClick={onPortfolioClick}
-            className="w-full sm:w-auto justify-center font-mono text-[11px] sm:text-[13px] md:text-[13.5px] tracking-wider px-[14px] sm:px-[22px] py-2.5 sm:py-3.5 border border-ink bg-ink text-paper hover:bg-paper hover:text-ink hover:border-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
+            className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[13px] tracking-wider px-5 py-3 border border-ink bg-ink text-paper hover:bg-paper hover:text-ink hover:border-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs"
           >
-            View Reading Room
+            <span>Reading Room</span>
           </button>
 
           {personalInfo.introVideo && (
             <button
               id="hero-cta-video"
               onClick={() => setIsVideoModalOpen(true)}
-              className="w-full sm:w-auto justify-center font-mono text-[13px] sm:text-[13.5px] tracking-wider px-[14px] sm:px-[22px] py-2.5 sm:py-3.5 border border-line bg-paper-deep text-ink hover:bg-ink hover:border-ink hover:text-paper rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-sm hover:shadow-md"
+              className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[13px] tracking-wider px-5 py-3 border border-rule bg-paper-deep text-ink hover:bg-ink hover:border-ink hover:text-paper rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs"
             >
               <Play className="w-3.5 h-3.5 fill-current translate-x-0.5" />
-              Play Intro Video
+              <span>Play Intro Video</span>
             </button>
           )}
 
           <button
             id="hero-cta-contact"
             onClick={onContactClick}
-            className="w-full sm:w-auto justify-center font-mono text-[11px] sm:text-[13px] md:text-[13.5px] tracking-wider px-[14px] sm:px-[22px] py-2.5 sm:py-3.5 border border-ink bg-transparent text-ink hover:text-paper hover:bg-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold"
+            className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[13px] tracking-wider px-5 py-3 border border-ink bg-transparent text-ink hover:text-paper hover:bg-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs"
           >
-            Get in Touch &nbsp;→
+            <span>Get in Touch</span>
           </button>
         </div>
 
-
-        {/* Middle Row: Full-width Cover Photo Banner */}
-        <div className="w-full mb-2 relative rounded-[4px] overflow-hidden border border-line shadow-sm group">
-          <div className="absolute inset-0 bg-gradient-to-t from-paper/40 via-transparent to-transparent z-10 pointer-events-none" />
-          <img 
-            src="https://res.cloudinary.com/ywmg6avw/image/upload/v1784023092/Gemini_Generated_Image_51tl351tl351tl35_qudg4a.png"
-            alt="Rahul Goyal Editorial Cover"
-            className="w-full h-auto block transition-transform duration-700 group-hover:scale-[1.01]"
-            referrerPolicy="no-referrer"
-          />
-          {/* Elegant corner brackets for that bespoke design feel */}
-          <div className="absolute top-3 left-3 w-4 h-4 border-t-2 border-l-2 border-brass/50 z-20 pointer-events-none" />
-          <div className="absolute top-3 right-3 w-4 h-4 border-t-2 border-r-2 border-brass/50 z-20 pointer-events-none" />
-          <div className="absolute bottom-3 left-3 w-4 h-4 border-b-2 border-l-2 border-brass/50 z-20 pointer-events-none" />
-          <div className="absolute bottom-3 right-3 w-4 h-4 border-b-2 border-r-2 border-brass/50 z-20 pointer-events-none" />
+        {/* Editorial Cover Banner */}
+        <div className="w-full mb-2 relative">
+          <Card3D intensity={8} depth={15} glareOpacity={0.18}>
+            <img 
+              src="https://res.cloudinary.com/ywmg6avw/image/upload/v1784023092/Gemini_Generated_Image_51tl351tl351tl35_qudg4a.png"
+              alt="Rahul Goyal Editorial Cover"
+              className="w-full h-auto block rounded-[2px] border border-rule shadow-md"
+              referrerPolicy="no-referrer"
+            />
+          </Card3D>
         </div>
 
-        {/* Eyebrow Label "the attached" (Now below the right side of cover photo) */}
-        <div className="w-full mb-6 flex justify-end text-right">
-          <div className="eyebrow font-mono text-[11.5px] sm:text-[13px] tracking-[0.14em] uppercase text-brass flex items-center gap-2.5 before:content-[''] before:w-3 before:h-[2px] before:bg-brass before:inline-block font-bold leading-relaxed">
-            <span>{personalInfo.name}</span>
+        {/* Eyebrow Label */}
+        <div className="w-full mb-4 flex justify-end text-right">
+          <div className="font-mono text-[11px] sm:text-[12px] tracking-[0.14em] uppercase text-brass flex items-center gap-2 font-bold leading-relaxed">
+            <span className="w-3 h-[1.5px] bg-brass inline-block" />
+            <span>Rahul Goyal &bull; Editorial Profile</span>
           </div>
         </div>
 
-
       </div>
 
-      {/* Immersive Video Theater Modal */}
+      {/* Video Modal */}
       {isVideoModalOpen && personalInfo.introVideo && (
         <div id="video-modal-container" className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
@@ -270,14 +260,12 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             className="absolute inset-0 bg-ink/75 backdrop-blur-sm"
           />
           
-          <div
-            className="relative w-full max-w-4xl bg-paper border border-rule shadow-2xl overflow-hidden z-10 rounded-[2px]"
-          >
+          <div className="relative w-full max-w-4xl bg-paper border border-rule shadow-2xl overflow-hidden z-10 rounded-[2px]">
             <div className="absolute top-4 right-4 z-20">
               <button
                 id="close-video-modal-btn"
                 onClick={() => setIsVideoModalOpen(false)}
-                className="p-1.5 bg-paper/90 hover:bg-ink text-ink hover:text-paper border border-rule transition-colors cursor-pointer rounded-[2px] active:scale-95"
+                className="p-1.5 bg-paper/90 hover:bg-ink text-ink hover:text-paper border border-rule transition-colors cursor-pointer rounded-[2px]"
                 title="Close Video"
               >
                 <X className="w-4 h-4" />

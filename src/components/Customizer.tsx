@@ -990,7 +990,7 @@ export default function Customizer() {
                 }`}
               >
                 <FolderOpen className="w-3.5 h-3.5" />
-                <span>Writings</span>
+                <span>Reading Room</span>
               </button>
             </div>
 
