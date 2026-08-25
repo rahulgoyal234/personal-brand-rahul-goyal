@@ -9,6 +9,26 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  // Serve favicon and touch icons directly with proper headers
+  app.get(['/favicon.png', '/favicon.ico', '/apple-touch-icon.png', '/favicon-32x32.png', '/favicon-16x16.png', '/profile-square.png'], (req, res, next) => {
+    const filename = path.basename(req.path);
+    const publicPath = path.join(process.cwd(), 'public', filename);
+    const rootPath = path.join(process.cwd(), filename);
+    const distPath = path.join(process.cwd(), 'dist', filename);
+
+    if (fs.existsSync(publicPath)) {
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.sendFile(publicPath);
+    } else if (fs.existsSync(rootPath)) {
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.sendFile(rootPath);
+    } else if (fs.existsSync(distPath)) {
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.sendFile(distPath);
+    }
+    next();
+  });
+
   // Serve the custom dynamic avatar
   app.get('/api/avatar.jpg', (req, res) => {
     const rootJpg = path.join(process.cwd(), 'avatar.jpg');

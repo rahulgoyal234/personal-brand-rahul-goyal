@@ -107,37 +107,31 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
           >
             <Card3D intensity={18} depth={24} glareOpacity={0.2} className="portrait-wrap relative flex flex-col items-center">
               
-              {/* Profile photo ring */}
+              {/* Profile photo */}
               <div 
-                className="portrait-ring w-[100px] h-[100px] sm:w-[170px] sm:h-[170px] md:w-[210px] md:h-[210px] aspect-square rounded-full border border-ink/20 relative transition-all duration-500 cursor-default shadow-md z-10 bg-paper"
+                className="portrait-ring w-[100px] h-[100px] sm:w-[170px] sm:h-[170px] md:w-[210px] md:h-[210px] aspect-square rounded-full overflow-hidden relative transition-all duration-500 cursor-default shadow-md z-10 bg-paper-deep"
               >
-                {/* Outer concentric decorative border outline */}
-                <div className="absolute inset-[-6px] sm:inset-[-8px] rounded-full border border-brass/30 pointer-events-none" />
-                
-                {/* Image core */}
-                <div className="absolute inset-1 sm:inset-2 rounded-full overflow-hidden bg-paper-deep">
-                  {personalInfo.avatar ? (
-                    <img
-                      id="hero-portrait-img"
-                      src={(imgSrc || '').startsWith('data:') ? imgSrc : `${imgSrc}${imgSrc.includes('?') ? '&' : '?'}v=${avatarVersion}`}
-                      alt={personalInfo.name}
-                      referrerPolicy="no-referrer"
-                      onLoad={() => setAvatarLoadError(false)}
-                      onError={() => {
-                        setAvatarLoadError(true);
-                        if (imgSrc !== '/api/avatar.jpg') {
-                          setImgSrc('/api/avatar.jpg');
-                        }
-                      }}
-                      className="absolute inset-0 w-full h-full object-cover object-center block rounded-full"
-                      style={{ objectPosition: 'center', objectFit: 'cover' }}
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center p-3 text-center text-ink-soft">
-                      <span className="font-mono text-[9px] sm:text-xs">Rahul Goyal</span>
-                    </div>
-                  )}
-                </div>
+                {personalInfo.avatar ? (
+                  <img
+                    id="hero-portrait-img"
+                    src={(imgSrc || '').startsWith('data:') ? imgSrc : `${imgSrc}${imgSrc.includes('?') ? '&' : '?'}v=${avatarVersion}`}
+                    alt={personalInfo.name}
+                    referrerPolicy="no-referrer"
+                    onLoad={() => setAvatarLoadError(false)}
+                    onError={() => {
+                      setAvatarLoadError(true);
+                      if (imgSrc !== '/api/avatar.jpg') {
+                        setImgSrc('/api/avatar.jpg');
+                      }
+                    }}
+                    className="w-full h-full object-cover object-center block rounded-full"
+                    style={{ objectPosition: 'center', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center p-3 text-center text-ink-soft">
+                    <span className="font-mono text-[9px] sm:text-xs">Rahul Goyal</span>
+                  </div>
+                )}
               </div>
 
               {/* Portrait Label Caption */}
