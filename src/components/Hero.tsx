@@ -230,26 +230,6 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
           </button>
         </div>
 
-        {/* Editorial Cover Banner */}
-        <div className="w-full mb-2 relative">
-          <Card3D intensity={8} depth={15} glareOpacity={0.18}>
-            <img 
-              src="https://res.cloudinary.com/ywmg6avw/image/upload/v1784023092/Gemini_Generated_Image_51tl351tl351tl35_qudg4a.png"
-              alt="Rahul Goyal Editorial Cover"
-              className="w-full h-auto block rounded-[2px] border border-rule shadow-md"
-              referrerPolicy="no-referrer"
-            />
-          </Card3D>
-        </div>
-
-        {/* Eyebrow Label */}
-        <div className="w-full mb-4 flex justify-end text-right">
-          <div className="font-mono text-[11px] sm:text-[12px] tracking-[0.14em] uppercase text-brass flex items-center gap-2 font-bold leading-relaxed">
-            <span className="w-3 h-[1.5px] bg-brass inline-block" />
-            <span>Rahul Goyal</span>
-          </div>
-        </div>
-
       </div>
 
       {/* Video Modal */}
