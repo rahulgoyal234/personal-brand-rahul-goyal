@@ -4,7 +4,6 @@ import Hero from './components/Hero';
 import Portfolio from './components/Portfolio';
 import Contact from './components/Contact';
 import Customizer from './components/Customizer';
-import EntranceCurtain from './components/EntranceCurtain';
 import { usePortfolio } from './context/PortfolioContext';
 import { ChevronUp } from 'lucide-react';
 
@@ -55,9 +54,6 @@ export default function App() {
 
   return (
     <div id="root-layout" className="min-h-screen flex flex-col bg-paper selection:bg-brass selection:text-paper text-ink relative overflow-x-hidden">
-      {/* Entrance Welcome Curtain */}
-      <EntranceCurtain />
-
       {/* Floating Navigation Menu */}
       <Navigation
         activeSection={activeSection}

@@ -323,9 +323,9 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               rel="noopener noreferrer"
               className="flex-1 sm:flex-initial min-w-[110px] justify-center font-mono text-[11px] xs:text-[11.5px] sm:text-[12.5px] tracking-wider px-3.5 sm:px-4 py-2 sm:py-2.5 border border-brass/40 bg-paper hover:border-ink hover:bg-paper-deep text-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5 group active:scale-95"
             >
-              <Linkedin className="w-3.5 h-3.5 text-brass group-hover:scale-110 transition-transform" />
+              <Linkedin className="w-3.5 h-3.5 text-brass" />
               <span>LinkedIn</span>
-              <ArrowUpRight className="w-3 h-3 text-ink-soft group-hover:text-ink group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              <ArrowUpRight className="w-3 h-3 text-ink-soft group-hover:text-ink transition-transform" />
             </a>
           )}
 
