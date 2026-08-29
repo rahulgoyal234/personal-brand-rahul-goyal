@@ -45,39 +45,41 @@ export default function Portfolio() {
   });
 
   return (
-    <section id="portfolio" className="py-20 md:py-28 bg-transparent relative scroll-mt-20 border-t border-rule/50">
-      <div className="max-w-[1120px] mx-auto px-6 sm:px-8 relative z-10">
+    <section id="portfolio" className="py-16 sm:py-20 md:py-28 bg-transparent relative scroll-mt-20 border-t border-rule/50">
+      <div className="max-w-[1120px] mx-auto px-4 xs:px-6 sm:px-8 relative z-10">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-          <div className="space-y-2">
-            <h2 className="font-serif text-3xl sm:text-4xl md:text-[42px] font-semibold text-ink leading-tight">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-8 sm:mb-12 gap-5 sm:gap-6">
+          <div className="space-y-1.5 sm:space-y-2 text-left">
+            <h2 className="font-serif text-2xl xs:text-3xl sm:text-4xl md:text-[42px] font-semibold text-ink leading-tight">
               Reading Room
             </h2>
-            <p className="text-ink-soft text-sm sm:text-base font-sans max-w-xl">
+            <p className="text-ink-soft text-xs xs:text-sm sm:text-base font-sans max-w-xl">
               Research publications, commentary, and legal analyses.
             </p>
           </div>
 
           {/* Controls: Search & Category Filters */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full lg:w-auto">
             
             {/* Search Trigger Button */}
             {!isSearchOpen ? (
               <button
                 id="open-search-btn"
                 onClick={() => setIsSearchOpen(true)}
-                className="font-mono text-xs text-ink-soft hover:text-ink border border-rule hover:border-ink bg-paper px-3 py-1.5 rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer"
+                className="font-mono text-xs text-ink-soft hover:text-ink border border-rule hover:border-ink bg-paper px-3 py-2 sm:py-1.5 rounded-[2px] transition-all duration-200 flex items-center justify-between sm:justify-start gap-2 cursor-pointer shadow-2xs"
                 title="Press / to search"
               >
-                <Search className="w-3.5 h-3.5 text-brass" />
-                <span>Search</span>
+                <div className="flex items-center gap-2">
+                  <Search className="w-3.5 h-3.5 text-brass" />
+                  <span>Search</span>
+                </div>
                 <kbd className="hidden sm:inline-block font-mono text-[10px] bg-paper-deep px-1.5 py-0.5 rounded-[2px] border border-rule/80 text-ink-soft">
                   /
                 </kbd>
               </button>
             ) : (
-              <div className="relative flex items-center w-full sm:w-60">
+              <div className="relative flex items-center w-full sm:w-64">
                 <Search className="w-3.5 h-3.5 text-brass absolute left-2.5 pointer-events-none" />
                 <input
                   ref={searchInputRef}
@@ -85,14 +87,15 @@ export default function Portfolio() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search titles, tags..."
-                  className="w-full pl-8 pr-7 py-1.5 font-mono text-xs bg-paper border border-ink rounded-[2px] focus:outline-none focus:ring-1 focus:ring-brass text-ink"
+                  className="w-full pl-8 pr-7 py-2 sm:py-1.5 font-mono text-xs bg-paper border border-ink rounded-[2px] focus:outline-none focus:ring-1 focus:ring-brass text-ink shadow-2xs"
                 />
                 <button
                   onClick={() => {
                     setSearchQuery('');
                     setIsSearchOpen(false);
                   }}
-                  className="absolute right-2 text-ink-soft hover:text-ink p-0.5 cursor-pointer"
+                  className="absolute right-2 text-ink-soft hover:text-ink p-1 cursor-pointer"
+                  aria-label="Close search"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -100,12 +103,12 @@ export default function Portfolio() {
             )}
 
             {/* Category Filter Pills */}
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {categories.map((category) => (
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`font-mono text-[11px] uppercase tracking-wider px-3 py-1.5 border rounded-full transition-all duration-200 font-semibold cursor-pointer ${
+                  className={`font-mono text-[10.5px] xs:text-[11px] uppercase tracking-wider px-3 py-1.5 sm:py-1.5 border rounded-full transition-all duration-200 font-semibold cursor-pointer select-none active:scale-95 ${
                     currentCategory === category
                       ? 'border-ink bg-ink text-paper shadow-xs'
                       : 'border-rule text-ink-soft bg-paper hover:border-ink hover:text-ink'
@@ -136,8 +139,8 @@ export default function Portfolio() {
 
         {/* Publications List */}
         {filteredProjects.length === 0 ? (
-          <div className="py-16 text-center border border-dashed border-rule rounded-[2px] bg-paper-deep/30 space-y-2">
-            <p className="font-serif text-lg text-ink">No publications found.</p>
+          <div className="py-12 sm:py-16 text-center border border-dashed border-rule rounded-[2px] bg-paper-deep/30 space-y-2 px-4">
+            <p className="font-serif text-base sm:text-lg text-ink">No publications found.</p>
             <button
               onClick={() => {
                 setSelectedCategory('All');
@@ -149,16 +152,16 @@ export default function Portfolio() {
             </button>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3.5 sm:space-y-4">
             {filteredProjects.map((project, index) => (
               <Card3D
                 key={project.id}
                 intensity={4}
                 depth={8}
                 glareOpacity={0.06}
-                className="bg-paper border border-rule hover:border-ink/40 transition-all duration-300 rounded-[2px] p-6 sm:p-7 shadow-xs text-left"
+                className="bg-paper border border-rule hover:border-ink/40 transition-all duration-300 rounded-[2px] p-5 xs:p-6 sm:p-7 shadow-xs text-left"
               >
-                <div className="flex flex-col md:flex-row items-start justify-between gap-6">
+                <div className="flex flex-col md:flex-row items-start justify-between gap-4 sm:gap-6">
                   
                   {/* Left Column: Index & Category */}
                   <div className="flex items-center md:flex-col md:items-start justify-between w-full md:w-auto md:min-w-[120px] gap-2">
@@ -172,7 +175,7 @@ export default function Portfolio() {
                   </div>
 
                   {/* Center Column: Title, Description, Tags */}
-                  <div className="flex-1 space-y-3">
+                  <div className="flex-1 space-y-2.5 sm:space-y-3 w-full">
                     <a
                       id={`project-title-link-${project.id}`}
                       href={project.demoUrl || '#'}
@@ -180,12 +183,12 @@ export default function Portfolio() {
                       rel="noreferrer"
                       className="group/title inline-block"
                     >
-                      <h3 className="font-serif text-lg sm:text-[21px] font-semibold leading-snug text-ink group-hover/title:text-brass transition-colors">
+                      <h3 className="font-serif text-[17px] xs:text-lg sm:text-[21px] font-semibold leading-snug text-ink group-hover/title:text-brass transition-colors">
                         {project.title}
                       </h3>
                     </a>
 
-                    <p className="text-ink-soft text-sm leading-relaxed font-sans max-w-[720px]">
+                    <p className="text-ink-soft text-[13.5px] sm:text-sm leading-relaxed font-sans max-w-[720px]">
                       {project.description}
                     </p>
 
@@ -195,7 +198,7 @@ export default function Portfolio() {
                         {project.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="font-mono text-[10.5px] px-2 py-0.5 bg-paper-deep text-ink-soft border border-rule/60 rounded-[2px]"
+                            className="font-mono text-[10px] sm:text-[10.5px] px-2 py-0.5 bg-paper-deep text-ink-soft border border-rule/60 rounded-[2px]"
                           >
                             #{tag}
                           </span>
@@ -206,13 +209,13 @@ export default function Portfolio() {
 
                   {/* Right Column: Direct Link Action */}
                   {project.demoUrl && (
-                    <div className="flex items-center self-end md:self-center">
+                    <div className="flex items-center self-start sm:self-end md:self-center pt-2 sm:pt-0">
                       <a
                         id={`project-link-${project.id}`}
                         href={project.demoUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="font-mono text-[11px] text-ink-soft hover:text-ink bg-paper hover:bg-paper-deep border border-rule px-3 py-1.5 rounded-[2px] transition-all duration-200 uppercase tracking-wider flex items-center gap-1.5 font-semibold cursor-pointer"
+                        className="font-mono text-[10.5px] sm:text-[11px] text-ink-soft hover:text-ink bg-paper hover:bg-paper-deep border border-rule px-3 py-1.5 rounded-[2px] transition-all duration-200 uppercase tracking-wider flex items-center gap-1.5 font-semibold cursor-pointer shadow-2xs active:scale-95"
                       >
                         <span>Access</span>
                         <ExternalLink className="w-3 h-3 text-brass" />

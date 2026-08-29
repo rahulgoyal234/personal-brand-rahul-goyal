@@ -80,8 +80,8 @@ export default function App() {
       </main>
 
       {/* Minimalist Footer */}
-      <footer id="main-footer" className="bg-paper-deep text-ink-soft py-16 px-6 sm:px-8 border-t border-rule print:hidden relative z-10">
-        <div className="max-w-[1120px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+      <footer id="main-footer" className="bg-paper-deep text-ink-soft py-12 sm:py-16 px-4 xs:px-6 sm:px-8 border-t border-rule print:hidden relative z-10">
+        <div className="max-w-[1120px] mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-6 sm:gap-8">
           
           {/* Brand section */}
           <div className="flex flex-col items-start space-y-2 text-left">
@@ -111,10 +111,10 @@ export default function App() {
           </div>
 
           {/* Quick links */}
-          <div className="flex flex-wrap items-center gap-6 font-mono text-xs text-ink-soft">
-            <button onClick={() => scrollToSection('about')} className="hover:text-ink cursor-pointer">About</button>
-            <button onClick={() => scrollToSection('portfolio')} className="hover:text-ink cursor-pointer">Reading Room</button>
-            <button onClick={() => scrollToSection('contact')} className="hover:text-ink cursor-pointer">Contact</button>
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 font-mono text-xs text-ink-soft">
+            <button onClick={() => scrollToSection('about')} className="hover:text-ink cursor-pointer transition-colors py-1">About</button>
+            <button onClick={() => scrollToSection('portfolio')} className="hover:text-ink cursor-pointer transition-colors py-1">Reading Room</button>
+            <button onClick={() => scrollToSection('contact')} className="hover:text-ink cursor-pointer transition-colors py-1">Contact</button>
           </div>
 
           {/* Copyright notice */}
@@ -130,7 +130,7 @@ export default function App() {
         <button
           id="scroll-to-top-btn"
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-40 p-2.5 bg-paper border border-ink/30 hover:border-ink text-ink shadow-md hover:shadow-lg rounded-[2px] transition-all duration-200 cursor-pointer group"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center bg-paper border border-ink/30 hover:border-ink text-ink shadow-md hover:shadow-lg rounded-[2px] transition-all duration-200 cursor-pointer group active:scale-95"
           title="Return to top of page"
           aria-label="Scroll to top"
         >

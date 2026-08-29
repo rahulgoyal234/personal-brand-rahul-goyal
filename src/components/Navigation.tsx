@@ -43,18 +43,18 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
       id="main-navigation"
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         scrolled || isOpen 
-          ? 'bg-paper/95 backdrop-blur-md py-3.5 border-b border-rule shadow-xs' 
-          : 'bg-transparent py-5'
+          ? 'bg-paper/95 backdrop-blur-md py-3 sm:py-3.5 border-b border-rule shadow-xs' 
+          : 'bg-transparent py-4 sm:py-5'
       }`}
     >
-      <div className="max-w-[1120px] mx-auto px-6 sm:px-8 flex items-center justify-between gap-4 w-full">
+      <div className="max-w-[1120px] mx-auto px-4 xs:px-6 sm:px-8 flex items-center justify-between gap-3 sm:gap-4 w-full">
         
         {/* Left Side: Photo / Name */}
         <div 
-          className="flex items-center gap-3 cursor-pointer group select-none"
+          className="flex items-center gap-2.5 sm:gap-3 cursor-pointer group select-none min-w-0"
           onClick={() => handleNavClick('about')}
         >
-          <div className="w-8 h-8 rounded-full border border-ink/30 bg-paper-deep overflow-hidden flex items-center justify-center font-serif text-xs font-bold text-ink group-hover:border-brass transition-colors shadow-xs flex-shrink-0">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-ink/30 bg-paper-deep overflow-hidden flex items-center justify-center font-serif text-xs font-bold text-ink group-hover:border-brass transition-colors shadow-xs flex-shrink-0">
             {personalInfo.avatar ? (
               <img
                 src={personalInfo.avatar}
@@ -66,13 +66,13 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
               <span>RG</span>
             )}
           </div>
-          <span className="font-serif text-[17px] sm:text-[18px] font-bold tracking-tight text-ink group-hover:text-brass transition-colors">
+          <span className="font-serif text-[16px] sm:text-[18px] font-bold tracking-tight text-ink group-hover:text-brass transition-colors truncate">
             {personalInfo.name}
           </span>
         </div>
 
         {/* Right Side: Floating Pill Navigation Dock (Moving Pattern) */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           
           {/* Desktop Floating Pill Dock */}
           <motion.nav 
@@ -132,12 +132,12 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
             )}
           </motion.nav>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button with Touch-Friendly Size */}
           <div className="flex items-center md:hidden">
             <button
               id="mobile-menu-toggle"
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 border border-rule hover:border-ink text-ink-soft hover:text-ink transition-colors cursor-pointer rounded-[2px] bg-paper"
+              className="p-2 sm:p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center border border-rule hover:border-ink text-ink-soft hover:text-ink transition-colors cursor-pointer rounded-[2px] bg-paper shadow-2xs active:scale-95"
               aria-label="Toggle menu"
             >
               {isOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
@@ -151,18 +151,18 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
       {isOpen && (
         <div
           id="mobile-nav-drawer"
-          className="md:hidden border-b border-rule bg-paper transition-all duration-200 shadow-lg"
+          className="md:hidden border-b border-rule bg-paper/98 backdrop-blur-md transition-all duration-200 shadow-xl"
         >
-          <div className="px-6 py-4 space-y-2.5 flex flex-col text-left">
+          <div className="px-5 py-4 space-y-2 flex flex-col text-left">
             {navItems.map((item) => (
               <button
                 id={`mobile-nav-item-${item.id}`}
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`text-left w-full py-2 font-sans text-sm font-semibold tracking-wide cursor-pointer rounded-[2px] transition-all ${
+                className={`text-left w-full py-2.5 px-3 font-sans text-sm font-semibold tracking-wide cursor-pointer rounded-[2px] transition-all min-h-[44px] flex items-center ${
                   activeSection === item.id 
-                    ? 'text-ink border-l-2 border-brass pl-3 bg-paper-deep/60' 
-                    : 'text-ink-soft pl-3 hover:text-ink'
+                    ? 'text-ink border-l-2 border-brass bg-paper-deep/70 font-bold' 
+                    : 'text-ink-soft hover:text-ink hover:bg-paper-deep/30'
                 }`}
               >
                 {item.label}
@@ -176,13 +176,13 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
                 href={personalInfo.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between w-full py-2.5 px-3 border border-rule bg-paper-deep/50 hover:bg-paper-deep rounded-[2px] text-xs font-mono text-ink font-semibold tracking-wider uppercase mt-2 transition-colors"
+                className="flex items-center justify-between w-full py-2.5 px-3 border border-rule bg-paper-deep/50 hover:bg-paper-deep rounded-[2px] text-xs font-mono text-ink font-semibold tracking-wider uppercase mt-2 transition-colors min-h-[44px]"
               >
                 <div className="flex items-center gap-2">
-                  <Linkedin className="w-3.5 h-3.5 text-brass" />
+                  <Linkedin className="w-4 h-4 text-brass" />
                   <span>Connect on LinkedIn</span>
                 </div>
-                <ArrowUpRight className="w-3.5 h-3.5 text-ink-soft" />
+                <ArrowUpRight className="w-4 h-4 text-ink-soft" />
               </a>
             )}
           </div>

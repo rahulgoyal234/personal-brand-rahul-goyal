@@ -49,10 +49,20 @@ export default function Card3D({
   }, [intensity, glareOpacity]);
 
   const handleMouseEnter = () => {
-    setIsHovered(true);
+    // Only enable hover 3D tilt on devices that support hover (desktop/mouse)
+    if (typeof window !== 'undefined' && window.matchMedia('(hover: hover)').matches) {
+      setIsHovered(true);
+    }
   };
 
   const handleMouseLeave = () => {
+    setIsHovered(false);
+    setRotateX(0);
+    setRotateY(0);
+    setGlarePos(prev => ({ ...prev, opacity: 0 }));
+  };
+
+  const handleTouchEnd = () => {
     setIsHovered(false);
     setRotateX(0);
     setRotateY(0);
@@ -67,6 +77,8 @@ export default function Card3D({
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
       className={`relative transition-transform duration-200 ease-out will-change-transform ${className}`}
       style={{
         perspective: '1200px',

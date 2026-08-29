@@ -64,29 +64,29 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
   return (
     <section
       id="about"
-      className="relative min-h-[75vh] flex flex-col justify-center pt-32 pb-16 md:pt-36 md:pb-24 overflow-hidden bg-transparent scroll-mt-20"
+      className="relative min-h-[70vh] md:min-h-[75vh] flex flex-col justify-center pt-24 sm:pt-28 md:pt-36 pb-12 sm:pb-16 md:pb-24 overflow-hidden bg-transparent scroll-mt-20"
     >
-      <div className="max-w-[1120px] mx-auto px-6 sm:px-8 w-full relative z-10">
+      <div className="max-w-[1120px] mx-auto px-4 xs:px-6 sm:px-8 w-full relative z-10">
         
-        {/* Top Row: Info (Left) & Profile Photo (Right) */}
-        <div className="flex flex-row items-start justify-between gap-6 sm:gap-10 lg:gap-12 mb-10 w-full">
+        {/* Top Row: Info (Left) & Profile Photo (Right) - Stacked on Mobile, Side-by-Side on Tablet/Desktop */}
+        <div className="flex flex-col-reverse md:flex-row items-center md:items-start justify-between gap-8 sm:gap-10 lg:gap-12 mb-8 sm:mb-10 w-full">
           
           {/* Left Column: Heading, Gold Rule, and Bio */}
-          <div className="flex-1 min-w-0 flex flex-col items-start text-left relative z-10">
+          <div className="flex-1 min-w-0 flex flex-col items-start text-left relative z-10 w-full">
             
             <h1
               id="hero-heading"
-              className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-semibold leading-[1.14] text-ink tracking-tight"
+              className="font-serif text-2xl xs:text-3xl sm:text-4xl md:text-[44px] lg:text-[52px] font-semibold leading-[1.18] sm:leading-[1.14] text-ink tracking-tight break-words"
             >
               {renderFormattedHeading(personalInfo.shortBio)}
             </h1>
 
             {/* Expanding Gold Gradient Rule Line */}
-            <div className={`lex-gold-rule my-5 sm:my-6 ${isRevealed ? 'in' : ''}`} />
+            <div className={`lex-gold-rule my-4 sm:my-5 md:my-6 ${isRevealed ? 'in' : ''}`} />
 
             <div
               id="hero-bio"
-              className={`lex-sub text-ink-soft text-[15px] sm:text-[16px] md:text-[17px] leading-relaxed max-w-[700px] font-sans space-y-3.5 ${isRevealed ? 'in' : ''}`}
+              className={`lex-sub text-ink-soft text-[14.5px] xs:text-[15px] sm:text-[16px] md:text-[17px] leading-relaxed max-w-[700px] font-sans space-y-3 sm:space-y-3.5 ${isRevealed ? 'in' : ''}`}
             >
               {(personalInfo.bio || '').split('\n').map((para, i) => {
                 if (!para.trim()) return null;
@@ -103,13 +103,13 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
           {/* Right Column: Profile Photo Container */}
           <div
             id="hero-portrait-container"
-            className="flex-shrink-0 flex justify-center md:justify-end pt-2 sm:pt-4 relative"
+            className="flex-shrink-0 flex justify-center md:justify-end w-full md:w-auto pt-2 sm:pt-4 relative"
           >
-            <Card3D intensity={10} depth={18} glareOpacity={0.08} className="portrait-wrap relative flex flex-col items-center">
+            <div className="portrait-wrap relative flex flex-col items-center">
               
-              {/* Open Profile photo */}
+              {/* Open Profile photo container with generous clearance */}
               <div 
-                className="relative transition-all duration-500 cursor-default z-10 flex items-center justify-center"
+                className="relative cursor-default z-10 flex items-center justify-center p-3 sm:p-5"
               >
                 {/* Soft ambient aura backdrop */}
                 <div className="absolute inset-0 bg-gradient-to-t from-paper-deep/60 via-transparent to-transparent -z-10 rounded-[8px] blur-sm transform translate-y-2 scale-95 opacity-80" />
@@ -127,7 +127,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                         setImgSrc('/rahul_transparent.png');
                       }
                     }}
-                    className="w-auto h-auto max-w-[220px] sm:max-w-[270px] md:max-w-[310px] lg:max-w-[340px] max-h-[340px] sm:max-h-[400px] md:max-h-[440px] object-contain object-bottom drop-shadow-md select-none pointer-events-auto transition-transform duration-300 hover:scale-[1.02]"
+                    className="w-auto h-auto max-w-[180px] xs:max-w-[210px] sm:max-w-[250px] md:max-w-[280px] lg:max-w-[310px] max-h-[280px] xs:max-h-[330px] sm:max-h-[380px] md:max-h-[420px] object-contain object-bottom drop-shadow-md select-none pointer-events-none relative z-10"
                   />
                 ) : (
                   <div className="w-[180px] h-[240px] flex flex-col items-center justify-center p-3 text-center text-ink-soft bg-paper-deep rounded-[4px]">
@@ -135,7 +135,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   </div>
                 )}
 
-                {/* Floating Pill Capsule Badge on Left (Social & Quick Links) */}
+                {/* Floating Pill Capsule Badge on Left Flank (Outside photo silhouette) */}
                 <motion.div
                   animate={{ 
                     y: [0, -6, 0],
@@ -146,7 +146,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                     repeat: Infinity,
                     ease: "easeInOut"
                   }}
-                  className="absolute bottom-4 -left-2 sm:bottom-6 sm:-left-4 z-20 flex items-center p-1 bg-paper/95 backdrop-blur-md border border-rule/90 hover:border-ink/50 rounded-full shadow-md hover:shadow-lg transition-all"
+                  className="absolute bottom-2 -left-5 sm:bottom-6 sm:-left-8 md:-left-10 z-20 flex items-center p-1 bg-paper/95 backdrop-blur-md border border-rule/90 hover:border-ink/50 rounded-full shadow-md hover:shadow-lg transition-all pointer-events-auto"
                 >
                   {personalInfo.linkedin && (
                     <a
@@ -178,7 +178,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   </button>
                 </motion.div>
 
-                {/* Floating Moving Education Badge along the photo */}
+                {/* Floating Moving Education Badge on Right Flank (Above shoulder, outside head silhouette) */}
                 <motion.div
                   animate={{ 
                     y: [0, 6, 0],
@@ -189,12 +189,12 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                     repeat: Infinity,
                     ease: "easeInOut"
                   }}
-                  className="absolute top-4 -right-2 sm:top-8 sm:-right-4 z-30 flex flex-col items-end"
+                  className="absolute -top-3 -right-5 sm:top-1 sm:-right-8 md:-right-10 z-30 flex flex-col items-end pointer-events-auto"
                 >
                   <button
                     id="floating-portrait-education"
                     onClick={() => setIsEducationOpen(!isEducationOpen)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-paper/95 backdrop-blur-md border border-rule/90 hover:border-ink/50 rounded-full shadow-md hover:shadow-lg transition-all cursor-pointer font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-ink hover:text-brass select-none group"
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 xs:px-3 xs:py-1.5 sm:px-3.5 sm:py-2 bg-paper/95 backdrop-blur-md border border-rule/90 hover:border-ink/50 rounded-full shadow-md hover:shadow-lg transition-all cursor-pointer font-mono text-[9.5px] xs:text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-ink hover:text-brass select-none group"
                     title="Click to view Education"
                   >
                     <span className="p-1 bg-paper-deep border border-rule rounded-full flex items-center justify-center text-brass group-hover:bg-brass group-hover:text-paper transition-colors">
@@ -216,7 +216,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                         animate={{ opacity: 1, scale: 1, y: 6 }}
                         exit={{ opacity: 0, scale: 0.95, y: -4 }}
                         transition={{ duration: 0.2 }}
-                        className="mt-1 w-[230px] sm:w-[260px] p-3.5 bg-paper/98 backdrop-blur-lg border border-rule/90 rounded-[4px] shadow-xl text-left space-y-3 z-40"
+                        className="mt-1 w-[260px] max-w-[calc(100vw-2.5rem)] p-3.5 bg-paper/98 backdrop-blur-lg border border-rule/90 rounded-[4px] shadow-xl text-left space-y-3 z-40"
                       >
                         <div className="flex items-center justify-between border-b border-rule/60 pb-1.5">
                           <span className="font-mono text-[9px] uppercase tracking-widest text-brass font-bold">Academic Background</span>
@@ -262,17 +262,28 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                 </motion.div>
               </div>
 
-              {/* Portrait Label Caption */}
-              <div className="portrait-caption mt-3.5 sm:mt-4 font-mono text-[9.5px] sm:text-[11px] tracking-[0.12em] uppercase text-brass font-bold text-center px-2 max-w-full leading-normal whitespace-nowrap z-10 relative">
-                {personalInfo.name} | {personalInfo.title}
+              {/* Cool Signature Typography Caption */}
+              <div 
+                id="portrait-signature-caption"
+                className="portrait-caption mt-3.5 sm:mt-4 text-center px-2 max-w-full leading-normal z-10 relative flex flex-col items-center select-none"
+              >
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-paper/95 backdrop-blur-md border border-rule/90 hover:border-ink/40 rounded-full shadow-2xs transition-all duration-300 group">
+                  <span className="font-['Cinzel',serif] text-[12.5px] xs:text-[13.5px] sm:text-[14.5px] font-bold tracking-[0.16em] text-ink uppercase group-hover:text-brass transition-colors">
+                    Rahul Goyal
+                  </span>
+                  <span className="text-brass/70 font-serif italic text-sm font-light">,</span>
+                  <span className="font-['Cormorant_Garamond',serif] italic font-bold text-[14px] xs:text-[15px] sm:text-[16px] tracking-[0.08em] text-brass">
+                    Lawyer
+                  </span>
+                </div>
               </div>
-            </Card3D>
+            </div>
           </div>
 
         </div>
 
         {/* Action Buttons (Pill & Moving Pattern) */}
-        <div id="hero-actions" className={`lex-cta ${isRevealed ? 'in' : ''} flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-3.5 w-full md:w-auto`}>
+        <div id="hero-actions" className={`lex-cta ${isRevealed ? 'in' : ''} flex flex-wrap items-center gap-2 xs:gap-2.5 sm:gap-3.5 w-full`}>
           
           <button
             id="hero-cta-about"
@@ -280,7 +291,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               const element = document.getElementById('about');
               if (element) element.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[12.5px] tracking-wider px-4 py-2.5 border border-rule bg-paper text-ink-soft hover:text-ink hover:border-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5"
+            className="flex-1 sm:flex-initial min-w-[100px] justify-center font-mono text-[11px] xs:text-[11.5px] sm:text-[12.5px] tracking-wider px-3.5 sm:px-4 py-2 sm:py-2.5 border border-rule bg-paper text-ink-soft hover:text-ink hover:border-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5 active:scale-95"
           >
             <User className="w-3.5 h-3.5 text-brass" />
             <span>About</span>
@@ -289,7 +300,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
           <button
             id="hero-cta-portfolio"
             onClick={onPortfolioClick}
-            className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[12.5px] tracking-wider px-5 py-2.5 border border-ink bg-ink text-paper hover:bg-paper hover:text-ink hover:border-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5"
+            className="flex-1 sm:flex-initial min-w-[130px] justify-center font-mono text-[11px] xs:text-[11.5px] sm:text-[12.5px] tracking-wider px-4 sm:px-5 py-2 sm:py-2.5 border border-ink bg-ink text-paper hover:bg-paper hover:text-ink hover:border-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5 active:scale-95"
           >
             <BookOpen className="w-3.5 h-3.5 text-brass" />
             <span>Reading Room</span>
@@ -298,7 +309,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
           <button
             id="hero-cta-contact"
             onClick={onContactClick}
-            className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[12.5px] tracking-wider px-4 py-2.5 border border-rule bg-paper hover:border-ink hover:text-ink text-ink-soft rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5"
+            className="flex-1 sm:flex-initial min-w-[100px] justify-center font-mono text-[11px] xs:text-[11.5px] sm:text-[12.5px] tracking-wider px-3.5 sm:px-4 py-2 sm:py-2.5 border border-rule bg-paper hover:border-ink hover:text-ink text-ink-soft rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5 active:scale-95"
           >
             <Mail className="w-3.5 h-3.5 text-brass" />
             <span>Contact</span>
@@ -310,7 +321,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               href={personalInfo.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[12.5px] tracking-wider px-4 py-2.5 border border-brass/40 bg-paper hover:border-ink hover:bg-paper-deep text-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5 group"
+              className="flex-1 sm:flex-initial min-w-[110px] justify-center font-mono text-[11px] xs:text-[11.5px] sm:text-[12.5px] tracking-wider px-3.5 sm:px-4 py-2 sm:py-2.5 border border-brass/40 bg-paper hover:border-ink hover:bg-paper-deep text-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5 group active:scale-95"
             >
               <Linkedin className="w-3.5 h-3.5 text-brass group-hover:scale-110 transition-transform" />
               <span>LinkedIn</span>
@@ -322,7 +333,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             <button
               id="hero-cta-video"
               onClick={() => setIsVideoModalOpen(true)}
-              className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[12.5px] tracking-wider px-4 py-2.5 border border-rule bg-paper text-ink hover:bg-paper-deep hover:border-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5"
+              className="flex-1 sm:flex-initial min-w-[120px] justify-center font-mono text-[11px] xs:text-[11.5px] sm:text-[12.5px] tracking-wider px-3.5 sm:px-4 py-2 sm:py-2.5 border border-rule bg-paper text-ink hover:bg-paper-deep hover:border-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5 active:scale-95"
             >
               <Play className="w-3.5 h-3.5 fill-current text-brass translate-x-0.5" />
               <span>Intro Video</span>
