@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Linkedin, ArrowUpRight } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
+import { motion } from 'motion/react';
 
 interface NavigationProps {
   activeSection: string;
@@ -14,7 +15,7 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
+      setScrolled(window.scrollY > 30);
     };
     
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -24,78 +25,114 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
   const navItems = [
     { id: 'about', label: 'About' },
     { id: 'portfolio', label: 'Reading Room' },
+    { id: 'contact', label: 'Contact' },
   ];
 
   const handleNavClick = (id: string) => {
     setActiveSection(id);
     setIsOpen(false);
     
-    setTimeout(() => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 100);
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   return (
     <header
       id="main-navigation"
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         scrolled || isOpen 
-          ? 'bg-paper/95 backdrop-blur-md py-4 border-b border-rule shadow-xs' 
-          : 'bg-paper/80 backdrop-blur-md py-6'
+          ? 'bg-paper/95 backdrop-blur-md py-3.5 border-b border-rule shadow-xs' 
+          : 'bg-transparent py-5'
       }`}
     >
-      <div className="max-w-[1120px] mx-auto px-6 sm:px-8 flex items-center justify-between gap-6 w-full">
+      <div className="max-w-[1120px] mx-auto px-6 sm:px-8 flex items-center justify-between gap-4 w-full">
         
-        {/* Left Side: Brand Link */}
+        {/* Left Side: Photo / Name */}
         <div 
           className="flex items-center gap-3 cursor-pointer group select-none"
           onClick={() => handleNavClick('about')}
         >
-          <div className="w-8 h-8 rounded-full border border-ink/40 bg-paper flex items-center justify-center font-serif text-xs font-bold text-ink group-hover:border-brass group-hover:text-brass transition-colors shadow-xs">
-            RG
+          <div className="w-8 h-8 rounded-full border border-ink/30 bg-paper-deep overflow-hidden flex items-center justify-center font-serif text-xs font-bold text-ink group-hover:border-brass transition-colors shadow-xs flex-shrink-0">
+            {personalInfo.avatar ? (
+              <img
+                src={personalInfo.avatar}
+                alt={personalInfo.name}
+                referrerPolicy="no-referrer"
+                className="w-full h-full object-cover object-center"
+              />
+            ) : (
+              <span>RG</span>
+            )}
           </div>
-          <div className="flex flex-col">
-            <span className="font-serif text-[18px] sm:text-[20px] font-bold tracking-tight text-ink leading-tight group-hover:text-brass transition-colors">
-              Rahul Goyal
-            </span>
-          </div>
+          <span className="font-serif text-[17px] sm:text-[18px] font-bold tracking-tight text-ink group-hover:text-brass transition-colors">
+            {personalInfo.name}
+          </span>
         </div>
 
-        {/* Right Side: Nav Links & CTA */}
-        <div className="flex items-center gap-6 lg:gap-8">
-          {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-6 lg:gap-8">
-            {navItems.map((item) => (
-              <button
-                id={`nav-item-${item.id}`}
-                key={item.id}
-                onClick={() => handleNavClick(item.id)}
-                className={`text-[13.5px] tracking-wide relative pb-1 transition-all cursor-pointer font-sans ${
-                  activeSection === item.id 
-                    ? 'text-ink font-semibold after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1.5px] after:bg-brass' 
-                    : 'text-ink-soft hover:text-ink after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1.5px] hover:after:w-full after:bg-brass after:transition-all after:duration-200'
-                }`}
+        {/* Right Side: Floating Pill Navigation Dock (Moving Pattern) */}
+        <div className="flex items-center gap-3">
+          
+          {/* Desktop Floating Pill Dock */}
+          <motion.nav 
+            animate={{ y: [0, -3, 0] }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="hidden md:flex items-center p-1 bg-paper/90 backdrop-blur-md border border-rule hover:border-ink/40 rounded-full shadow-sm transition-all"
+          >
+            {navItems.map((item) => {
+              const isActive = activeSection === item.id;
+              return (
+                <button
+                  id={`nav-item-${item.id}`}
+                  key={item.id}
+                  onClick={() => handleNavClick(item.id)}
+                  className={`relative px-3.5 py-1.5 text-xs font-sans font-medium tracking-wide transition-colors cursor-pointer rounded-full select-none ${
+                    isActive ? 'text-paper font-semibold' : 'text-ink-soft hover:text-ink'
+                  }`}
+                >
+                  {/* Moving Sliding Highlight Pill Indicator */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="active-nav-capsule"
+                      className="absolute inset-0 bg-ink rounded-full shadow-xs -z-0"
+                      transition={{
+                        type: "spring",
+                        stiffness: 380,
+                        damping: 30,
+                      }}
+                    />
+                  )}
+                  <span className="relative z-10">{item.label}</span>
+                </button>
+              );
+            })}
+
+            {/* Separator */}
+            <div className="w-[1px] h-4 bg-rule mx-1" />
+
+            {/* LinkedIn Button in Pill */}
+            {personalInfo.linkedin && (
+              <a
+                id="nav-linkedin-btn"
+                href={personalInfo.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-sans font-medium text-ink-soft hover:text-ink hover:bg-paper-deep transition-all cursor-pointer select-none"
+                title="Connect on LinkedIn"
               >
-                {item.label}
-              </button>
-            ))}
-          </nav>
+                <Linkedin className="w-3.5 h-3.5 text-brass group-hover:scale-110 transition-transform" />
+                <span>LinkedIn</span>
+                <ArrowUpRight className="w-3 h-3 text-ink-soft/70 group-hover:text-ink group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+              </a>
+            )}
+          </motion.nav>
 
-          {/* Desktop Get in touch CTA */}
-          <div className="hidden md:block">
-            <button
-              id="get-in-touch-btn"
-              onClick={() => handleNavClick('contact')}
-              className="text-xs font-mono border border-ink bg-ink text-paper px-4 py-2 hover:bg-paper hover:text-ink transition-all duration-200 cursor-pointer rounded-[2px] tracking-wider uppercase font-semibold"
-            >
-              Get in Touch
-            </button>
-          </div>
-
-          {/* Mobile Hamburger Button */}
+          {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden">
             <button
               id="mobile-menu-toggle"
@@ -106,6 +143,7 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
               {isOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
           </div>
+
         </div>
       </div>
 
@@ -113,9 +151,9 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
       {isOpen && (
         <div
           id="mobile-nav-drawer"
-          className="md:hidden border-b border-rule bg-paper transition-all duration-200"
+          className="md:hidden border-b border-rule bg-paper transition-all duration-200 shadow-lg"
         >
-          <div className="px-6 py-4 space-y-3 flex flex-col">
+          <div className="px-6 py-4 space-y-2.5 flex flex-col text-left">
             {navItems.map((item) => (
               <button
                 id={`mobile-nav-item-${item.id}`}
@@ -123,20 +161,30 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
                 onClick={() => handleNavClick(item.id)}
                 className={`text-left w-full py-2 font-sans text-sm font-semibold tracking-wide cursor-pointer rounded-[2px] transition-all ${
                   activeSection === item.id 
-                    ? 'text-ink border-l-2 border-brass pl-2 bg-paper-deep/50' 
-                    : 'text-ink-soft pl-2 hover:text-ink'
+                    ? 'text-ink border-l-2 border-brass pl-3 bg-paper-deep/60' 
+                    : 'text-ink-soft pl-3 hover:text-ink'
                 }`}
               >
                 {item.label}
               </button>
             ))}
-            <button
-              id="mobile-get-in-touch-btn"
-              onClick={() => handleNavClick('contact')}
-              className="w-full text-center font-mono text-xs border border-ink bg-ink text-paper py-2.5 hover:bg-paper hover:text-ink transition-all duration-200 cursor-pointer rounded-[2px] tracking-wider uppercase font-semibold mt-2"
-            >
-              Get in Touch
-            </button>
+
+            {/* Mobile LinkedIn Link */}
+            {personalInfo.linkedin && (
+              <a
+                id="mobile-nav-linkedin"
+                href={personalInfo.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between w-full py-2.5 px-3 border border-rule bg-paper-deep/50 hover:bg-paper-deep rounded-[2px] text-xs font-mono text-ink font-semibold tracking-wider uppercase mt-2 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <Linkedin className="w-3.5 h-3.5 text-brass" />
+                  <span>Connect on LinkedIn</span>
+                </div>
+                <ArrowUpRight className="w-3.5 h-3.5 text-ink-soft" />
+              </a>
+            )}
           </div>
         </div>
       )}

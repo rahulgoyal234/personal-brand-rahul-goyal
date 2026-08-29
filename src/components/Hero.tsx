@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, X, GraduationCap, ChevronDown, ChevronUp, Box } from 'lucide-react';
+import { Play, X, GraduationCap, ChevronDown, ChevronUp, Linkedin, ArrowUpRight, BookOpen, Mail, User } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { motion, AnimatePresence } from 'motion/react';
 import Card3D from './Card3D';
@@ -48,8 +48,8 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
           return (
             <React.Fragment key={idx}>
               <span
-                className={`lex-word ${isRevealed ? 'in' : ''} ${isLast ? 'italic font-serif font-normal' : ''}`}
-                style={{ transitionDelay: `${400 + idx * 90}ms` }}
+                className={`lex-word ${isRevealed ? 'in' : ''} ${isLast ? 'italic font-serif font-normal text-brass' : ''}`}
+                style={{ transitionDelay: `${250 + idx * 70}ms` }}
               >
                 {word}
               </span>
@@ -64,29 +64,29 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
   return (
     <section
       id="about"
-      className="relative min-h-[85vh] flex items-center justify-center pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden bg-transparent scroll-mt-20"
+      className="relative min-h-[75vh] flex flex-col justify-center pt-32 pb-16 md:pt-36 md:pb-24 overflow-hidden bg-transparent scroll-mt-20"
     >
       <div className="max-w-[1120px] mx-auto px-6 sm:px-8 w-full relative z-10">
         
         {/* Top Row: Info (Left) & Profile Photo (Right) */}
-        <div className="flex flex-row items-start justify-between gap-4 sm:gap-8 lg:gap-12 mb-8 w-full">
+        <div className="flex flex-row items-start justify-between gap-6 sm:gap-10 lg:gap-12 mb-10 w-full">
           
           {/* Left Column: Heading, Gold Rule, and Bio */}
           <div className="flex-1 min-w-0 flex flex-col items-start text-left relative z-10">
             
             <h1
               id="hero-heading"
-              className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-semibold leading-[1.1] text-ink tracking-tight"
+              className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-[54px] font-semibold leading-[1.14] text-ink tracking-tight"
             >
               {renderFormattedHeading(personalInfo.shortBio)}
             </h1>
 
             {/* Expanding Gold Gradient Rule Line */}
-            <div className={`lex-gold-rule my-4 sm:my-6 ${isRevealed ? 'in' : ''}`} />
+            <div className={`lex-gold-rule my-5 sm:my-6 ${isRevealed ? 'in' : ''}`} />
 
             <div
               id="hero-bio"
-              className={`lex-sub text-ink-soft text-[14.5px] sm:text-[16px] md:text-[17px] leading-relaxed max-w-[720px] font-sans space-y-3.5 sm:space-y-4 ${isRevealed ? 'in' : ''}`}
+              className={`lex-sub text-ink-soft text-[15px] sm:text-[16px] md:text-[17px] leading-relaxed max-w-[700px] font-sans space-y-3.5 ${isRevealed ? 'in' : ''}`}
             >
               {(personalInfo.bio || '').split('\n').map((para, i) => {
                 if (!para.trim()) return null;
@@ -103,14 +103,17 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
           {/* Right Column: Profile Photo Container */}
           <div
             id="hero-portrait-container"
-            className="flex-shrink-0 flex justify-end pt-2 sm:pt-4 relative"
+            className="flex-shrink-0 flex justify-center md:justify-end pt-2 sm:pt-4 relative"
           >
-            <Card3D intensity={18} depth={24} glareOpacity={0.2} className="portrait-wrap relative flex flex-col items-center">
+            <Card3D intensity={10} depth={18} glareOpacity={0.08} className="portrait-wrap relative flex flex-col items-center">
               
-              {/* Profile photo */}
+              {/* Open Profile photo */}
               <div 
-                className="portrait-ring w-[100px] h-[100px] sm:w-[170px] sm:h-[170px] md:w-[210px] md:h-[210px] aspect-square rounded-full overflow-hidden relative transition-all duration-500 cursor-default shadow-md z-10 bg-paper-deep"
+                className="relative transition-all duration-500 cursor-default z-10 flex items-center justify-center"
               >
+                {/* Soft ambient aura backdrop */}
+                <div className="absolute inset-0 bg-gradient-to-t from-paper-deep/60 via-transparent to-transparent -z-10 rounded-[8px] blur-sm transform translate-y-2 scale-95 opacity-80" />
+
                 {personalInfo.avatar ? (
                   <img
                     id="hero-portrait-img"
@@ -120,108 +123,211 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                     onLoad={() => setAvatarLoadError(false)}
                     onError={() => {
                       setAvatarLoadError(true);
-                      if (imgSrc !== '/api/avatar.jpg') {
-                        setImgSrc('/api/avatar.jpg');
+                      if (imgSrc !== '/rahul_transparent.png') {
+                        setImgSrc('/rahul_transparent.png');
                       }
                     }}
-                    className="w-full h-full object-cover object-center block rounded-full"
-                    style={{ objectPosition: 'center', objectFit: 'cover' }}
+                    className="w-auto h-auto max-w-[220px] sm:max-w-[270px] md:max-w-[310px] lg:max-w-[340px] max-h-[340px] sm:max-h-[400px] md:max-h-[440px] object-contain object-bottom drop-shadow-md select-none pointer-events-auto transition-transform duration-300 hover:scale-[1.02]"
                   />
                 ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center p-3 text-center text-ink-soft">
+                  <div className="w-[180px] h-[240px] flex flex-col items-center justify-center p-3 text-center text-ink-soft bg-paper-deep rounded-[4px]">
                     <span className="font-mono text-[9px] sm:text-xs">Rahul Goyal</span>
                   </div>
                 )}
+
+                {/* Floating Pill Capsule Badge on Left (Social & Quick Links) */}
+                <motion.div
+                  animate={{ 
+                    y: [0, -6, 0],
+                    rotate: [0, -1, 0, 1, 0]
+                  }}
+                  transition={{
+                    duration: 4.5,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="absolute bottom-4 -left-2 sm:bottom-6 sm:-left-4 z-20 flex items-center p-1 bg-paper/95 backdrop-blur-md border border-rule/90 hover:border-ink/50 rounded-full shadow-md hover:shadow-lg transition-all"
+                >
+                  {personalInfo.linkedin && (
+                    <a
+                      id="floating-portrait-linkedin"
+                      href={personalInfo.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 sm:p-2 bg-ink text-paper hover:bg-brass transition-colors rounded-full flex items-center justify-center cursor-pointer shadow-xs group"
+                      title="Connect on LinkedIn"
+                    >
+                      <Linkedin className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current group-hover:scale-110 transition-transform" />
+                    </a>
+                  )}
+                  <button
+                    id="floating-portrait-reading-room"
+                    onClick={onPortfolioClick}
+                    className="p-1.5 sm:p-2 text-ink-soft hover:text-ink hover:bg-paper-deep rounded-full transition-colors cursor-pointer"
+                    title="Go to Reading Room"
+                  >
+                    <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  </button>
+                  <button
+                    id="floating-portrait-contact"
+                    onClick={onContactClick}
+                    className="p-1.5 sm:p-2 text-ink-soft hover:text-ink hover:bg-paper-deep rounded-full transition-colors cursor-pointer"
+                    title="Contact Rahul"
+                  >
+                    <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  </button>
+                </motion.div>
+
+                {/* Floating Moving Education Badge along the photo */}
+                <motion.div
+                  animate={{ 
+                    y: [0, 6, 0],
+                    rotate: [0, 1, 0, -1, 0]
+                  }}
+                  transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  className="absolute top-4 -right-2 sm:top-8 sm:-right-4 z-30 flex flex-col items-end"
+                >
+                  <button
+                    id="floating-portrait-education"
+                    onClick={() => setIsEducationOpen(!isEducationOpen)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-paper/95 backdrop-blur-md border border-rule/90 hover:border-ink/50 rounded-full shadow-md hover:shadow-lg transition-all cursor-pointer font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-ink hover:text-brass select-none group"
+                    title="Click to view Education"
+                  >
+                    <span className="p-1 bg-paper-deep border border-rule rounded-full flex items-center justify-center text-brass group-hover:bg-brass group-hover:text-paper transition-colors">
+                      <GraduationCap className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                    </span>
+                    <span>Education</span>
+                    {isEducationOpen ? (
+                      <ChevronUp className="w-3 h-3 text-ink-soft/70" />
+                    ) : (
+                      <ChevronDown className="w-3 h-3 text-ink-soft/70" />
+                    )}
+                  </button>
+
+                  {/* Expandable Floating Education Card */}
+                  <AnimatePresence>
+                    {isEducationOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                        animate={{ opacity: 1, scale: 1, y: 6 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                        transition={{ duration: 0.2 }}
+                        className="mt-1 w-[230px] sm:w-[260px] p-3.5 bg-paper/98 backdrop-blur-lg border border-rule/90 rounded-[4px] shadow-xl text-left space-y-3 z-40"
+                      >
+                        <div className="flex items-center justify-between border-b border-rule/60 pb-1.5">
+                          <span className="font-mono text-[9px] uppercase tracking-widest text-brass font-bold">Academic Background</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-brass animate-pulse" />
+                        </div>
+
+                        {/* Bennett University */}
+                        <div className="space-y-0.5">
+                          <p className="font-sans text-[11px] font-bold text-ink leading-tight">
+                            Bennett University
+                          </p>
+                          <p className="font-mono text-[9px] text-ink-soft uppercase tracking-wide">
+                            Greater Noida, India
+                          </p>
+                          <p className="font-mono text-[9.5px] text-brass font-semibold mt-0.5">
+                            Master of Laws - LL.M.
+                          </p>
+                          <p className="text-[10px] text-ink-soft/90 font-sans italic">
+                            Corporate & Commercial Law
+                          </p>
+                        </div>
+
+                        <div className="w-full h-[1px] bg-rule/50" />
+
+                        {/* KIIT School of Law */}
+                        <div className="space-y-0.5">
+                          <p className="font-sans text-[11px] font-bold text-ink leading-tight">
+                            KIIT School of Law
+                          </p>
+                          <p className="font-mono text-[9px] text-ink-soft uppercase tracking-wide">
+                            Bhubaneswar, India
+                          </p>
+                          <p className="font-mono text-[9.5px] text-brass font-semibold mt-0.5">
+                            B.A. LL.B. (Hons.)
+                          </p>
+                          <p className="text-[10px] text-ink-soft/90 font-sans italic">
+                            Law & Legal Studies
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
               </div>
 
               {/* Portrait Label Caption */}
-              <div className="portrait-caption mt-4 sm:mt-5 font-mono text-[9px] sm:text-[11px] tracking-[0.12em] uppercase text-brass font-bold text-center px-2.5 max-w-full leading-normal whitespace-nowrap z-10 relative">
+              <div className="portrait-caption mt-3.5 sm:mt-4 font-mono text-[9.5px] sm:text-[11px] tracking-[0.12em] uppercase text-brass font-bold text-center px-2 max-w-full leading-normal whitespace-nowrap z-10 relative">
                 {personalInfo.name} | {personalInfo.title}
               </div>
-
-              {/* Education Button with toggle */}
-              <button
-                onClick={() => setIsEducationOpen(!isEducationOpen)}
-                className="mt-3 font-mono text-[9px] sm:text-[10px] tracking-[0.12em] uppercase text-ink-soft hover:text-brass border border-ink/15 hover:border-brass/35 px-3 py-1 rounded-[2px] transition-all duration-200 flex items-center gap-1.5 cursor-pointer bg-paper hover:bg-paper-deep/60 select-none shadow-xs font-bold"
-              >
-                <GraduationCap className="w-3.5 h-3.5 text-brass" />
-                <span>Education</span>
-                {isEducationOpen ? (
-                  <ChevronUp className="w-3 h-3 text-ink-soft/70" />
-                ) : (
-                  <ChevronDown className="w-3 h-3 text-ink-soft/70" />
-                )}
-              </button>
-
-              {/* Education Snippet under photo (Collapsible) */}
-              <AnimatePresence initial={false}>
-                {isEducationOpen && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0, marginTop: 0 }}
-                    animate={{ height: "auto", opacity: 1, marginTop: 12 }}
-                    exit={{ height: 0, opacity: 0, marginTop: 0 }}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                    className="overflow-hidden flex flex-col items-center w-full max-w-[210px] sm:max-w-[240px] text-center"
-                  >
-                    <div className="w-10 h-[1px] bg-rule mb-3" />
-                    
-                    <div className="space-y-3 w-full pb-1">
-                      {/* Bennett University */}
-                      <div className="flex flex-col items-center px-1">
-                        <p className="font-sans text-[11px] font-bold text-ink uppercase tracking-wider leading-snug">
-                          Bennett University
-                        </p>
-                        <p className="font-mono text-[9px] text-brass font-semibold tracking-wide mt-0.5 uppercase">
-                          LL.M. (Corp & Comm Law)
-                        </p>
-                      </div>
-
-                      {/* KIIT School of Law */}
-                      <div className="flex flex-col items-center px-1">
-                        <p className="font-sans text-[11px] font-bold text-ink uppercase tracking-wider leading-snug">
-                          KIIT School of Law
-                        </p>
-                        <p className="font-mono text-[9px] text-brass font-semibold tracking-wide mt-0.5 uppercase">
-                          B.A. LL.B. (Hons.)
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </Card3D>
           </div>
 
         </div>
 
-        {/* Action Buttons */}
-        <div id="hero-actions" className={`lex-cta ${isRevealed ? 'in' : ''} flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-4 w-full md:w-auto mb-10`}>
+        {/* Action Buttons (Pill & Moving Pattern) */}
+        <div id="hero-actions" className={`lex-cta ${isRevealed ? 'in' : ''} flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-3.5 w-full md:w-auto`}>
+          
+          <button
+            id="hero-cta-about"
+            onClick={() => {
+              const element = document.getElementById('about');
+              if (element) element.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[12.5px] tracking-wider px-4 py-2.5 border border-rule bg-paper text-ink-soft hover:text-ink hover:border-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5"
+          >
+            <User className="w-3.5 h-3.5 text-brass" />
+            <span>About</span>
+          </button>
+
           <button
             id="hero-cta-portfolio"
             onClick={onPortfolioClick}
-            className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[13px] tracking-wider px-5 py-3 border border-ink bg-ink text-paper hover:bg-paper hover:text-ink hover:border-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs"
+            className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[12.5px] tracking-wider px-5 py-2.5 border border-ink bg-ink text-paper hover:bg-paper hover:text-ink hover:border-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5"
           >
+            <BookOpen className="w-3.5 h-3.5 text-brass" />
             <span>Reading Room</span>
           </button>
+
+          <button
+            id="hero-cta-contact"
+            onClick={onContactClick}
+            className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[12.5px] tracking-wider px-4 py-2.5 border border-rule bg-paper hover:border-ink hover:text-ink text-ink-soft rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5"
+          >
+            <Mail className="w-3.5 h-3.5 text-brass" />
+            <span>Contact</span>
+          </button>
+
+          {personalInfo.linkedin && (
+            <a
+              id="hero-cta-linkedin"
+              href={personalInfo.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[12.5px] tracking-wider px-4 py-2.5 border border-brass/40 bg-paper hover:border-ink hover:bg-paper-deep text-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5 group"
+            >
+              <Linkedin className="w-3.5 h-3.5 text-brass group-hover:scale-110 transition-transform" />
+              <span>LinkedIn</span>
+              <ArrowUpRight className="w-3 h-3 text-ink-soft group-hover:text-ink group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </a>
+          )}
 
           {personalInfo.introVideo && (
             <button
               id="hero-cta-video"
               onClick={() => setIsVideoModalOpen(true)}
-              className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[13px] tracking-wider px-5 py-3 border border-rule bg-paper-deep text-ink hover:bg-ink hover:border-ink hover:text-paper rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs"
+              className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[12.5px] tracking-wider px-4 py-2.5 border border-rule bg-paper text-ink hover:bg-paper-deep hover:border-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5"
             >
-              <Play className="w-3.5 h-3.5 fill-current translate-x-0.5" />
-              <span>Play Intro Video</span>
+              <Play className="w-3.5 h-3.5 fill-current text-brass translate-x-0.5" />
+              <span>Intro Video</span>
             </button>
           )}
-
-          <button
-            id="hero-cta-contact"
-            onClick={onContactClick}
-            className="w-full sm:w-auto justify-center font-mono text-[11.5px] sm:text-[13px] tracking-wider px-5 py-3 border border-ink bg-transparent text-ink hover:text-paper hover:bg-ink rounded-[2px] transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs"
-          >
-            <span>Get in Touch</span>
-          </button>
         </div>
 
       </div>
@@ -247,36 +353,27 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             </div>
 
             <div className="relative aspect-video w-full flex items-center justify-center bg-black">
-              {personalInfo.introVideoType === 'file' || personalInfo.introVideoType === 'url' ? (
-                <video 
-                  src={personalInfo.introVideo} 
-                  controls 
-                  autoPlay
-                  className="w-full h-full object-contain"
-                />
-              ) : (
+              {personalInfo.introVideo.includes('youtube.com') || personalInfo.introVideo.includes('youtu.be') ? (
                 <iframe
-                  src={`${personalInfo.introVideo}${personalInfo.introVideo.includes('?') ? '&' : '?'}autoplay=1`}
-                  title="Intro Video Profile Player"
-                  className="w-full h-full border-none"
+                  src={personalInfo.introVideo.replace('watch?v=', 'embed/')}
+                  title="Intro Video"
+                  className="w-full h-full border-0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
+              ) : (
+                <video
+                  src={personalInfo.introVideo}
+                  controls
+                  autoPlay
+                  className="w-full h-full"
+                />
               )}
-            </div>
-
-            <div className="p-4 bg-paper border-t border-rule flex justify-between items-center">
-              <div>
-                <span className="block text-[8px] font-mono text-ink-soft uppercase tracking-widest">Introduction video</span>
-                <h4 className="text-xs font-sans font-bold text-ink uppercase tracking-wide">{personalInfo.name} | Profile Pitch</h4>
-              </div>
-              <div className="text-[9px] font-mono text-ink-soft uppercase border border-rule px-2.5 py-0.5">
-                {personalInfo.introVideoType === 'file' ? 'Local Upload' : 'External Stream'}
-              </div>
             </div>
           </div>
         </div>
       )}
+
     </section>
   );
 }
