@@ -109,7 +109,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               
               {/* Open Profile photo container with balanced stage width so badges never overlap the portrait */}
               <div 
-                className="relative cursor-default z-10 flex items-center justify-center w-[290px] xs:w-[330px] sm:w-[370px] md:w-[410px] min-h-[270px] xs:min-h-[310px] sm:min-h-[370px] md:min-h-[410px] p-2"
+                className="relative cursor-default z-10 flex items-end justify-center w-[290px] xs:w-[320px] sm:w-[360px] md:w-[400px] px-2 pb-0 pt-2"
               >
                 {/* Soft ambient aura backdrop */}
                 <div className="absolute inset-x-8 bottom-0 top-6 bg-gradient-to-t from-paper-deep/60 via-transparent to-transparent -z-10 rounded-[8px] blur-sm opacity-80" />
@@ -127,7 +127,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                         setImgSrc('/rahul_transparent.png');
                       }
                     }}
-                    className="w-auto h-auto max-w-[160px] xs:max-w-[185px] sm:max-w-[225px] md:max-w-[255px] max-h-[255px] xs:max-h-[295px] sm:max-h-[350px] md:max-h-[390px] object-contain object-bottom drop-shadow-md select-none pointer-events-none relative z-10 mx-auto"
+                    className="w-auto h-auto max-w-[160px] xs:max-w-[185px] sm:max-w-[225px] md:max-w-[255px] max-h-[255px] xs:max-h-[295px] sm:max-h-[350px] md:max-h-[390px] object-contain object-bottom drop-shadow-md select-none pointer-events-none relative z-10 mx-auto block"
                   />
                 ) : (
                   <div className="w-[180px] h-[240px] flex flex-col items-center justify-center p-3 text-center text-ink-soft bg-paper-deep rounded-[4px]">
@@ -145,7 +145,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                     repeat: Infinity,
                     ease: "easeInOut"
                   }}
-                  className="absolute bottom-6 xs:bottom-8 sm:bottom-12 md:bottom-14 left-0 xs:left-1 sm:left-2 md:left-3 z-20 flex items-center p-1 bg-paper/95 backdrop-blur-md border border-rule/90 hover:border-ink/50 rounded-full shadow-md hover:shadow-lg transition-all pointer-events-auto"
+                  className="absolute bottom-2 xs:bottom-3 sm:bottom-4 md:bottom-6 left-0 xs:left-1 sm:left-2 md:left-3 z-20 flex items-center p-1 bg-paper/95 backdrop-blur-md border border-rule/90 hover:border-ink/50 rounded-full shadow-md hover:shadow-lg transition-all pointer-events-auto"
                 >
                   {personalInfo.linkedin && (
                     <a
@@ -263,7 +263,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               {/* Cool Signature Typography Caption */}
               <div 
                 id="portrait-signature-caption"
-                className="portrait-caption mt-3.5 sm:mt-4 text-center px-2 max-w-full leading-normal z-10 relative flex flex-col items-center select-none"
+                className="portrait-caption mt-1.5 sm:mt-2 text-center px-2 max-w-full leading-normal z-10 relative flex flex-col items-center select-none"
               >
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-paper/95 backdrop-blur-md border border-rule/90 hover:border-ink/40 rounded-full shadow-2xs transition-all duration-300 group">
                   <span className="font-['Cinzel',serif] text-[12.5px] xs:text-[13.5px] sm:text-[14.5px] font-bold tracking-[0.16em] text-ink uppercase group-hover:text-brass transition-colors">
