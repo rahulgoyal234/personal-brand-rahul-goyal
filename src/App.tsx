@@ -4,16 +4,62 @@ import Hero from './components/Hero';
 import Portfolio from './components/Portfolio';
 import Contact from './components/Contact';
 import Customizer from './components/Customizer';
+import ArticleView from './components/ArticleView';
 import { usePortfolio } from './context/PortfolioContext';
+import { Project } from './types';
 import { ChevronUp } from 'lucide-react';
 
 export default function App() {
-  const { personalInfo } = usePortfolio();
+  const { personalInfo, projects } = usePortfolio();
   const [activeSection, setActiveSection] = useState<string>('about');
   const [showScrollTop, setShowScrollTop] = useState<boolean>(false);
+  const [activeArticleId, setActiveArticleId] = useState<string | null>(null);
 
-  // Set up Scroll Spy to highlight Navigation links based on scrolled sections
+  // Helper to extract article ID from current URL (query params or hash)
+  const getArticleIdFromUrl = (): string | null => {
+    try {
+      const searchParams = new URLSearchParams(window.location.search);
+      const queryArticle = searchParams.get('article') || searchParams.get('blog') || searchParams.get('post') || searchParams.get('id');
+      if (queryArticle) return queryArticle;
+
+      const hash = window.location.hash.replace('#', '');
+      if (hash.startsWith('article/')) {
+        return hash.replace('article/', '');
+      }
+      if (hash.startsWith('read/')) {
+        return hash.replace('read/', '');
+      }
+      // Check if hash exactly matches a project id
+      const matchesProject = projects.some((p) => p.id === hash);
+      if (matchesProject) return hash;
+    } catch (e) {
+      console.error(e);
+    }
+    return null;
+  };
+
+  // Sync URL on initial mount and on popstate/hashchange
   useEffect(() => {
+    const handleUrlChange = () => {
+      const articleId = getArticleIdFromUrl();
+      setActiveArticleId(articleId);
+    };
+
+    // Run on initial mount
+    handleUrlChange();
+
+    window.addEventListener('popstate', handleUrlChange);
+    window.addEventListener('hashchange', handleUrlChange);
+    return () => {
+      window.removeEventListener('popstate', handleUrlChange);
+      window.removeEventListener('hashchange', handleUrlChange);
+    };
+  }, [projects]);
+
+  // Set up Scroll Spy when in homepage mode
+  useEffect(() => {
+    if (activeArticleId) return;
+
     const handleScroll = () => {
       const sections = ['about', 'portfolio', 'contact'];
       const scrollPosition = window.scrollY + 160; // Offset for navbar
@@ -35,7 +81,32 @@ export default function App() {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [activeArticleId]);
+
+  const handleSelectArticle = (article: Project) => {
+    setActiveArticleId(article.id);
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.set('article', article.id);
+    window.history.pushState({ articleId: article.id }, '', newUrl.toString());
+  };
+
+  const handleBackToHome = () => {
+    setActiveArticleId(null);
+    const newUrl = new URL(window.location.href);
+    newUrl.searchParams.delete('article');
+    newUrl.searchParams.delete('blog');
+    newUrl.searchParams.delete('post');
+    newUrl.searchParams.delete('id');
+    window.history.pushState({}, '', newUrl.pathname + newUrl.search);
+    
+    // Scroll smoothly to portfolio section
+    setTimeout(() => {
+      const el = document.getElementById('portfolio');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 50);
+  };
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -45,6 +116,17 @@ export default function App() {
   };
 
   const scrollToSection = (id: string) => {
+    if (activeArticleId) {
+      handleBackToHome();
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+      return;
+    }
+
     setActiveSection(id);
     const element = document.getElementById(id);
     if (element) {
@@ -52,28 +134,45 @@ export default function App() {
     }
   };
 
+  // Find currently active article if any
+  const currentArticle = activeArticleId
+    ? projects.find((p) => p.id === activeArticleId)
+    : null;
+
   return (
     <div id="root-layout" className="min-h-screen flex flex-col bg-paper selection:bg-brass selection:text-paper text-ink relative overflow-x-hidden">
-      {/* Floating Navigation Menu */}
-      <Navigation
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-      />
-
-      {/* Main Page Layout */}
-      <main id="main-content" className="flex-1">
-        {/* Editorial Hero & Bio Section */}
-        <Hero
-          onContactClick={() => scrollToSection('contact')}
-          onPortfolioClick={() => scrollToSection('portfolio')}
+      
+      {/* If an article is open via URL or selection, render the dedicated Article View */}
+      {currentArticle ? (
+        <ArticleView
+          article={currentArticle}
+          onBack={handleBackToHome}
+          onSelectArticle={handleSelectArticle}
         />
+      ) : (
+        <>
+          {/* Floating Navigation Menu */}
+          <Navigation
+            activeSection={activeSection}
+            setActiveSection={setActiveSection}
+          />
 
-        {/* Reading Room / Publications & Research Section */}
-        <Portfolio />
+          {/* Main Page Layout */}
+          <main id="main-content" className="flex-1">
+            {/* Editorial Hero & Bio Section */}
+            <Hero
+              onContactClick={() => scrollToSection('contact')}
+              onPortfolioClick={() => scrollToSection('portfolio')}
+            />
 
-        {/* Minimalist Contact Section */}
-        <Contact />
-      </main>
+            {/* Reading Room / Publications & Research Section */}
+            <Portfolio onSelectArticle={handleSelectArticle} />
+
+            {/* Minimalist Contact Section */}
+            <Contact />
+          </main>
+        </>
+      )}
 
       {/* Minimalist Footer */}
       <footer id="main-footer" className="bg-paper-deep text-ink-soft py-12 sm:py-16 px-4 xs:px-6 sm:px-8 border-t border-rule print:hidden relative z-10">
@@ -116,7 +215,7 @@ export default function App() {
       </footer>
 
       {/* Floating Scroll to Top button */}
-      {showScrollTop && (
+      {showScrollTop && !currentArticle && (
         <button
           id="scroll-to-top-btn"
           onClick={scrollToTop}
@@ -133,3 +232,4 @@ export default function App() {
     </div>
   );
 }
+

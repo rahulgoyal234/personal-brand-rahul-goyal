@@ -22,7 +22,7 @@ export const PROJECTS: Project[] = [
   {
     id: 'supreme-court-3-year-practice-rule',
     title: 'Supreme Court softens the 3-year practice rule, but I think even one year is too much',
-    category: 'Articles',
+    category: 'Opinion',
     date: 'August 2026',
     description: 'Back in May 2025, the Supreme Court mandated 3 years of bar practice for Civil Judge aspirants. In August 2026, it softened this to 1 year. Here is why pre-exam practice rules harm first-generation graduates and why courtroom grounding belongs in paid, structured training post-selection.',
     longDescription: `Back in May 2025, the Supreme Court said something simple but strict: if you want to become a Civil Judge (Junior Division), you first need three years of practice as a lawyer. Fresh law graduates couldn't even sit for the exam anymore.
