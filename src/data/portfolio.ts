@@ -35,7 +35,7 @@ Here's my honest take:
 
 The three-year rule sounded good on paper. Judges should know how courts actually work before they start deciding cases, fair point. But in practice, it hurt the wrong people. A bright law graduate with no family connections in litigation doesn't get three years of real courtroom experience. They get three years of odd jobs, unpaid drafting work, or just waiting around. The rule ended up rewarding who you know, not what you know.
 
-I don't think one year fixes this. I think it should be deleted entirely.
+I don't think one year fixes this. I think it should be scrapped entirely.
 
 Entry-level judiciary should be open right after LLB. Instead, put the training where it actually belongs: one year of structured, paid, on-the-job training after selection, before someone is confirmed as a judge. That gives you the same courtroom grounding the Court is worried about, without making candidates wait outside the door first.
 
@@ -52,7 +52,7 @@ There's also relief for people caught in between. If the exam was notified betwe
 
 The three-year rule sounded good on paper. Judges should know how courts actually work before they start deciding cases, fair point. But in practice, it hurt the wrong people. A bright law graduate with no family connections in litigation doesn't get three years of real courtroom experience. They get three years of odd jobs, unpaid drafting work, or just waiting around. The rule ended up rewarding who you know, not what you know.
 
-I don't think one year fixes this. I think it should be deleted entirely.
+I don't think one year fixes this. I think it should be scrapped entirely.
 
 Entry-level judiciary should be open right after LLB. Instead, put the training where it actually belongs: one year of structured, paid, on-the-job training after selection, before someone is confirmed as a judge. That gives you the same courtroom grounding the Court is worried about, without making candidates wait outside the door first.
 
