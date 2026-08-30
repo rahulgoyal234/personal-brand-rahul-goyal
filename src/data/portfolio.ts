@@ -20,6 +20,64 @@ I work in corporate law, IP, and tech policy, turning tangled regulation into cl
 
 export const PROJECTS: Project[] = [
   {
+    id: 'supreme-court-3-year-practice-rule',
+    title: 'Supreme Court softens the 3-year practice rule, but I think even one year is too much',
+    category: 'Articles',
+    date: 'August 2026',
+    description: 'Back in May 2025, the Supreme Court mandated 3 years of bar practice for Civil Judge aspirants. In August 2026, it softened this to 1 year. Here is why pre-exam practice rules harm first-generation graduates and why courtroom grounding belongs in paid, structured training post-selection.',
+    longDescription: `Back in May 2025, the Supreme Court said something simple but strict: if you want to become a Civil Judge (Junior Division), you first need three years of practice as a lawyer. Fresh law graduates couldn't even sit for the exam anymore.
+
+Now, in August 2026, the Court has changed its mind, a little. The three-year rule is now a one-year rule. This applies to any judicial exam notified on or after April 1, 2027.
+
+There's also relief for people caught in between. If the exam was notified between May 20, 2025 and March 31, 2027, candidates can apply even with zero years of practice. They'll just be appointed as "Trainee Judicial Officers" first and go through training before becoming full judges.
+
+Here's my honest take:
+
+The three-year rule sounded good on paper. Judges should know how courts actually work before they start deciding cases, fair point. But in practice, it hurt the wrong people. A bright law graduate with no family connections in litigation doesn't get three years of real courtroom experience. They get three years of odd jobs, unpaid drafting work, or just waiting around. The rule ended up rewarding who you know, not what you know.
+
+I don't think one year fixes this. I think it should be deleted entirely.
+
+Entry-level judiciary should be open right after LLB. Instead, put the training where it actually belongs: one year of structured, paid, on-the-job training after selection, before someone is confirmed as a judge. That gives you the same courtroom grounding the Court is worried about, without making candidates wait outside the door first.
+
+Here's the part that doesn't get talked about enough: after five intense years of law school, the strongest students, the ones who've actually built real skills, often at top-tier corporate firms, have lucrative offers waiting for them. Corporate firms pay well. Asking these same people to first "prove" themselves for a year (or three) before they can even attempt the judicial exam just pushes them further away from judiciary and deeper into corporate practice. The people we most want on the bench are the ones this rule discourages the most.
+
+If the real goal is competent, well-prepared judges, the answer isn't a waiting period before the exam, it's a strong training pipeline after selection.`,
+    content: `Back in May 2025, the Supreme Court said something simple but strict: if you want to become a Civil Judge (Junior Division), you first need three years of practice as a lawyer. Fresh law graduates couldn't even sit for the exam anymore.
+
+Now, in August 2026, the Court has changed its mind, a little. The three-year rule is now a one-year rule. This applies to any judicial exam notified on or after April 1, 2027.
+
+There's also relief for people caught in between. If the exam was notified between May 20, 2025 and March 31, 2027, candidates can apply even with zero years of practice. They'll just be appointed as "Trainee Judicial Officers" first and go through training before becoming full judges.
+
+### Here's my honest take:
+
+The three-year rule sounded good on paper. Judges should know how courts actually work before they start deciding cases, fair point. But in practice, it hurt the wrong people. A bright law graduate with no family connections in litigation doesn't get three years of real courtroom experience. They get three years of odd jobs, unpaid drafting work, or just waiting around. The rule ended up rewarding who you know, not what you know.
+
+I don't think one year fixes this. I think it should be deleted entirely.
+
+Entry-level judiciary should be open right after LLB. Instead, put the training where it actually belongs: one year of structured, paid, on-the-job training after selection, before someone is confirmed as a judge. That gives you the same courtroom grounding the Court is worried about, without making candidates wait outside the door first.
+
+### The Talent Drain to Corporate Practice
+
+Here's the part that doesn't get talked about enough: after five intense years of law school, the strongest students, the ones who've actually built real skills, often at top-tier corporate firms, have lucrative offers waiting for them. Corporate firms pay well.
+
+Asking these same people to first "prove" themselves for a year (or three) before they can even attempt the judicial exam just pushes them further away from judiciary and deeper into corporate practice. The people we most want on the bench are the ones this rule discourages the most.
+
+If the real goal is competent, well-prepared judges, the answer isn't a waiting period before the exam, it's a strong training pipeline after selection.`,
+    tags: ['Supreme Court', 'Judicial Reforms', 'Civil Judge Exam', 'Bar Practice', 'Legal Education', 'Commentary'],
+    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
+    highlights: [
+      'Deconstructs the Supreme Court\'s modification of the Civil Judge (Junior Division) practice requirement from 3 years to 1 year.',
+      'Highlights the transitional relief mechanism creating "Trainee Judicial Officers" for exams notified between May 2025 and March 2027.',
+      'Critiques the socio-economic disadvantages faced by first-generation law graduates in litigation chambers.',
+      'Advocates for a 1-year paid post-selection training model to prevent talent drain to corporate practice.'
+    ],
+    stats: [
+      { label: 'Forum', value: 'Commentary' },
+      { label: 'Domain', value: 'Judiciary' },
+      { label: 'Date', value: 'Aug 2026' }
+    ]
+  },
+  {
     id: 'ai-governance',
     title: 'Contribution of AI to Environmental Sustainability Governance: A Comparative Study',
     category: 'Research Papers',

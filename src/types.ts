@@ -3,6 +3,8 @@ export interface Project {
   title: string;
   description: string;
   longDescription: string;
+  content?: string;
+  date?: string;
   tags: string[];
   category: string;
   image: string;

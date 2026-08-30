@@ -98,12 +98,6 @@ export default function App() {
                 {personalInfo.name}
               </span>
             </div>
-            <p className="font-mono text-xs text-brass max-w-sm">
-              {personalInfo.title} • {personalInfo.location}
-            </p>
-            <p className="font-sans text-xs text-ink-soft">
-              "Making the complex, comprehensible."
-            </p>
           </div>
 
           {/* Quick links */}

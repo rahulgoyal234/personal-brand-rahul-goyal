@@ -164,11 +164,12 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
     if (!Array.isArray(projs)) return PROJECTS;
     let list = [...projs];
     
-    // Ensure all default projects are present
-    PROJECTS.forEach((dp) => {
+    // Ensure all default projects are present and updated
+    PROJECTS.forEach((dp, dpIndex) => {
       const index = list.findIndex((p) => p && typeof p === 'object' && p.id === dp.id);
       if (index === -1) {
-        list.push(dp);
+        // Insert at designated index
+        list.splice(dpIndex, 0, dp);
       }
     });
 
@@ -177,9 +178,17 @@ export function PortfolioProvider({ children }: { children: React.ReactNode }) {
       .map((p: any) => {
         const defaultProj = PROJECTS.find((dp) => dp.id === p.id);
         if (defaultProj) {
-          let updated = { ...p };
-          // Always force the official default images for all default projects to ensure high-quality, up-to-date thumbnails are displayed
+          let updated = { ...defaultProj, ...p };
+          // Always force the official default images, title, content, and dates
           updated.image = defaultProj.image;
+          updated.title = defaultProj.title;
+          updated.category = defaultProj.category;
+          updated.longDescription = defaultProj.longDescription;
+          updated.content = defaultProj.content;
+          updated.date = defaultProj.date;
+          updated.highlights = defaultProj.highlights;
+          updated.stats = defaultProj.stats;
+          
           // If the saved demoUrl is the old default top-level link, upgrade it
           if (p.id === 'private-law-colleges' && (!p.demoUrl || p.demoUrl === 'https://www.barandbench.com' || p.demoUrl === 'https://www.barandbench.com/')) {
             updated.demoUrl = defaultProj.demoUrl;
