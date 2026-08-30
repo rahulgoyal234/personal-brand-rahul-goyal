@@ -137,10 +137,10 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
             <button
               id="mobile-menu-toggle"
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 sm:p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center border border-rule hover:border-ink text-ink-soft hover:text-ink transition-colors cursor-pointer rounded-[2px] bg-paper shadow-2xs active:scale-95"
+              className="p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center border border-rule hover:border-ink text-ink-soft hover:text-ink transition-colors cursor-pointer rounded-full bg-paper shadow-2xs active:scale-95 hover:bg-paper-deep/60"
               aria-label="Toggle menu"
             >
-              {isOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              {isOpen ? <X className="w-4 h-4 text-brass" /> : <Menu className="w-4 h-4" />}
             </button>
           </div>
 
@@ -159,10 +159,10 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
                 id={`mobile-nav-item-${item.id}`}
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`text-left w-full py-2.5 px-3 font-sans text-sm font-semibold tracking-wide cursor-pointer rounded-[2px] transition-all min-h-[44px] flex items-center ${
+                className={`text-left w-full py-2.5 px-4 font-sans text-sm font-medium tracking-normal cursor-pointer rounded-full transition-all min-h-[44px] flex items-center ${
                   activeSection === item.id 
-                    ? 'text-ink border-l-2 border-brass bg-paper-deep/70 font-bold' 
-                    : 'text-ink-soft hover:text-ink hover:bg-paper-deep/30'
+                    ? 'text-paper bg-ink font-semibold shadow-xs' 
+                    : 'text-ink-soft hover:text-ink hover:bg-paper-deep/60'
                 }`}
               >
                 {item.label}
@@ -176,7 +176,7 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
                 href={personalInfo.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between w-full py-2.5 px-3 border border-rule bg-paper-deep/50 hover:bg-paper-deep rounded-[2px] text-xs font-mono text-ink font-semibold tracking-wider uppercase mt-2 transition-colors min-h-[44px]"
+                className="flex items-center justify-between w-full py-2.5 px-4 border border-rule bg-paper hover:bg-paper-deep/60 rounded-full text-sm font-sans font-medium text-ink mt-2 transition-colors min-h-[44px] shadow-xs active:scale-95"
               >
                 <div className="flex items-center gap-2">
                   <Linkedin className="w-4 h-4 text-brass" />

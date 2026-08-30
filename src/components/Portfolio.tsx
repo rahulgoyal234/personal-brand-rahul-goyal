@@ -67,34 +67,34 @@ export default function Portfolio() {
               <button
                 id="open-search-btn"
                 onClick={() => setIsSearchOpen(true)}
-                className="font-mono text-xs text-ink-soft hover:text-ink border border-rule hover:border-ink bg-paper px-3 py-2 sm:py-1.5 rounded-[2px] transition-all duration-200 flex items-center justify-between sm:justify-start gap-2 cursor-pointer shadow-2xs"
+                className="font-sans text-xs sm:text-[13px] font-medium text-ink-soft hover:text-ink border border-rule hover:border-ink bg-paper px-3.5 py-1.5 sm:py-2 rounded-full transition-all duration-200 flex items-center justify-between sm:justify-start gap-2 cursor-pointer shadow-xs hover:bg-paper-deep/50 active:scale-95 select-none"
                 title="Press / to search"
               >
                 <div className="flex items-center gap-2">
                   <Search className="w-3.5 h-3.5 text-brass" />
                   <span>Search</span>
                 </div>
-                <kbd className="hidden sm:inline-block font-mono text-[10px] bg-paper-deep px-1.5 py-0.5 rounded-[2px] border border-rule/80 text-ink-soft">
+                <kbd className="hidden sm:inline-block font-sans text-[11px] font-semibold bg-paper-deep px-1.5 py-0.5 rounded-full border border-rule/80 text-ink-soft">
                   /
                 </kbd>
               </button>
             ) : (
               <div className="relative flex items-center w-full sm:w-64">
-                <Search className="w-3.5 h-3.5 text-brass absolute left-2.5 pointer-events-none" />
+                <Search className="w-3.5 h-3.5 text-brass absolute left-3 pointer-events-none" />
                 <input
                   ref={searchInputRef}
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search titles, tags..."
-                  className="w-full pl-8 pr-7 py-2 sm:py-1.5 font-mono text-xs bg-paper border border-ink rounded-[2px] focus:outline-none focus:ring-1 focus:ring-brass text-ink shadow-2xs"
+                  className="w-full pl-8.5 pr-7 py-1.5 sm:py-2 font-sans text-xs sm:text-[13px] bg-paper border border-ink rounded-full focus:outline-none focus:ring-1 focus:ring-brass text-ink shadow-xs"
                 />
                 <button
                   onClick={() => {
                     setSearchQuery('');
                     setIsSearchOpen(false);
                   }}
-                  className="absolute right-2 text-ink-soft hover:text-ink p-1 cursor-pointer"
+                  className="absolute right-2 text-ink-soft hover:text-ink p-1 cursor-pointer rounded-full hover:bg-paper-deep"
                   aria-label="Close search"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -108,10 +108,10 @@ export default function Portfolio() {
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`font-mono text-[10.5px] xs:text-[11px] uppercase tracking-wider px-3 py-1.5 sm:py-1.5 border rounded-full transition-all duration-200 font-semibold cursor-pointer select-none active:scale-95 ${
+                  className={`font-sans text-xs sm:text-[12.5px] font-medium px-3.5 py-1.5 sm:py-2 rounded-full transition-all duration-200 cursor-pointer select-none active:scale-95 ${
                     currentCategory === category
-                      ? 'border-ink bg-ink text-paper shadow-xs'
-                      : 'border-rule text-ink-soft bg-paper hover:border-ink hover:text-ink'
+                      ? 'border border-ink bg-ink text-paper shadow-xs font-semibold'
+                      : 'border border-rule text-ink-soft bg-paper hover:border-ink hover:text-ink hover:bg-paper-deep/60'
                   }`}
                 >
                   {category}
@@ -215,7 +215,7 @@ export default function Portfolio() {
                         href={project.demoUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="font-mono text-[10.5px] sm:text-[11px] text-ink-soft hover:text-ink bg-paper hover:bg-paper-deep border border-rule px-3 py-1.5 rounded-[2px] transition-all duration-200 uppercase tracking-wider flex items-center gap-1.5 font-semibold cursor-pointer shadow-2xs active:scale-95"
+                        className="font-sans text-xs sm:text-[12.5px] text-ink-soft hover:text-ink bg-paper hover:bg-paper-deep/60 border border-rule hover:border-ink px-3.5 py-1.5 rounded-full transition-all duration-200 flex items-center gap-1.5 font-medium cursor-pointer shadow-xs active:scale-95 select-none"
                       >
                         <span>Access</span>
                         <ExternalLink className="w-3 h-3 text-brass" />

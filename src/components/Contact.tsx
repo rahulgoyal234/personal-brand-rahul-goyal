@@ -52,16 +52,16 @@ export default function Contact() {
 
             <button
               onClick={() => handleCopy(personalInfo.email, 'email')}
-              className="font-mono text-[10.5px] uppercase tracking-wider px-3 py-1.5 rounded-[2px] border border-rule hover:border-ink bg-paper text-ink transition-colors flex items-center justify-center gap-1.5 cursor-pointer font-semibold w-fit active:scale-95 shadow-2xs"
+              className="font-sans text-xs sm:text-[13px] font-medium px-4 py-2 rounded-full border border-rule hover:border-ink bg-paper hover:bg-paper-deep/60 text-ink transition-colors flex items-center justify-center gap-1.5 cursor-pointer w-fit active:scale-95 shadow-xs select-none"
             >
               {copiedField === 'email' ? (
                 <>
-                  <Check className="w-3 h-3 text-emerald-600" />
-                  <span className="text-emerald-700">Copied</span>
+                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                  <span className="text-emerald-700 font-semibold">Copied</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-3 h-3 text-ink-soft" />
+                  <Copy className="w-3.5 h-3.5 text-ink-soft" />
                   <span>Copy Address</span>
                 </>
               )}
@@ -108,14 +108,14 @@ export default function Contact() {
                 href={personalInfo.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-mono text-[10.5px] uppercase tracking-wider px-3.5 py-1.5 rounded-[2px] border border-rule hover:border-ink bg-paper hover:bg-paper-deep text-ink transition-all flex items-center justify-center gap-1.5 cursor-pointer font-semibold w-fit group shadow-xs active:scale-95"
+                className="font-sans text-xs sm:text-[13px] font-medium px-4 py-2 rounded-full border border-rule hover:border-brass/60 bg-paper hover:bg-paper-deep/60 text-ink transition-all flex items-center justify-center gap-1.5 cursor-pointer w-fit group shadow-xs active:scale-95 select-none"
               >
-                <Linkedin className="w-3 h-3 text-brass" />
+                <Linkedin className="w-3.5 h-3.5 text-brass" />
                 <span>Connect on LinkedIn</span>
                 <ArrowUpRight className="w-3 h-3 text-ink-soft group-hover:text-ink transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </a>
             ) : (
-              <span className="font-mono text-[10.5px] text-ink-soft">LinkedIn connected</span>
+              <span className="font-sans text-xs text-ink-soft">LinkedIn connected</span>
             )}
           </Card3D>
 

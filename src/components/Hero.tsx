@@ -100,19 +100,19 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
 
           </div>
 
-          {/* Right Column: Profile Photo Container */}
+            {/* Right Column: Profile Photo Container */}
           <div
             id="hero-portrait-container"
             className="flex-shrink-0 flex justify-center md:justify-end w-full md:w-auto pt-2 sm:pt-4 relative"
           >
             <div className="portrait-wrap relative flex flex-col items-center">
               
-              {/* Open Profile photo container with generous clearance */}
+              {/* Open Profile photo container with balanced stage width so badges never overlap the portrait */}
               <div 
-                className="relative cursor-default z-10 flex items-center justify-center p-3 sm:p-5"
+                className="relative cursor-default z-10 flex items-center justify-center w-[290px] xs:w-[330px] sm:w-[370px] md:w-[410px] min-h-[270px] xs:min-h-[310px] sm:min-h-[370px] md:min-h-[410px] p-2"
               >
                 {/* Soft ambient aura backdrop */}
-                <div className="absolute inset-0 bg-gradient-to-t from-paper-deep/60 via-transparent to-transparent -z-10 rounded-[8px] blur-sm transform translate-y-2 scale-95 opacity-80" />
+                <div className="absolute inset-x-8 bottom-0 top-6 bg-gradient-to-t from-paper-deep/60 via-transparent to-transparent -z-10 rounded-[8px] blur-sm opacity-80" />
 
                 {personalInfo.avatar ? (
                   <img
@@ -127,7 +127,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                         setImgSrc('/rahul_transparent.png');
                       }
                     }}
-                    className="w-auto h-auto max-w-[180px] xs:max-w-[210px] sm:max-w-[250px] md:max-w-[280px] lg:max-w-[310px] max-h-[280px] xs:max-h-[330px] sm:max-h-[380px] md:max-h-[420px] object-contain object-bottom drop-shadow-md select-none pointer-events-none relative z-10"
+                    className="w-auto h-auto max-w-[160px] xs:max-w-[185px] sm:max-w-[225px] md:max-w-[255px] max-h-[255px] xs:max-h-[295px] sm:max-h-[350px] md:max-h-[390px] object-contain object-bottom drop-shadow-md select-none pointer-events-none relative z-10 mx-auto"
                   />
                 ) : (
                   <div className="w-[180px] h-[240px] flex flex-col items-center justify-center p-3 text-center text-ink-soft bg-paper-deep rounded-[4px]">
@@ -135,18 +135,17 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   </div>
                 )}
 
-                {/* Floating Pill Capsule Badge on Left Flank (Outside photo silhouette) */}
+                {/* Floating Pill Capsule Badge on Left Flank (Clear of body silhouette) */}
                 <motion.div
                   animate={{ 
-                    y: [0, -6, 0],
-                    rotate: [0, -1, 0, 1, 0]
+                    y: [0, -5, 0],
                   }}
                   transition={{
-                    duration: 4.5,
+                    duration: 2.2,
                     repeat: Infinity,
                     ease: "easeInOut"
                   }}
-                  className="absolute bottom-2 -left-5 sm:bottom-6 sm:-left-8 md:-left-10 z-20 flex items-center p-1 bg-paper/95 backdrop-blur-md border border-rule/90 hover:border-ink/50 rounded-full shadow-md hover:shadow-lg transition-all pointer-events-auto"
+                  className="absolute bottom-6 xs:bottom-8 sm:bottom-12 md:bottom-14 left-0 xs:left-1 sm:left-2 md:left-3 z-20 flex items-center p-1 bg-paper/95 backdrop-blur-md border border-rule/90 hover:border-ink/50 rounded-full shadow-md hover:shadow-lg transition-all pointer-events-auto"
                 >
                   {personalInfo.linkedin && (
                     <a
@@ -178,33 +177,32 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   </button>
                 </motion.div>
 
-                {/* Floating Moving Education Badge on Right Flank (Above shoulder, outside head silhouette) */}
+                {/* Floating Moving Education Badge on Right Flank (Clear of head silhouette) */}
                 <motion.div
                   animate={{ 
-                    y: [0, 6, 0],
-                    rotate: [0, 1, 0, -1, 0]
+                    y: [0, 5, 0],
                   }}
                   transition={{
-                    duration: 5,
+                    duration: 2.0,
                     repeat: Infinity,
                     ease: "easeInOut"
                   }}
-                  className="absolute -top-3 -right-5 sm:top-1 sm:-right-8 md:-right-10 z-30 flex flex-col items-end pointer-events-auto"
+                  className="absolute top-2 xs:top-3 sm:top-6 md:top-8 right-0 xs:right-1 sm:right-2 md:right-3 z-30 flex flex-col items-end pointer-events-auto"
                 >
                   <button
                     id="floating-portrait-education"
                     onClick={() => setIsEducationOpen(!isEducationOpen)}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 xs:px-3 xs:py-1.5 sm:px-3.5 sm:py-2 bg-paper/95 backdrop-blur-md border border-rule/90 hover:border-ink/50 rounded-full shadow-md hover:shadow-lg transition-all cursor-pointer font-mono text-[9.5px] xs:text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-ink hover:text-brass select-none group"
+                    className="flex items-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-paper/95 backdrop-blur-md border border-rule/90 hover:border-ink/50 rounded-full shadow-md hover:shadow-lg transition-all cursor-pointer font-sans text-xs font-medium text-ink hover:text-brass select-none group"
                     title="Click to view Education"
                   >
                     <span className="p-1 bg-paper-deep border border-rule rounded-full flex items-center justify-center text-brass group-hover:bg-brass group-hover:text-paper transition-colors">
-                      <GraduationCap className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                      <GraduationCap className="w-3.5 h-3.5" />
                     </span>
                     <span>Education</span>
                     {isEducationOpen ? (
-                      <ChevronUp className="w-3 h-3 text-ink-soft/70" />
+                      <ChevronUp className="w-3.5 h-3.5 text-ink-soft/70" />
                     ) : (
-                      <ChevronDown className="w-3 h-3 text-ink-soft/70" />
+                      <ChevronDown className="w-3.5 h-3.5 text-ink-soft/70" />
                     )}
                   </button>
 
@@ -277,13 +275,14 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                   </span>
                 </div>
               </div>
+
             </div>
           </div>
 
         </div>
 
         {/* Action Buttons (Pill & Moving Pattern) */}
-        <div id="hero-actions" className={`lex-cta ${isRevealed ? 'in' : ''} flex flex-wrap items-center gap-2 xs:gap-2.5 sm:gap-3.5 w-full`}>
+        <div id="hero-actions" className={`lex-cta ${isRevealed ? 'in' : ''} flex flex-wrap items-center gap-2 xs:gap-2.5 sm:gap-3 w-full`}>
           
           <button
             id="hero-cta-about"
@@ -291,7 +290,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               const element = document.getElementById('about');
               if (element) element.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="flex-1 sm:flex-initial min-w-[100px] justify-center font-mono text-[11px] xs:text-[11.5px] sm:text-[12.5px] tracking-wider px-3.5 sm:px-4 py-2 sm:py-2.5 border border-rule bg-paper text-ink-soft hover:text-ink hover:border-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5 active:scale-95"
+            className="flex-1 sm:flex-initial min-w-[95px] justify-center font-sans text-xs sm:text-[13px] font-medium px-4 py-2 sm:py-2.5 border border-rule bg-paper text-ink-soft hover:text-ink hover:border-ink hover:bg-paper-deep/60 rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer shadow-xs hover:-translate-y-0.5 active:scale-95 select-none"
           >
             <User className="w-3.5 h-3.5 text-brass" />
             <span>About</span>
@@ -300,16 +299,16 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
           <button
             id="hero-cta-portfolio"
             onClick={onPortfolioClick}
-            className="flex-1 sm:flex-initial min-w-[130px] justify-center font-mono text-[11px] xs:text-[11.5px] sm:text-[12.5px] tracking-wider px-4 sm:px-5 py-2 sm:py-2.5 border border-ink bg-ink text-paper hover:bg-paper hover:text-ink hover:border-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5 active:scale-95"
+            className="flex-1 sm:flex-initial min-w-[135px] justify-center font-sans text-xs sm:text-[13px] font-medium px-4.5 sm:px-5 py-2 sm:py-2.5 border border-ink bg-ink text-paper hover:bg-ink/90 rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer shadow-xs hover:-translate-y-0.5 active:scale-95 select-none"
           >
-            <BookOpen className="w-3.5 h-3.5 text-brass" />
+            <BookOpen className="w-3.5 h-3.5 text-brass-soft" />
             <span>Reading Room</span>
           </button>
 
           <button
             id="hero-cta-contact"
             onClick={onContactClick}
-            className="flex-1 sm:flex-initial min-w-[100px] justify-center font-mono text-[11px] xs:text-[11.5px] sm:text-[12.5px] tracking-wider px-3.5 sm:px-4 py-2 sm:py-2.5 border border-rule bg-paper hover:border-ink hover:text-ink text-ink-soft rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5 active:scale-95"
+            className="flex-1 sm:flex-initial min-w-[95px] justify-center font-sans text-xs sm:text-[13px] font-medium px-4 py-2 sm:py-2.5 border border-rule bg-paper hover:border-ink hover:text-ink hover:bg-paper-deep/60 text-ink-soft rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer shadow-xs hover:-translate-y-0.5 active:scale-95 select-none"
           >
             <Mail className="w-3.5 h-3.5 text-brass" />
             <span>Contact</span>
@@ -321,11 +320,11 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               href={personalInfo.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 sm:flex-initial min-w-[110px] justify-center font-mono text-[11px] xs:text-[11.5px] sm:text-[12.5px] tracking-wider px-3.5 sm:px-4 py-2 sm:py-2.5 border border-brass/40 bg-paper hover:border-ink hover:bg-paper-deep text-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5 group active:scale-95"
+              className="flex-1 sm:flex-initial min-w-[105px] justify-center font-sans text-xs sm:text-[13px] font-medium px-4 py-2 sm:py-2.5 border border-rule hover:border-brass/60 bg-paper hover:bg-paper-deep/60 text-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer shadow-xs hover:-translate-y-0.5 group active:scale-95 select-none"
             >
               <Linkedin className="w-3.5 h-3.5 text-brass" />
               <span>LinkedIn</span>
-              <ArrowUpRight className="w-3 h-3 text-ink-soft group-hover:text-ink transition-transform" />
+              <ArrowUpRight className="w-3 h-3 text-ink-soft/70 group-hover:text-ink transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </a>
           )}
 
@@ -333,7 +332,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
             <button
               id="hero-cta-video"
               onClick={() => setIsVideoModalOpen(true)}
-              className="flex-1 sm:flex-initial min-w-[120px] justify-center font-mono text-[11px] xs:text-[11.5px] sm:text-[12.5px] tracking-wider px-3.5 sm:px-4 py-2 sm:py-2.5 border border-rule bg-paper text-ink hover:bg-paper-deep hover:border-ink rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer font-semibold shadow-xs hover:-translate-y-0.5 active:scale-95"
+              className="flex-1 sm:flex-initial min-w-[115px] justify-center font-sans text-xs sm:text-[13px] font-medium px-4 py-2 sm:py-2.5 border border-rule bg-paper text-ink hover:border-ink hover:bg-paper-deep/60 rounded-full transition-all duration-200 flex items-center gap-2 cursor-pointer shadow-xs hover:-translate-y-0.5 active:scale-95 select-none"
             >
               <Play className="w-3.5 h-3.5 fill-current text-brass translate-x-0.5" />
               <span>Intro Video</span>
@@ -356,7 +355,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               <button
                 id="close-video-modal-btn"
                 onClick={() => setIsVideoModalOpen(false)}
-                className="p-1.5 bg-paper/90 hover:bg-ink text-ink hover:text-paper border border-rule transition-colors cursor-pointer rounded-[2px]"
+                className="p-2 bg-paper/90 hover:bg-ink text-ink hover:text-paper border border-rule transition-colors cursor-pointer rounded-full shadow-xs active:scale-95"
                 title="Close Video"
               >
                 <X className="w-4 h-4" />

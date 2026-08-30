@@ -126,11 +126,11 @@ export default function App() {
         <button
           id="scroll-to-top-btn"
           onClick={scrollToTop}
-          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 p-2.5 min-w-[40px] min-h-[40px] flex items-center justify-center bg-paper border border-ink/30 hover:border-ink text-ink shadow-md hover:shadow-lg rounded-[2px] transition-all duration-200 cursor-pointer group active:scale-95"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-40 p-3 min-w-[44px] min-h-[44px] flex items-center justify-center bg-paper border border-rule hover:border-ink text-ink shadow-md hover:shadow-lg rounded-full transition-all duration-200 cursor-pointer group active:scale-95 hover:bg-paper-deep/60"
           title="Return to top of page"
           aria-label="Scroll to top"
         >
-          <ChevronUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform" />
+          <ChevronUp className="w-4 h-4 text-brass group-hover:-translate-y-0.5 transition-transform" />
         </button>
       )}
 
