@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Play, X, GraduationCap, ChevronDown, ChevronUp, Linkedin, ArrowUpRight, BookOpen, Mail, User } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { motion, AnimatePresence } from 'motion/react';
@@ -17,6 +17,7 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
   const [imgSrc, setImgSrc] = useState(personalInfo?.avatar || '');
   const [isEducationOpen, setIsEducationOpen] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
+  const educationRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setAvatarLoadError(false);
@@ -30,6 +31,28 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
     }, 100);
     return () => clearTimeout(timer);
   }, []);
+
+  // Close education popover when clicking outside or on Escape
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (educationRef.current && !educationRef.current.contains(e.target as Node)) {
+        setIsEducationOpen(false);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isEducationOpen) {
+        setIsEducationOpen(false);
+      }
+    };
+    if (isEducationOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isEducationOpen]);
 
   const renderFormattedHeading = (text: string) => {
     const defaultText = "Making the complex, comprehensible.";
@@ -109,7 +132,9 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               
               {/* Open Profile photo container with balanced stage width so badges never overlap the portrait */}
               <div 
-                className="relative cursor-default z-10 flex items-end justify-center w-[290px] xs:w-[320px] sm:w-[360px] md:w-[400px] px-2 pb-0 pt-2"
+                className={`relative cursor-default flex items-end justify-center w-[290px] xs:w-[320px] sm:w-[360px] md:w-[400px] px-2 pb-0 pt-2 transition-all ${
+                  isEducationOpen ? 'z-40' : 'z-10'
+                }`}
               >
                 {/* Soft ambient aura backdrop */}
                 <div className="absolute inset-x-8 bottom-0 top-6 bg-gradient-to-t from-paper-deep/60 via-transparent to-transparent -z-10 rounded-[8px] blur-sm opacity-80" />
@@ -179,15 +204,18 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
 
                 {/* Floating Moving Education Badge on Right Flank (Clear of head silhouette) */}
                 <motion.div
-                  animate={{ 
+                  ref={educationRef}
+                  animate={isEducationOpen ? { y: 0 } : { 
                     y: [0, 5, 0],
                   }}
                   transition={{
                     duration: 2.0,
-                    repeat: Infinity,
+                    repeat: isEducationOpen ? 0 : Infinity,
                     ease: "easeInOut"
                   }}
-                  className="absolute top-2 xs:top-3 sm:top-6 md:top-8 right-0 xs:right-1 sm:right-2 md:right-3 z-30 flex flex-col items-end pointer-events-auto"
+                  className={`absolute top-2 xs:top-3 sm:top-6 md:top-8 right-0 xs:right-1 sm:right-2 md:right-3 flex flex-col items-end pointer-events-auto ${
+                    isEducationOpen ? 'z-50' : 'z-30'
+                  }`}
                 >
                   <button
                     id="floating-portrait-education"
@@ -214,43 +242,47 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
                         animate={{ opacity: 1, scale: 1, y: 6 }}
                         exit={{ opacity: 0, scale: 0.95, y: -4 }}
                         transition={{ duration: 0.2 }}
-                        className="mt-1 w-[260px] max-w-[calc(100vw-2.5rem)] p-3.5 bg-paper/98 backdrop-blur-lg border border-rule/90 rounded-[4px] shadow-xl text-left space-y-3 z-40"
+                        className="mt-1.5 w-[275px] xs:w-[290px] max-w-[calc(100vw-2rem)] p-4 bg-paper/98 backdrop-blur-xl border border-ink/20 rounded-[4px] shadow-2xl text-left space-y-3.5 z-50 ring-1 ring-black/5"
                       >
-                        <div className="flex items-center justify-between border-b border-rule/60 pb-1.5">
-                          <span className="font-mono text-[9px] uppercase tracking-widest text-brass font-bold">Academic Background</span>
+                        <div className="flex items-center justify-between border-b border-rule/70 pb-2">
+                          <span className="font-mono text-[9.5px] uppercase tracking-widest text-brass font-bold">Academic Background</span>
                           <span className="w-1.5 h-1.5 rounded-full bg-brass animate-pulse" />
                         </div>
 
                         {/* Bennett University */}
-                        <div className="space-y-0.5">
-                          <p className="font-sans text-[11px] font-bold text-ink leading-tight">
-                            Bennett University
-                          </p>
+                        <div className="space-y-1">
+                          <div className="flex items-baseline justify-between gap-1">
+                            <p className="font-serif text-[13px] font-bold text-ink leading-tight">
+                              Bennett University
+                            </p>
+                          </div>
                           <p className="font-mono text-[9px] text-ink-soft uppercase tracking-wide">
                             Greater Noida, India
                           </p>
-                          <p className="font-mono text-[9.5px] text-brass font-semibold mt-0.5">
+                          <p className="font-mono text-[10px] text-brass font-semibold mt-0.5">
                             Master of Laws - LL.M.
                           </p>
-                          <p className="text-[10px] text-ink-soft/90 font-sans italic">
+                          <p className="text-[10.5px] text-ink-soft font-sans italic">
                             Corporate & Commercial Law
                           </p>
                         </div>
 
-                        <div className="w-full h-[1px] bg-rule/50" />
+                        <div className="w-full h-[1px] bg-rule/60" />
 
                         {/* KIIT School of Law */}
-                        <div className="space-y-0.5">
-                          <p className="font-sans text-[11px] font-bold text-ink leading-tight">
-                            KIIT School of Law
-                          </p>
+                        <div className="space-y-1">
+                          <div className="flex items-baseline justify-between gap-1">
+                            <p className="font-serif text-[13px] font-bold text-ink leading-tight">
+                              KIIT School of Law
+                            </p>
+                          </div>
                           <p className="font-mono text-[9px] text-ink-soft uppercase tracking-wide">
                             Bhubaneswar, India
                           </p>
-                          <p className="font-mono text-[9.5px] text-brass font-semibold mt-0.5">
+                          <p className="font-mono text-[10px] text-brass font-semibold mt-0.5">
                             B.A. LL.B. (Hons.)
                           </p>
-                          <p className="text-[10px] text-ink-soft/90 font-sans italic">
+                          <p className="text-[10.5px] text-ink-soft font-sans italic">
                             Law & Legal Studies
                           </p>
                         </div>
@@ -263,7 +295,9 @@ export default function Hero({ onContactClick, onPortfolioClick }: HeroProps) {
               {/* Cool Signature Typography Caption */}
               <div 
                 id="portrait-signature-caption"
-                className="portrait-caption mt-1.5 sm:mt-2 text-center px-2 max-w-full leading-normal z-10 relative flex flex-col items-center select-none"
+                className={`portrait-caption mt-1.5 sm:mt-2 text-center px-2 max-w-full leading-normal relative flex flex-col items-center select-none ${
+                  isEducationOpen ? 'z-0' : 'z-10'
+                }`}
               >
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-paper/95 backdrop-blur-md border border-rule/90 hover:border-ink/40 rounded-full shadow-2xs transition-all duration-300 group">
                   <span className="font-['Cinzel',serif] text-[12.5px] xs:text-[13.5px] sm:text-[14.5px] font-bold tracking-[0.16em] text-ink uppercase group-hover:text-brass transition-colors">
